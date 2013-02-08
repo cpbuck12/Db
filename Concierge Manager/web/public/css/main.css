@@ -1,0 +1,32 @@
+.text {
+  background-color: Black;
+  color: White;
+}
+body {
+  background-color: Black;
+  color: White;
+}
+.class-initially-hidden {
+  display: none;
+}
+.class-hidden {
+  display: none;
+}
+span.class-machine-state,
+span.class-machine-event {
+  display: none;
+}
+table.dataTable thead th {
+  color: White;
+}
+table.dataTable td {
+  color: Black;
+}
+/*
+.dataTables_filter select, .dataTables_filter input
+{
+    color : @TextColor;
+    background-color : Black;
+}
+
+*/

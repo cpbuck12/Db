@@ -1,0 +1,248 @@
+﻿<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <title>work</title>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.js"></script>
+    <style type="text/css">
+        @import "css/jquery-ui.css";
+        @import "css/jquery-ui-theme/jquery-ui-1.9.2.custom.css";
+        @import "css/jquery.dataTables.css";
+        @import "css/main.css";
+    </style>
+    <script type="text/javascript">
+        var MachineState = "";
+        var PreviousMachineState = "";
+        var StateInfoArray = [];
+
+        function GetStateInfo(StateName) {
+            return StateMachine.State[StateName].state;
+        }
+        function SetStateInfo(StateName, Value) {
+            StateMachine.State[StateName].state = Value;
+        }
+        function GetCurrentStateInfo() {
+            return GetStateInfo(MachineState);
+        }
+        function GetPreviousStateInfo() {
+            return GetStateInfo(PreviousMachineState);
+        }
+        function GetStateElement(StateName) {
+            var result;
+            $("span.class-machine-state").each(function (index, element) {
+                if ($(element).text() == StateName) {
+                    result = $(element).parent()[0];
+                }
+            });
+            return result;
+        }
+        function GotoMachineState(NextState) {
+            var first, second;
+            first = GetStateElement(MachineState);
+            second = GetStateElement(NextState);
+            if (first === undefined) {
+                $(second).fadeIn(300);
+            }
+            else {
+                $(first).fadeOut(300, function () {
+                    $(second).fadeIn(300);
+                });
+                StateMachine.State[MachineState].exit();
+            }
+            PreviousMachineState = MachineState;
+            MachineState = NextState;
+            StateMachine.State[MachineState].enter();
+        }
+        function HandleMachineEvent(MachineEvent) {
+            var NextState;
+            var State = StateMachine.State[MachineState];
+            var Event = State.event[MachineEvent];
+            GotoMachineState(Event.next);
+        }
+        var previousOTable;
+        var StateMachine = {
+            State: {
+                "state-main-menu": {
+                    enter: function () {
+                    },
+                    exit: function () {
+                    },
+                    state: {},
+                    event: {
+                        "event-database-maintenance": {
+                            next: "state-database"
+                        },
+                        "event-generate-report": {
+                            next: "state-generate-report"
+                        }
+                    }
+                },
+
+
+
+
+
+
+                "state-database": {
+                    enter: function () {
+                        //                        var patientsOnDiskJSON = window.external.GetPatients();
+                        //var patientsOnDiskJSON = window.external.GetPeopleOnDisk();
+                        $.getJSON("http://localhost:50505/ajax/GetPeopleOnDisk", function (patientsOnDiskJSON) {
+                            var patientsOnDisk = $.parseJSON(patientsOnDiskJSON);
+                            $("#id-table-people").dataTable(
+                        {
+                            bJQueryUI: true,
+                            aaData: patientsOnDiskJSON, /*
+                             [
+                                { LastName: "Smith", FirstName: "John" },
+                                { LastName: "Smith2", FirstName: "John2" },
+                            ], */
+                            aoColumns: [
+                                { "sTitle": "Last", "mData": "LastName" },
+                                { "sTitle": "First", "mData": "FirstName" }
+                            ],
+                            oTableTools: {
+                                "sDom": 'T<"clear">lfrtip',
+                                sRowSelect: "single"
+                            }
+                        });
+                            $("#id-table-people tr").click(function () {
+                                $("tr td", $(this).parent()).removeClass("ui-state-highlight");
+                                var items = $("td", this).addClass("ui-state-highlight");
+                                var lastName = $(items[0]).text();
+                                var firstName = $(items[1]).text();
+                                $("#id-status-message").removeClass("class-hidden");
+                                //var result = window.external.GetFilesOnDisk(firstName, lastName);
+                                var request = "http://localhost:50505/ajax/GetFilesOnDisk"; // =" + firstName + "&LastName=" + lastName;
+                                $.getJSON(request, { FirstName: firstName, LastName: lastName }, function (data) {
+                                    $("#id-status-message").addClass("class-hidden");
+                                    //  var filesOnDisk = $.parseJSON(result);
+                                    var result = data;
+                                    if (previousOTable !== undefined) {
+                                        previousOTable.fnDestroy();
+                                    }
+                                    previousOTable = $("#id-table-files-on-disk").dataTable({
+                                        bJQueryUI: true,
+                                        aaData: data,
+                                        //                                        aaData: filesOnDisk,
+                                        aoColumns:
+                                        [
+                                            { "sTitle": "Last", "mData": "LastName" },
+                                            { "sTitle": "First", "mData": "FirstName" },
+                                            { "sTitle": "Specialty", "mData": "Specialty" },
+                                            { "sTitle": "Subspecialty", "mData": "Subspecialty" },
+                                            { "sTitle": "File Name", "mData": "FileName" },
+                                            { "sTitle": "Hash", "mData": "Hash" }
+                                        ]
+                                    });
+                                });
+                            });
+                        });
+
+                    },
+                    exit: function () { },
+                    state: {},
+                    event: {
+                        "event-database-done": {
+                            next: "state-main-menu"
+                        }
+                    }
+                },
+                "state-generate-report":
+                {
+                    enter: function () {
+                        $.getJSON("http://localhost:50505/ajax/GetPeopleOnDisk", function (patientsInDbJSON) {
+                            var patientsInDb = $.parseJSON(patientsInDbJSON);
+                            $("#id-table-report-people").dataTable({
+                                bJQueryUI: true,
+                                aaData: patientsOnDiskJSON, /*
+                                 [
+                                    { LastName: "Smith", FirstName: "John" },
+                                    { LastName: "Smith2", FirstName: "John2" },
+                                ], */
+                                aoColumns: [
+                                    { "sTitle": "Last", "mData": "LastName" },
+                                    { "sTitle": "First", "mData": "FirstName" }
+                                ],
+                                oTableTools: {
+                                    "sDom": 'T<"clear">lfrtip',
+                                    sRowSelect: "single"
+                                }
+                            });
+                        });
+                    },
+                    exit: function () { },
+                    //                    event: { }
+                    event:
+                    {
+                        "event-report-done": {
+                            next: "state-main-menu"
+                        }
+                    }
+                }
+            }
+        };
+        $(document).ready(function () {
+            $(".class-machine-menu").menu({
+                select: function (event, ui) {
+                    $("span.class-machine-event", ui.item[0]).first().each(function (index, element) {
+                        var MachineEvent = $(element).text();
+                        HandleMachineEvent(MachineEvent);
+                    });
+                }
+            });
+            $(".class-machine-button").each(function (index, element) {
+                $(element).button();
+                $(element).click(function () {
+                    var MachineEvent = $(element).next("span.class-machine-event").text();
+                    HandleMachineEvent(MachineEvent);
+                });
+            });
+            //            $(".data-table").dataTable({ bJQueryUI: true });
+            $("span.class-machine-state").parent().fadeOut(0);
+            $(".class-initially-hidden").removeClass("class-initially-hidden");
+            GotoMachineState("state-main-menu");
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <div>
+            <span class="class-machine-state">state-main-menu</span>
+            <ul class="class-machine-menu">
+                <li><a href="#">Database Maintenance</a><span class="class-machine-event">event-database-maintenance</span></li>
+                <li><a href="#">Create report</a><span class="class-machine-event">event-generate-report</span></li>
+                <li><a href="#">Create website</a></li>
+            </ul>
+        </div>
+        <div>
+            <span class="class-machine-state">state-database</span>
+            <h3>
+                Database Maintenance
+            </h3>
+            <div>
+                <table id="id-table-people" class='class-data-table class-initially-hidden'>
+                </table>
+                <div id="id-status-message" class="class-hidden">
+                    Retrieving files</div>
+                <table id="id-table-files-on-disk" class='class-data-table class-initially-hidden'>
+                </table>
+            </div>
+            <button type="button" class="class-machine-button">
+                Cancel</button><span class="class-machine-event">event-database-done</span>
+        </div>
+        <div>
+            <span class="class-machine-state">state-generate-report</span>
+            <h3>Generate Report</h3>
+            <div>
+                <table id="id-table-report-people" class='class-data-table class-initially-hidden'>
+                </table>
+            </div>
+            <button type="button" class="class-machine-button">
+                Cancel</button><span class="class-machine-event">event-report-done</span>
+        </div>
+    </div>
+</body>
+</html>
+<!-- // on disk: patient location filename status -->

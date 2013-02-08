@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0D20D65A-CC4A-4380-9E99-975EA597053A}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Concierge_Manager</RootNamespace>
+    <AssemblyName>Concierge Manager</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Db\Db.csproj">
+      <Project>{330C01D2-4EEF-4A9B-8057-4D94E0CFC5FC}</Project>
+      <Name>Db</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectForScripting.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="HttpServer">
+      <HintPath>..\..\WebServer\HttpServer\bin\Debug\HttpServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="web\less\main.less.css" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_flat_30_cccccc_40x100.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_flat_50_5c5c5c_40x100.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_glass_40_ffc73d_1x400.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_highlight-hard_20_0972a5_1x100.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_highlight-soft_33_003147_1x100.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_highlight-soft_35_222222_1x100.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_highlight-soft_44_444444_1x100.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_highlight-soft_80_eeeeee_1x100.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-bg_loop_25_000000_21x21.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_222222_256x240.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_4b8e0b_256x240.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_a83300_256x240.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_cccccc_256x240.png" />
+    <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_ffffff_256x240.png" />
+    <None Include="web\public\css\jquery-ui-theme\jquery-ui-1.9.2.custom.css" />
+    <None Include="web\public\css\jquery-ui-theme\jquery-ui-1.9.2.custom.min.css" />
+    <None Include="web\public\css\jquery-ui.css" />
+    <None Include="web\public\css\jquery.dataTables.css" />
+    <Content Include="web\public\js\jquery-ui.js" />
+    <Content Include="web\public\js\jquery.dataTables.js" />
+    <Content Include="web\public\js\jquery.dataTables.min.js" />
+    <None Include="web\public\js\jquery.js" />
+    <Content Include="web\public\work.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="web\less\runless.bat" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>"$(ProjectDir)web\less\runless.bat"</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
