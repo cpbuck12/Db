@@ -55,8 +55,8 @@ namespace Concierge_Manager
             }
             else
             {
-                basePath = @"C:\Users\pacmny_local\git\concierge\public";
-//                basePath = @"C:\temp";
+                //basePath = @"C:\Users\pacmny_local\git\concierge\public";
+                basePath = @"C:\work\concierge\public";
             }
             foreach (string part in parts)
                 basePath = basePath + "\\" + part;
