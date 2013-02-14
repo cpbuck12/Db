@@ -120,7 +120,7 @@ namespace Db
             {
                 foreach (FileInfo file in files)
                 {
-                    int result = AddFile(file);
+                    int result = AddFile_(file);
                 }
                 transaction.Commit();
             }
