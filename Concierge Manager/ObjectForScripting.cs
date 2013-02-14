@@ -55,8 +55,8 @@ namespace Concierge_Manager
             }
             else
             {
-                //basePath = @"C:\Users\pacmny_local\git\concierge\public";
-                basePath = @"C:\work\concierge\public";
+                basePath = @"C:\Users\pacmny_local\git\concierge\public";
+                //basePath = @"C:\work\concierge\public";
             }
             foreach (string part in parts)
                 basePath = basePath + "\\" + part;
@@ -93,6 +93,14 @@ namespace Concierge_Manager
                 fs.Dispose();
             return true;
         }
+        private string GetRequestPayload(IHttpRequest request)
+        {
+            byte[] payload = new byte[request.ContentLength];
+            request.Body.Seek(0, SeekOrigin.Begin);
+            request.Body.Read(payload, 0, request.ContentLength);
+            string payloadText = Encoding.ASCII.GetString(payload);
+            return payloadText;
+        }
         public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
         {
             //MessageBox.Show(request.Uri.ToString());
@@ -103,8 +111,19 @@ namespace Concierge_Manager
             }
             else if (request.UriParts[0].ToLower() == "ajax")
             {
+                string payloadText;
                 switch (request.UriParts[1])
                 {
+                    case "AddDoctor":
+                        payloadText = GetRequestPayload(request);
+                        AjaxReply(objectForScripting.AddDoctor(payloadText), response);
+                        return true;
+                    case "UploadFile":
+                        payloadText = GetRequestPayload(request);
+                        string[] lines = payloadText.Split(new string[] { "\n" },StringSplitOptions.None);
+                        string fullName = lines[2];
+                        AjaxReply(objectForScripting.UploadFile(fullName), response);
+                        return true;
                     case "GetPeopleOnDisk":
                         AjaxReply(objectForScripting.GetPeopleOnDisk(), response);
                         return true;
@@ -142,6 +161,13 @@ namespace Concierge_Manager
             httpServer.Start(IPAddress.Any, 50505);
             httpServer.BackLog = 5;
         }
+        public string UploadFile(string fullName)
+        {
+            Db.Db db = Db.Db.Instance();
+            FileInfo fi = new FileInfo(fullName);
+            db.AddFile(fi);
+            return "ok";
+        }
         public string GetPatients()
         {
             //            throw new Exception("Yabba Dabba Doooo!!!");
@@ -166,7 +192,29 @@ namespace Concierge_Manager
             Match m = r.Match(fileName);
             return m.Success;
         }
-        private void Populate(Dictionary<string, string> entry, string firstName, string lastName, string hash, string specialty, string subspecialty, string fileName)
+        string RemovePounds(string folderName)
+        {
+            try
+            {
+                folderName = folderName.Trim();
+                if (folderName == string.Empty)
+                    return folderName;
+                if (folderName.Last() == '#')
+                {
+                    folderName = folderName.Substring(0, folderName.Length - 1);
+                    folderName = folderName.Trim();
+                }
+                return folderName;
+
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+            return folderName;
+        }
+        private void Populate(Dictionary<string, string> entry, string firstName, string lastName, string hash, string specialty, string subspecialty, string fileName, string fullName)
         {
             entry.Add("FirstName", firstName);
             entry.Add("LastName", lastName);
@@ -191,6 +239,68 @@ namespace Concierge_Manager
             JavaScriptSerializer jss = new JavaScriptSerializer();
             return jss.Serialize(people);
         }
+        public string AddDoctor(string payloadText)
+        {
+            string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
+            string firstName = string.Empty, lastName = string.Empty, shortName = string.Empty, address1 = string.Empty, address2 = string.Empty;
+            string address3 = string.Empty, city = string.Empty, locality1 = string.Empty, locality2 = string.Empty, postalCode = string.Empty;
+            string country = string.Empty, voice = string.Empty, fax = string.Empty, email = string.Empty, contact = string.Empty;
+            for (int i = 0; i < lines.Length; i += 2)
+            {
+                switch (lines[i])
+                {
+                    case "firstname":
+                        firstName = lines[i + 1].Trim();
+                        continue;
+                    case "lasstname":
+                        lastName = lines[i + 1].Trim();
+                        continue;
+                    case "shortname":
+                        shortName = lines[i + 1].Trim();
+                        continue;
+                    case "address1":
+                        address1 = lines[i + 1].Trim();
+                        continue;
+                    case "address2":
+                        address2 = lines[i + 1].Trim();
+                        continue;
+                    case "address3":
+                        address3 = lines[i + 1].Trim();
+                        continue;
+                    case "city":
+                        city = lines[i + 1].Trim();
+                        continue;
+                    case "locality1":
+                        locality1 = lines[i + 1].Trim();
+                        continue;
+                    case "locality2":
+                        locality2 = lines[i + 1].Trim();
+                        continue;
+                    case "postalcode":
+                        postalCode = lines[i + 1].Trim();
+                        continue;
+                    case "country":
+                        country = lines[i + 1].Trim();
+                        continue;
+                    case "voice":
+                        voice = lines[i + 1].Trim();
+                        continue;
+                    case "fax":
+                        fax = lines[i + 1].Trim();
+                        continue;
+                    case "email":
+                        email = lines[i + 1].Trim();
+                        continue;
+                    case "contact":
+                        contact = lines[i + 1].Trim();
+                        continue;
+                }
+            }
+            Db.Db db = Db.Db.Instance();
+            db.AddDoctor(firstName, lastName, shortName, address1, address2, address3, city, locality1, locality2, postalCode, country, voice, fax, email, contact);
+            return "ok";
+
+        }
         public string GetFilesOnDisk(string firstName, string lastName)
         {
             List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
@@ -205,29 +315,54 @@ namespace Concierge_Manager
                 select specialty);
             foreach (var specialty in specialties)
             {
-                string hash;
-                foreach (var specialtyPdf in specialty.GetFiles("*.pdf"))
+                try
                 {
-                    if(!ValidFileName(specialtyPdf.Name))
-                        continue;
-                    Dictionary<string, string> entry = new Dictionary<string, string>();
-                        Populate(entry, firstName, lastName, Hash(specialtyPdf) , specialty.Name, "", specialtyPdf.Name);
-                    result.Add(entry);
+                    foreach (var specialtyPdf in specialty.GetFiles("*.pdf"))
+                    {
+                        if (!ValidFileName(specialtyPdf.Name))
+                            continue;
+                        Dictionary<string, string> entry = new Dictionary<string, string>();
+                        try
+                        {
+                            Populate(entry, firstName, lastName, Hash(specialtyPdf), specialty.Name, "", specialtyPdf.Name,specialtyPdf.FullName);
+                        }
+                        catch (Exception)
+                        {
+                            
+                            throw;
+                        }
+                        result.Add(entry);
+                    }
+
+                }
+                catch (Exception)
+                {
+                    
+                    throw;
                 }
                 var subspecialties = (
                     from subspecialty in specialty.GetDirectories()
                     where Char.IsLetter(subspecialty.Name.ToCharArray()[0])
                     select subspecialty);
-                foreach (var subspecialty in subspecialties)
+                try
                 {
-                    foreach (var subspecialtyPdf in subspecialty.GetFiles("*.pdf"))
+                    foreach (var subspecialty in subspecialties)
                     {
-                        if (!ValidFileName(subspecialtyPdf.Name))
-                            continue;
-                        Dictionary<string, string> entry = new Dictionary<string, string>();
-                        Populate(entry, firstName, lastName, Hash(subspecialtyPdf), specialty.Name, subspecialty.Name, subspecialtyPdf.Name);
-                        result.Add(entry);
+                        foreach (var subspecialtyPdf in subspecialty.GetFiles("*.pdf"))
+                        {
+                            if (!ValidFileName(subspecialtyPdf.Name))
+                                continue;
+                            Dictionary<string, string> entry = new Dictionary<string, string>();
+                            Populate(entry, firstName, lastName, Hash(subspecialtyPdf), specialty.Name, subspecialty.Name, subspecialtyPdf.Name, subspecialtyPdf.FullName);
+                            result.Add(entry);
+                        }
                     }
+
+                }
+                catch (Exception)
+                {
+                    
+                    throw;
                 }
             }
             JavaScriptSerializer jss = new JavaScriptSerializer();
