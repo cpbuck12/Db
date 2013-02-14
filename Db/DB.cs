@@ -84,6 +84,21 @@ namespace Db
                 transaction.Commit();
             }
         }
+        public int AddPatient(string firstName, string lastName)
+        {
+            if ((from patient in conciergeEntities_.patients
+                 where patient.first == firstName && patient.last == lastName
+                 select patient).Count() > 0)
+            {
+                return -1; // TODO: handle patient already added.
+            }
+            patient p = conciergeEntities_.patients.CreateObject();
+            p.first = firstName;
+            p.last = lastName;
+            conciergeEntities_.patients.AddObject(p);
+            conciergeEntities_.SaveChanges();
+            return 0;
+        }
         public int AddDoctor(string firstName,string lastName,string shortName,string address1,string address2,string address3,string city,string locality1,string locality2,
             string postalCode,string country,string voice,string fax,string email,string contact)
         {

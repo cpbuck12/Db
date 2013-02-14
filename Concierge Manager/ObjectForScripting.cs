@@ -114,6 +114,10 @@ namespace Concierge_Manager
                 string payloadText;
                 switch (request.UriParts[1])
                 {
+                    case "AddPatient":
+                        payloadText = GetRequestPayload(request);
+                        AjaxReply(objectForScripting.AddPatient(payloadText), response);
+                        return true;
                     case "AddDoctor":
                         payloadText = GetRequestPayload(request);
                         AjaxReply(objectForScripting.AddDoctor(payloadText), response);
@@ -239,6 +243,15 @@ namespace Concierge_Manager
             }
             JavaScriptSerializer jss = new JavaScriptSerializer();
             return jss.Serialize(people);
+        }
+        public string AddPatient(string payloadText)
+        {
+            string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
+            string firstName = lines[0];
+            string lastName = lines[1];
+            Db.Db db = Db.Db.Instance();
+            db.AddPatient(firstName, lastName);
+            return "ok";
         }
         public string AddDoctor(string payloadText)
         {
