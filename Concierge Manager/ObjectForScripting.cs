@@ -222,6 +222,7 @@ namespace Concierge_Manager
             entry.Add("Specialty", specialty);
             entry.Add("Subspecialty", subspecialty);
             entry.Add("FileName", fileName);
+            entry.Add("FullName", fullName);
         }
         public string GetPeopleOnDisk()
         {
