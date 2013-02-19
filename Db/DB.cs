@@ -8,6 +8,13 @@ using System.Security.Cryptography;
 
 namespace Db
 {
+    public struct Activity
+    {
+        public string specialty;
+        public string subspecialty;
+        public FileInfo fileInfo;
+    }
+
     public class Db
     {
         static private Db db = null;
@@ -136,6 +143,32 @@ namespace Db
                 foreach (FileInfo file in files)
                 {
                     int result = AddFile_(file);
+                }
+                transaction.Commit();
+            }
+            return 0;
+        }
+        public int AddActivities(int doctorID, int patientID, Activity[] activities)
+        {
+            using (DbTransaction transaction = conciergeEntities_.Connection.BeginTransaction())
+            {
+                for (int activity = 0; activity < activities.Length; activity++)
+                {
+                    var specialtyQuery = (from specialty in conciergeEntities_.specialties
+                                          where specialty.specialty_name == activities[activity].specialty &&
+                                          specialty.subspecialty_name == activities[activity].subspecialty
+                                          select specialty.id);
+                    if (specialtyQuery.Count() != 1)
+                        return -1; // TODO: error handling
+                    int specialtyID = specialtyQuery.First();
+                    activity a = conciergeEntities_.activities.CreateObject();
+                    a.specialty_id = specialtyID;
+                    a.doctor_id = doctorID;
+                    a.patient_id = patientID;
+                    int fileId = AddFile_(activities[activity].fileInfo);
+                    a.doctor_id = fileId;
+                    conciergeEntities_.activities.AddObject(a);
+                    conciergeEntities_.SaveChanges();
                 }
                 transaction.Commit();
             }

@@ -13,8 +13,19 @@ using HttpServer.Sessions;
 using System.Net;
 using System.Windows.Forms;
 
+
 namespace Concierge_Manager
 {
+    public static class Utility
+    {
+        public static string SpecialtyStrip(this string specialty)
+        {
+            specialty = specialty.Trim();
+            while (specialty.EndsWith("#") && specialty != string.Empty)
+                specialty = specialty.Substring(0, specialty.Length).Trim();
+            return specialty;
+        }
+    }
 #if NOWHERE
     public class SimpleModule : HttpServer.HttpModules.HttpModule
     {
@@ -122,12 +133,35 @@ namespace Concierge_Manager
                         payloadText = GetRequestPayload(request);
                         AjaxReply(objectForScripting.AddDoctor(payloadText), response);
                         return true;
-                    case "UploadFile":
-                        payloadText = GetRequestPayload(request);
-                        string[] lines = payloadText.Split(new string[] { "\n" },StringSplitOptions.None);
-                        string fullName = lines[2];
-                        AjaxReply(objectForScripting.UploadFile(fullName), response);
+                    case "AddActivities":
+                        {
+                            payloadText = GetRequestPayload(request);
+                            string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
+                            int doctorID = int.Parse(lines[0]);
+                            int patientID = int.Parse(lines[1]);
+                            int cFiles = int.Parse(lines[2]);
+                            Db.Activity[] files = new Db.Activity[cFiles];
+                            for (int iFile = 0; iFile < cFiles; iFile++)
+                            {
+                                files[iFile] = new Db.Activity();
+                                string specialty = lines[3 + 0 + iFile * 3];
+                                string subspecialty = lines[3 + 1 + iFile * 3];
+                                string fullName = lines[3 + 2 + iFile * 3];
+                                files[iFile].specialty = specialty.SpecialtyStrip();
+                                files[iFile].subspecialty = subspecialty.SpecialtyStrip();
+                                files[iFile].fileInfo = new FileInfo(fullName);
+                            }
+                            AjaxReply(objectForScripting.AddActivities(doctorID,patientID,files),response);
+                        }
                         return true;
+                    case "UploadFile":
+                        {
+                            payloadText = GetRequestPayload(request);
+                            string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
+                            string fullName = lines[2];
+                            AjaxReply(objectForScripting.UploadFile(fullName), response);
+                            return true;
+                        }
                     case "GetPeopleOnDisk":
                         AjaxReply(objectForScripting.GetPeopleOnDisk(), response);
                         return true;
@@ -164,6 +198,12 @@ namespace Concierge_Manager
             httpServer.Add(ajaxObjectForScripting);
             httpServer.Start(IPAddress.Any, 50505);
             httpServer.BackLog = 5;
+        }
+        public string AddActivities(int doctorID,int patientID,Db.Activity[] activities)
+        {
+            Db.Db db = Db.Db.Instance();
+            db.AddActivities(doctorID, patientID, activities);
+            return "";
         }
         public string UploadFile(string fullName)
         {
@@ -243,6 +283,12 @@ namespace Concierge_Manager
             }
             JavaScriptSerializer jss = new JavaScriptSerializer();
             return jss.Serialize(people);
+        }
+        public string AddSpecialty(string payloadText)
+        {
+            string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
+            Db.Db db = Db.Db.Instance();
+            return "ok";
         }
         public string AddPatient(string payloadText)
         {
