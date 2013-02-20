@@ -12,7 +12,10 @@ using HttpServer;
 using HttpServer.Sessions;
 using System.Net;
 using System.Windows.Forms;
-
+using System.Runtime.Serialization.Json;
+using System.Xml.Linq;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace Concierge_Manager
 {
@@ -42,12 +45,31 @@ namespace Concierge_Manager
         }
     }
 #endif
+    public class Response
+    {
+        public string result;
+        public Response(string result)
+        {
+            this.result = result;
+        }
+    }
     public class AjaxObjectForScripting : HttpServer.HttpModules.HttpModule
     {
         ObjectForScripting objectForScripting;
         public AjaxObjectForScripting(ObjectForScripting objectForScripting)
         {
             this.objectForScripting = objectForScripting;
+        }
+        public void AjaxReply(Response r,IHttpResponse response)
+        {
+            response.Body.Position = 0;
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            response.Body.Position = 0;
+            string str = ser.Serialize(r);
+            byte[] buffer = Encoding.ASCII.GetBytes(str);
+            response.Body.Write(buffer, 0, buffer.Length);
+            response.Status = HttpStatusCode.OK;
+            response.ContentType = "applixation/text";
         }
         public void AjaxReply(string data, IHttpResponse response)
         {
@@ -104,13 +126,20 @@ namespace Concierge_Manager
                 fs.Dispose();
             return true;
         }
+        private XElement GetXmlRequestPayload(IHttpRequest request)
+        {
+            request.Body.Position = 0;
+            XmlReader reader = JsonReaderWriterFactory.CreateJsonReader(request.Body, new System.Xml.XmlDictionaryReaderQuotas());
+            XElement root = XElement.Load(reader);
+            return root;
+        }
         private string GetRequestPayload(IHttpRequest request)
         {
-            byte[] payload = new byte[request.ContentLength];
-            request.Body.Seek(0, SeekOrigin.Begin);
-            request.Body.Read(payload, 0, request.ContentLength);
-            string payloadText = Encoding.ASCII.GetString(payload);
-            return payloadText;
+//            byte[] payload = GetXmlRequestPayload(request);
+//            string payloadText = Encoding.ASCII.GetString(payload);
+//            return payloadText;
+            throw new NotImplementedException("converting GetRequestPayload");
+            return "uhoh";
         }
         public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
         {
@@ -123,15 +152,17 @@ namespace Concierge_Manager
             else if (request.UriParts[0].ToLower() == "ajax")
             {
                 string payloadText;
+                XElement xmlRequest;
+
                 switch (request.UriParts[1])
                 {
                     case "AddPatient":
-                        payloadText = GetRequestPayload(request);
-                        AjaxReply(objectForScripting.AddPatient(payloadText), response);
+                        xmlRequest = GetXmlRequestPayload(request);
+                        AjaxReply(objectForScripting.AddPatient(xmlRequest), response);
                         return true;
                     case "AddDoctor":
-                        payloadText = GetRequestPayload(request);
-                        AjaxReply(objectForScripting.AddDoctor(payloadText), response);
+                        xmlRequest = GetXmlRequestPayload(request);
+                        AjaxReply(objectForScripting.AddDoctor(xmlRequest), response);
                         return true;
                     case "AddActivities":
                         {
@@ -290,21 +321,39 @@ namespace Concierge_Manager
             Db.Db db = Db.Db.Instance();
             return "ok";
         }
-        public string AddPatient(string payloadText)
+        public string AddPatient(XElement root)
         {
-            string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
-            string firstName = lines[0];
-            string lastName = lines[1];
+            string firstName = root.XPathSelectElement("//firstName").Value;
+            string lastName = root.XPathSelectElement("//lastName").Value;
+            string dateOfBirth = root.XPathSelectElement("//dateOfBirth").Value;
+            string gender = root.XPathSelectElement("//gender").Value;
+            string emergencyContact = root.XPathSelectElement("//emergencyContact").Value;
             Db.Db db = Db.Db.Instance();
-            db.AddPatient(firstName, lastName);
+            db.AddPatient(firstName, lastName, dateOfBirth, gender, emergencyContact);
             return "ok";
         }
-        public string AddDoctor(string payloadText)
+        public Response AddDoctor(XElement root)
         {
-            string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
+            //string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
             string firstName = string.Empty, lastName = string.Empty, shortName = string.Empty, address1 = string.Empty, address2 = string.Empty;
             string address3 = string.Empty, city = string.Empty, locality1 = string.Empty, locality2 = string.Empty, postalCode = string.Empty;
             string country = string.Empty, voice = string.Empty, fax = string.Empty, email = string.Empty, contact = string.Empty;
+            firstName = root.XPathSelectElement("//firstname").Value;
+            lastName = root.XPathSelectElement("//lastname").Value;
+            shortName = root.XPathSelectElement("//shortname").Value;
+            address1 = root.XPathSelectElement("//address1").Value;
+            address2 = root.XPathSelectElement("//address2").Value;
+            address3 = root.XPathSelectElement("//address3").Value;
+            city = root.XPathSelectElement("//city").Value;
+            locality1 = root.XPathSelectElement("//locality1").Value;
+            locality2 = root.XPathSelectElement("//locality2").Value;
+            postalCode = root.XPathSelectElement("//postalcode").Value;
+            country = root.XPathSelectElement("//country").Value;
+            voice = root.XPathSelectElement("//voice").Value;
+            voice = root.XPathSelectElement("//fax").Value;
+            email = root.XPathSelectElement("//email").Value;
+            contact = root.XPathSelectElement("//contact").Value;
+            /*
             for (int i = 0; i < lines.Length; i += 2)
             {
                 switch (lines[i])
@@ -355,10 +404,11 @@ namespace Concierge_Manager
                         contact = lines[i + 1].Trim();
                         continue;
                 }
-            }
+            }*/
             Db.Db db = Db.Db.Instance();
             db.AddDoctor(firstName, lastName, shortName, address1, address2, address3, city, locality1, locality2, postalCode, country, voice, fax, email, contact);
-            return "ok";
+
+            return new Response("ok");
 
         }
         public string GetFilesOnDisk(string firstName, string lastName)

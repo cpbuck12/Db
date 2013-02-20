@@ -91,7 +91,7 @@ namespace Db
                 transaction.Commit();
             }
         }
-        public int AddPatient(string firstName, string lastName)
+        public int AddPatient(string firstName, string lastName,string dateOfBirth,string gender,string emergencyContact)
         {
             if ((from patient in conciergeEntities_.patients
                  where patient.first == firstName && patient.last == lastName
@@ -102,6 +102,9 @@ namespace Db
             patient p = conciergeEntities_.patients.CreateObject();
             p.first = firstName;
             p.last = lastName;
+            p.dob = DateTime.Parse(dateOfBirth);
+            p.gender = gender;
+            p.emergency_contact = emergencyContact;
             conciergeEntities_.patients.AddObject(p);
             conciergeEntities_.SaveChanges();
             return 0;
