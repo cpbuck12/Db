@@ -16,12 +16,13 @@ using System.Runtime.Serialization.Json;
 using System.Xml.Linq;
 using System.Xml;
 using System.Xml.XPath;
+using System.Collections;
 
 namespace Concierge_Manager
 {
     public static class Utility
     {
-        public static string SpecialtyStrip(this string specialty)
+        public static string SpecialtyTrim(this string specialty)
         {
             specialty = specialty.Trim();
             while (specialty.EndsWith("#") && specialty != string.Empty)
@@ -45,14 +46,6 @@ namespace Concierge_Manager
         }
     }
 #endif
-    public class Response
-    {
-        public string result;
-        public Response(string result)
-        {
-            this.result = result;
-        }
-    }
     public class AjaxObjectForScripting : HttpServer.HttpModules.HttpModule
     {
         ObjectForScripting objectForScripting;
@@ -60,24 +53,25 @@ namespace Concierge_Manager
         {
             this.objectForScripting = objectForScripting;
         }
-        public void AjaxReply(Response r,IHttpResponse response)
+        public void AjaxReply(IList payload, IHttpResponse response)
         {
-            response.Body.Position = 0;
             JavaScriptSerializer ser = new JavaScriptSerializer();
             response.Body.Position = 0;
-            string str = ser.Serialize(r);
+            string str = ser.Serialize(payload);
             byte[] buffer = Encoding.ASCII.GetBytes(str);
             response.Body.Write(buffer, 0, buffer.Length);
             response.Status = HttpStatusCode.OK;
             response.ContentType = "applixation/text";
         }
-        public void AjaxReply(string data, IHttpResponse response)
+        public void AjaxReply(Hashtable payload, IHttpResponse response)
         {
-            byte[] buffer = Encoding.ASCII.GetBytes(data);
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            response.Body.Position = 0;
+            string str = ser.Serialize(payload);
+            byte[] buffer = Encoding.ASCII.GetBytes(str);
             response.Body.Write(buffer, 0, buffer.Length);
             response.Status = HttpStatusCode.OK;
-            response.ContentType = "application/json";
-            response.Status = HttpStatusCode.OK;
+            response.ContentType = "applixation/text";
         }
         public bool GetFile(string[] parts, IHttpResponse response)
         {
@@ -166,6 +160,10 @@ namespace Concierge_Manager
                         return true;
                     case "AddActivities":
                         {
+                            xmlRequest = GetXmlRequestPayload(request);
+                            AjaxReply(objectForScripting.AddActivities(xmlRequest), response);
+                            return true;
+
                             payloadText = GetRequestPayload(request);
                             string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
                             int doctorID = int.Parse(lines[0]);
@@ -178,8 +176,8 @@ namespace Concierge_Manager
                                 string specialty = lines[3 + 0 + iFile * 3];
                                 string subspecialty = lines[3 + 1 + iFile * 3];
                                 string fullName = lines[3 + 2 + iFile * 3];
-                                files[iFile].specialty = specialty.SpecialtyStrip();
-                                files[iFile].subspecialty = subspecialty.SpecialtyStrip();
+                                files[iFile].specialty = specialty.SpecialtyTrim();
+                                files[iFile].subspecialty = subspecialty.SpecialtyTrim();
                                 files[iFile].fileInfo = new FileInfo(fullName);
                             }
                             AjaxReply(objectForScripting.AddActivities(doctorID,patientID,files),response);
@@ -203,8 +201,7 @@ namespace Concierge_Manager
                         return true;
                     case "GetPeopleInDb":
                         {
-                            string patients = objectForScripting.GetPatients();
-                            AjaxReply(patients, response);
+                            AjaxReply(objectForScripting.GetPatients(), response);
                             return true;
                         }
                 }
@@ -230,26 +227,53 @@ namespace Concierge_Manager
             httpServer.Start(IPAddress.Any, 50505);
             httpServer.BackLog = 5;
         }
-        public string AddActivities(int doctorID,int patientID,Db.Activity[] activities)
+        public Hashtable AddActivities(XElement root)
+        {
+            // TODO: MAJOR REWRITE: more complex, like uploading files and stuff
+            int doctor = int.Parse(root.XPathSelectElement("//doctor").Value);
+            int patient = int.Parse(root.XPathSelectElement("//patient").Value);
+            var activities = root.XPathSelectElements("//activities");
+            foreach (var activity in activities)
+            {
+                int specialty = int.Parse(activity.XPathSelectElement("//specialty").Value);
+                
+
+                                string specialty = lines[3 + 0 + iFile * 3];
+                                string subspecialty = lines[3 + 1 + iFile * 3];
+                                string fullName = lines[3 + 2 + iFile * 3];
+                                files[iFile].specialty = specialty.SpecialtyTrim();
+                                files[iFile].subspecialty = subspecialty.SpecialtyTrim();
+                                files[iFile].fileInfo = new FileInfo(fullName);
+
+            }
+            var result = new Hashtable();
+            return result;
+        }
+        public Hashtable AddActivities(int doctorID, int patientID, Db.Activity[] activities)
         {
             Db.Db db = Db.Db.Instance();
             db.AddActivities(doctorID, patientID, activities);
-            return "";
+            var result = new Hashtable();
+            result["Status"] = "OK";
+            return result;
         }
-        public string UploadFile(string fullName)
+        public Hashtable UploadFile(string fullName)
         {
             Db.Db db = Db.Db.Instance();
             FileInfo fi = new FileInfo(fullName);
             db.AddFile(fi);
-            return "ok";
+            var result = new Hashtable();
+            result["Status"] = "OK";
+            return result;
         }
-        public string GetPatients()
+        public Hashtable GetPatients()
         {
             //            throw new Exception("Yabba Dabba Doooo!!!");
             Db.Db db = Db.Db.Instance();
             Db.patient[] patients = db.Patients();
-            string s = (new JavaScriptSerializer()).Serialize(patients);
-            return s;
+            var result = new Hashtable();
+            result["patients"] = patients;
+            return result;
         }
         private string Hash(FileInfo fileInfo)
         {
@@ -299,7 +323,7 @@ namespace Concierge_Manager
             entry.Add("FileName", fileName);
             entry.Add("FullName", fullName);
         }
-        public string GetPeopleOnDisk()
+        public Hashtable GetPeopleOnDisk()
         {
             List<Dictionary<string, string>> people = new List<Dictionary<string, string>>();
             DirectoryInfo diConcierge = new DirectoryInfo(Properties.Settings.Default.Concierge);
@@ -312,8 +336,9 @@ namespace Concierge_Manager
                 entry.Add("LastName", names[0]);
                 people.Add(entry);
             }
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            return jss.Serialize(people);
+            var result = new Hashtable();
+            result["people"] = people;
+            return result;
         }
         public string AddSpecialty(string payloadText)
         {
@@ -321,7 +346,7 @@ namespace Concierge_Manager
             Db.Db db = Db.Db.Instance();
             return "ok";
         }
-        public string AddPatient(XElement root)
+        public Hashtable AddPatient(XElement root)
         {
             string firstName = root.XPathSelectElement("//firstName").Value;
             string lastName = root.XPathSelectElement("//lastName").Value;
@@ -330,9 +355,11 @@ namespace Concierge_Manager
             string emergencyContact = root.XPathSelectElement("//emergencyContact").Value;
             Db.Db db = Db.Db.Instance();
             db.AddPatient(firstName, lastName, dateOfBirth, gender, emergencyContact);
-            return "ok";
+            var result = new Hashtable();
+            result["Status"] = "OK";
+            return result;
         }
-        public Response AddDoctor(XElement root)
+        public Hashtable AddDoctor(XElement root)
         {
             //string[] lines = payloadText.Split(new string[] { "\n" }, StringSplitOptions.None);
             string firstName = string.Empty, lastName = string.Empty, shortName = string.Empty, address1 = string.Empty, address2 = string.Empty;
@@ -408,12 +435,14 @@ namespace Concierge_Manager
             Db.Db db = Db.Db.Instance();
             db.AddDoctor(firstName, lastName, shortName, address1, address2, address3, city, locality1, locality2, postalCode, country, voice, fax, email, contact);
 
-            return new Response("ok");
+            var result = new Hashtable();
+            result["status"] = "ok";
+            return result;
 
         }
-        public string GetFilesOnDisk(string firstName, string lastName)
+        public Hashtable GetFilesOnDisk(string firstName, string lastName)
         {
-            List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
+            List<Dictionary<string, string>> results = new List<Dictionary<string, string>>();
             DirectoryInfo diConcierge = new DirectoryInfo(Properties.Settings.Default.Concierge);
 
             var person = diConcierge.GetDirectories(lastName + ", " + firstName)[0];
@@ -441,7 +470,7 @@ namespace Concierge_Manager
                             
                             throw;
                         }
-                        result.Add(entry);
+                        results.Add(entry);
                     }
 
                 }
@@ -464,7 +493,7 @@ namespace Concierge_Manager
                                 continue;
                             Dictionary<string, string> entry = new Dictionary<string, string>();
                             Populate(entry, firstName, lastName, Hash(subspecialtyPdf), specialty.Name, subspecialty.Name, subspecialtyPdf.Name, subspecialtyPdf.FullName);
-                            result.Add(entry);
+                            results.Add(entry);
                         }
                     }
 
@@ -475,8 +504,9 @@ namespace Concierge_Manager
                     throw;
                 }
             }
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            return jss.Serialize(result);
+            var result = new Hashtable();
+            result["files"] = results;
+            return result;
         }
     }
 }
