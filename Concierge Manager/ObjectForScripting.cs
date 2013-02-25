@@ -81,6 +81,34 @@ namespace Concierge_Manager
         #region adapter
         public Hashtable AddActivities(XElement root)
         {
+            Hashtable result = new Hashtable();
+            Db.Db db = Db.Db.Instance();
+            try 
+            {
+                List<Hashtable> request = new List<Hashtable>();
+                var activitiesElement = root.XPathSelectElement("//activities");
+                foreach (var activityElement in activitiesElement.Elements())
+                {
+                    Hashtable item = new Hashtable();
+                    request.Add(item);
+                    item["path"] = activityElement.XPathSelectElement("//path").Value;
+                    string s = activityElement.XPathSelectElement("//specialty").Value;
+                    item["specialty"] = activityElement.XPathSelectElement("//specialty").Value.SpecialtyTrim();
+                    item["subspecialty"] = activityElement.XPathSelectElement("//subspecialty").Value.SpecialtyTrim();
+                    item["firstName"] = activityElement.XPathSelectElement("//firstname").Value;
+                    item["lastName"] = activityElement.XPathSelectElement("//lastname").Value;
+                }
+                return db.AddActivities(request);
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+            return result;
+        }
+        public Hashtable AddActivities_(XElement root)
+        {
             try
             {
                 int doctor = int.Parse(root.XPathSelectElement("//doctor").Value);

@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.IO;
 using System.Security.Cryptography;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Db
 {
@@ -164,6 +165,77 @@ namespace Db
             conciergeEntities_.doctor.AddObject(dr);
             conciergeEntities_.SaveChanges();
             return 0;
+        }
+        public Hashtable AddActivities(List<Hashtable> items)
+        {
+            Hashtable result = new Hashtable();
+            string fileName = string.Empty;
+            using (DbTransaction transaction = conciergeEntities_.Connection.BeginTransaction())
+            {
+                foreach (var item in items)
+                {
+                    string specialty = item["specialty"] as string;
+                    string subspecialty = item["subspecialty"] as string;
+                    var specialtyQuery = (from s in conciergeEntities_.specialty
+                                          where s.specialty_name == specialty && s.subspecialty_name == subspecialty
+                                          select s.id);
+                    if (specialtyQuery.Count() != 1)
+                    {
+                        result["status"] = "error";
+                        result["info"] = "Unknown specialty/subspecialty combination";
+                        transaction.Rollback();
+                        return result;
+                    }
+                    int specialty_id = (from s in conciergeEntities_.specialty
+                                        where s.specialty_name == specialty && s.subspecialty_name == subspecialty
+                                        select s.id).First();
+                    string firstName = item["firstName"] as string;
+                    string lastName = item["lastName"] as string;
+                    var patientQuery = (from s in conciergeEntities_.patient
+                                      where s.first == firstName && s.last == lastName
+                                      select s.id);
+                    if(patientQuery.Count() != 1)
+                    {
+                        result["status"] = "error";
+                        result["info"] = "Unknown patient";
+                        transaction.Rollback();
+                        return result;
+                    }
+                    int patient_id = patientQuery.First();
+                    string fullFileName = item["path"] as string;
+                    FileInfo fileInfo = new FileInfo(fullFileName);
+                    fileName = fileInfo.Name;
+                    //  (fileInfo.Name
+                    Match m = Regex.Match(fileName,@"^.*\-\-DOCTOR\-\-(?<name>[^\-]*)\-\-.*$");
+                    string doctorName = m.Groups["name"].Value;
+                    var doctorQuery = (from s in conciergeEntities_.doctor
+                                       where s.shortname == doctorName
+                                       select s.id);
+                    if (doctorQuery.Count() != 1)
+                    {
+                        result["status"] = "error";
+                        result["info"] = "Unknown doctor";
+                        return result;
+                    }
+                    int doctor_id = doctorQuery.First();
+                    m = Regex.Match(fileName,@"^(?<day>{2}d)?\-(?<month>{2}d)?\-(?<year>{4}d).*$");
+                    DateTime dt = new DateTime(int.Parse(m.Groups["year"].Value), int.Parse(m.Groups["month"].Value), int.Parse(m.Groups["day"].Value));
+                    m = Regex.Match(fileName,@"^.*\-\-PROCEDURE\-\-(?<name>.*)\-\-.*$");
+                    string procedureName = m.Groups["name"].Value;
+                    m = Regex.Match(fileName, @"^.*\-\-PROCEDURE\-\-(?<name>.*)\-\-.*$");
+                    string location = m.Groups["name"].Value;
+                    activity activity = conciergeEntities_.activity.CreateObject();
+                    activity.specialty_id = specialty_id;
+                    activity.doctor_id = doctor_id;
+                    activity.date = dt;
+                    activity.patient_id = patient_id;
+                    activity.procedure = procedureName;
+                    int file_id = AddFile_(fileInfo);
+                    activity.document_id = file_id;
+                }
+                transaction.Commit();
+            }
+            return result;
         }
         // called by AddActivities(XElement root)
         public Hashtable AddActivities(activity[] activities, FileInfo[] files)

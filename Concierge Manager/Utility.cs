@@ -6,7 +6,7 @@
         {
             specialty = specialty.Trim();
             while (specialty.EndsWith("#") && specialty != string.Empty)
-                specialty = specialty.Substring(0, specialty.Length).Trim();
+                specialty = specialty.Substring(0, specialty.Length-1).Trim();
             return specialty;
         }
     }
