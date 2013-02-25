@@ -76,11 +76,22 @@ namespace Db
 
             return id;
         }
-        public patient[] Patients()
+        public Hashtable[] Patients()
         {
-            var foo = (from p in conciergeEntities_.patient
-                       select p);
-            return foo.ToArray();
+            Hashtable[] result = new Hashtable[(from p in conciergeEntities_.patient
+                                                select p).Count()];
+            int i = 0;
+            foreach(var p in (from p in conciergeEntities_.patient select p))
+            {
+                result[i] = new Hashtable();
+                result[i]["first"] = p.first;
+                result[i]["last"] = p.last;
+                result[i]["dob"] = p.dob;
+                result[i]["gender"] = p.gender;
+                result[i]["emercency_contact"] = p.emergency_contact;
+                i++;
+            }
+            return result;
         }
         // called by AddFile(FileInfo file)
         private int AddFiles(FileInfo[] files)

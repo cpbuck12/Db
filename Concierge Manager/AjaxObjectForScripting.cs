@@ -57,8 +57,8 @@ namespace Concierge_Manager
             }
             else
             {
-                basePath = @"C:\Users\pacmny_local\git\concierge\public";
-                //basePath = @"C:\work\concierge\public";
+                //basePath = @"C:\Users\pacmny_local\git\concierge\public";
+                basePath = @"C:\work\concierge\public";
             }
             foreach (string part in parts)
                 basePath = basePath + "\\" + part;
@@ -97,6 +97,8 @@ namespace Concierge_Manager
         }
         private XElement GetXmlRequestPayload(IHttpRequest request)
         {
+            if (request.Body.Length == 0)
+                return null;
             request.Body.Position = 0;
             XmlReader reader = JsonReaderWriterFactory.CreateJsonReader(request.Body, new System.Xml.XmlDictionaryReaderQuotas());
             XElement root = XElement.Load(reader);

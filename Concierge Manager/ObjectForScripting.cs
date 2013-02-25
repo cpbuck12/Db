@@ -140,10 +140,9 @@ namespace Concierge_Manager
             try
             {
                 Db.Db db = Db.Db.Instance();
-                Db.patient[] patients = db.Patients();
-                result["patients"] = patients;
+                result["patients"] = db.Patients();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 result["status"] = "error";
                 result["reason"] = "Could not get patients";
