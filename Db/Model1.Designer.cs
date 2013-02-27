@@ -20,6 +20,7 @@ using System.Runtime.Serialization;
 
 [assembly: EdmRelationshipAttribute("conciergeModel", "activity_ibfk_1", "doctor", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Db.doctor), "activity", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Db.activity), true)]
 [assembly: EdmRelationshipAttribute("conciergeModel", "activity_ibfk_2", "patient", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Db.patient), "activity", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Db.activity), true)]
+[assembly: EdmRelationshipAttribute("conciergeModel", "activity_ibfk_3", "specialty", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Db.specialty), "activity", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Db.activity), true)]
 [assembly: EdmRelationshipAttribute("conciergeModel", "activity_ibfk_4", "document", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Db.document), "activity", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Db.activity), true)]
 [assembly: EdmRelationshipAttribute("conciergeModel", "detail_item_ibfk_1", "detail_group", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Db.detail_group), "detail_item", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Db.detail_item), true)]
 [assembly: EdmRelationshipAttribute("conciergeModel", "detail_item_ibfk_2", "patient", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Db.patient), "detail_item", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Db.detail_item), true)]
@@ -680,6 +681,44 @@ namespace Db
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<patient>("conciergeModel.activity_ibfk_2", "patient", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("conciergeModel", "activity_ibfk_3", "specialty")]
+        public specialty specialty
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<specialty>("conciergeModel.activity_ibfk_3", "specialty").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<specialty>("conciergeModel.activity_ibfk_3", "specialty").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<specialty> specialtyReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<specialty>("conciergeModel.activity_ibfk_3", "specialty");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<specialty>("conciergeModel.activity_ibfk_3", "specialty", value);
                 }
             }
         }
@@ -2924,7 +2963,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 id
         {
@@ -2934,11 +2973,14 @@ namespace Db
             }
             set
             {
-                OnidChanging(value);
-                ReportPropertyChanging("id");
-                _id = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("id");
-                OnidChanged();
+                if (_id != value)
+                {
+                    OnidChanging(value);
+                    ReportPropertyChanging("id");
+                    _id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("id");
+                    OnidChanged();
+                }
             }
         }
         private global::System.Int32 _id;
@@ -2948,7 +2990,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String specialty_name
         {
@@ -2958,14 +3000,11 @@ namespace Db
             }
             set
             {
-                if (_specialty_name != value)
-                {
-                    Onspecialty_nameChanging(value);
-                    ReportPropertyChanging("specialty_name");
-                    _specialty_name = StructuralObject.SetValidValue(value, false);
-                    ReportPropertyChanged("specialty_name");
-                    Onspecialty_nameChanged();
-                }
+                Onspecialty_nameChanging(value);
+                ReportPropertyChanging("specialty_name");
+                _specialty_name = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("specialty_name");
+                Onspecialty_nameChanged();
             }
         }
         private global::System.String _specialty_name;
@@ -2975,7 +3014,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String subspecialty_name
         {
@@ -2985,14 +3024,11 @@ namespace Db
             }
             set
             {
-                if (_subspecialty_name != value)
-                {
-                    Onsubspecialty_nameChanging(value);
-                    ReportPropertyChanging("subspecialty_name");
-                    _subspecialty_name = StructuralObject.SetValidValue(value, false);
-                    ReportPropertyChanged("subspecialty_name");
-                    Onsubspecialty_nameChanged();
-                }
+                Onsubspecialty_nameChanging(value);
+                ReportPropertyChanging("subspecialty_name");
+                _subspecialty_name = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("subspecialty_name");
+                Onsubspecialty_nameChanged();
             }
         }
         private global::System.String _subspecialty_name;
@@ -3001,6 +3037,31 @@ namespace Db
 
         #endregion
     
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("conciergeModel", "activity_ibfk_3", "activity")]
+        public EntityCollection<activity> activity
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<activity>("conciergeModel.activity_ibfk_3", "activity");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<activity>("conciergeModel.activity_ibfk_3", "activity", value);
+                }
+            }
+        }
+
+        #endregion
     }
 
     #endregion

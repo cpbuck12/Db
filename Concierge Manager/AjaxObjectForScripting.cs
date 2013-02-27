@@ -57,8 +57,8 @@ namespace Concierge_Manager
             }
             else
             {
-                //basePath = @"C:\Users\pacmny_local\git\concierge\public";
-                basePath = @"C:\work\concierge\public";
+                basePath = @"C:\Users\pacmny_local\git\concierge\public";
+                //basePath = @"C:\work\concierge\public";
             }
             foreach (string part in parts)
                 basePath = basePath + "\\" + part;
@@ -119,6 +119,9 @@ namespace Concierge_Manager
 
                     switch (request.UriParts[1])
                     {
+                        case "AddSpecialty":
+                            AjaxReply(objectForScripting.AddSpecialty(xmlRequest), response);
+                            return true;
                         case "AddPatient":
                             AjaxReply(objectForScripting.AddPatient(xmlRequest), response);
                             return true;
@@ -139,6 +142,9 @@ namespace Concierge_Manager
                             return true;
                         case "GetPeopleInDb":
                             AjaxReply(objectForScripting.GetPatients(), response);
+                            return true;
+                        case "GetSpecialties":
+                            AjaxReply(objectForScripting.GetSpecialties(), response);
                             return true;
                     }
                     return false; // TODO finish this

@@ -100,7 +100,7 @@ namespace Concierge_Manager
                 }
                 return db.AddActivities(request);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 
                 throw;
@@ -158,6 +158,22 @@ namespace Concierge_Manager
             {
                 result["status"] = "error";
                 result["reason"] = "UploadFile failed";
+            }
+            return result;
+        }
+        public Hashtable GetSpecialties()
+        {
+            var result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                Db.Db db = Db.Db.Instance();
+                result["specialties"] = db.Specialties();
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = "Could not get patients";
             }
             return result;
         }
@@ -221,6 +237,24 @@ namespace Concierge_Manager
             {
                 result["status"] = "error";
                 result["reason"] = "AddPatient failed";
+            }
+            return result;
+        }
+        public Hashtable AddSpecialty(XElement root)
+        {
+            var result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string specialty = root.XPathSelectElement("//specialty").Value;
+                string subspecialty = root.XPathSelectElement("//subspecialty").Value;
+                Db.Db db = Db.Db.Instance();
+                db.AddSpecialty(specialty, subspecialty);
+            }
+            catch (Exception)
+            {
+                result["status"] = "error";
+                result["reason"] = "AddSpecialty failed";
             }
             return result;
         }

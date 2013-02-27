@@ -43,6 +43,10 @@
             <End Role="patient" EntitySet="patient" />
             <End Role="activity" EntitySet="activity" />
           </AssociationSet>
+          <AssociationSet Name="activity_ibfk_3" Association="conciergeModel.Store.activity_ibfk_3">
+            <End Role="specialty" EntitySet="specialty" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
           <AssociationSet Name="activity_ibfk_4" Association="conciergeModel.Store.activity_ibfk_4">
             <End Role="document" EntitySet="document" />
             <End Role="activity" EntitySet="activity" />
@@ -207,13 +211,9 @@
           <Property Name="received_date" Type="date" Nullable="false" />
           <Property Name="scanned_date" Type="date" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6035: The relationship 'activity_ibfk_3' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
-      -->
         <EntityType Name="specialty">
           <Key>
-            <PropertyRef Name="specialty_name" />
-            <PropertyRef Name="subspecialty_name" />
+            <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="specialty_name" Type="varchar" Nullable="false" MaxLength="50" />
@@ -240,6 +240,18 @@
             </Principal>
             <Dependent Role="activity">
               <PropertyRef Name="patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_3">
+          <End Role="specialty" Type="conciergeModel.Store.specialty" Multiplicity="1" />
+          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="specialty">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="specialty_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -377,6 +389,10 @@
             <End Role="patient" EntitySet="patient" />
             <End Role="activity" EntitySet="activity" />
           </AssociationSet>
+          <AssociationSet Name="activity_ibfk_3" Association="conciergeModel.activity_ibfk_3">
+            <End Role="specialty" EntitySet="specialty" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
           <AssociationSet Name="activity_ibfk_4" Association="conciergeModel.activity_ibfk_4">
             <End Role="document" EntitySet="document" />
             <End Role="activity" EntitySet="activity" />
@@ -433,6 +449,7 @@
           <Property Name="document_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="doctor" Relationship="conciergeModel.activity_ibfk_1" FromRole="activity" ToRole="doctor" />
           <NavigationProperty Name="patient" Relationship="conciergeModel.activity_ibfk_2" FromRole="activity" ToRole="patient" />
+          <NavigationProperty Name="specialty" Relationship="conciergeModel.activity_ibfk_3" FromRole="activity" ToRole="specialty" />
           <NavigationProperty Name="document" Relationship="conciergeModel.activity_ibfk_4" FromRole="activity" ToRole="document" />
         </EntityType>
         <EntityType Name="detail_group">
@@ -559,12 +576,12 @@
         </EntityType>
         <EntityType Name="specialty">
           <Key>
-            <PropertyRef Name="specialty_name" />
-            <PropertyRef Name="subspecialty_name" />
+            <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="specialty_name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="subspecialty_name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_3" FromRole="specialty" ToRole="activity" />
         </EntityType>
         <Association Name="activity_ibfk_1">
           <End Role="doctor" Type="conciergeModel.doctor" Multiplicity="1" />
@@ -587,6 +604,18 @@
             </Principal>
             <Dependent Role="activity">
               <PropertyRef Name="patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_3">
+          <End Role="specialty" Type="conciergeModel.specialty" Multiplicity="1" />
+          <End Role="activity" Type="conciergeModel.activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="specialty">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="specialty_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -808,97 +837,106 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="Model1">
-        <EntityTypeShape EntityType="conciergeModel.activity" Width="1.5" PointX="3" PointY="5.75" Height="2.9417936197916674" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.detail_group" Width="1.5" PointX="3.75" PointY="10.5" Height="1.5956835937499996" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.detail_item" Width="1.5" PointX="6" PointY="6.125" Height="2.1725878906249996" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.directives" Width="1.5" PointX="3" PointY="13" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.doctor" Width="1.5" PointX="0.75" PointY="10.125" Height="4.2879036458333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.document" Width="1.5" PointX="0.75" PointY="2.125" Height="2.364889322916667" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.document_segment" Width="1.5" PointX="3" PointY="16" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.note" Width="1.5" PointX="3" PointY="18.5" Height="1.9802864583333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.patient" Width="1.5" PointX="0.75" PointY="5.75" Height="2.9417936197916665" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.release_request" Width="1.5" PointX="3" PointY="2" Height="2.5571907552083353" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.release_response" Width="1.5" PointX="5.25" PointY="2.375" Height="1.787985026041671" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.specialty" Width="1.5" PointX="7.75" PointY="0.75" Height="1.5956835937500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.activity" Width="1.5" PointX="3" PointY="7.5" Height="3.1340950520833326" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.detail_group" Width="1.5" PointX="3.75" PointY="12.25" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.detail_item" Width="1.5" PointX="6" PointY="7.875" Height="2.1725878906249996" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.directives" Width="1.5" PointX="3" PointY="14.875" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.doctor" Width="1.5" PointX="0.75" PointY="11.625" Height="4.2879036458333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.document" Width="1.5" PointX="0.75" PointY="3.875" Height="2.364889322916667" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.document_segment" Width="1.5" PointX="3" PointY="0.75" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.note" Width="1.5" PointX="3" PointY="18.25" Height="1.9802864583333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.patient" Width="1.5" PointX="0.75" PointY="7.5" Height="2.9417936197916683" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.release_request" Width="1.5" PointX="3" PointY="3.75" Height="2.5571907552083353" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.release_response" Width="1.5" PointX="5.25" PointY="4.125" Height="1.787985026041671" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.specialty" Width="1.5" PointX="0.75" PointY="16.625" Height="1.7879850260416745" IsExpanded="true" />
         <AssociationConnector Association="conciergeModel.activity_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="10.126152846153847" />
-          <ConnectorPoint PointX="2.625" PointY="9.7511528461538468" />
-          <ConnectorPoint PointX="2.625" PointY="7.2208968098958337" />
-          <ConnectorPoint PointX="2.6354166666666665" PointY="7.2208968098958328" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="7.2208968098958337" />
-          <ConnectorPoint PointX="3" PointY="7.2208968098958337" />
+          <ConnectorPoint PointX="2.25" PointY="11.626152846153847" />
+          <ConnectorPoint PointX="2.625" PointY="11.251152846153847" />
+          <ConnectorPoint PointX="2.625" PointY="9.0670475260416659" />
+          <ConnectorPoint PointX="2.8229166666666665" PointY="9.0670475260416659" />
+          <ConnectorPoint PointX="2.9895833333333335" PointY="9.0670475260416659" />
+          <ConnectorPoint PointX="3" PointY="9.0670475260416659" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.activity_ibfk_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="6.4229484049479169" />
-          <ConnectorPoint PointX="2.6354166666666665" PointY="6.422948404947916" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="6.4229484049479169" />
-          <ConnectorPoint PointX="3" PointY="6.4229484049479169" />
+          <ConnectorPoint PointX="2.25" PointY="8.2210237630208329" />
+          <ConnectorPoint PointX="2.6041666666666665" PointY="8.2210237630208329" />
+          <ConnectorPoint PointX="2.7708333333333335" PointY="8.2210237630208329" />
+          <ConnectorPoint PointX="2.8229166666666665" PointY="8.2210237630208329" />
+          <ConnectorPoint PointX="2.9895833333333335" PointY="8.2210237630208329" />
+          <ConnectorPoint PointX="3" PointY="8.2210237630208329" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.activity_ibfk_3" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="16.688460538461534" />
+          <ConnectorPoint PointX="2.8125" PointY="16.125960538461534" />
+          <ConnectorPoint PointX="2.8125" PointY="9.8818232890624991" />
+          <ConnectorPoint PointX="2.8229166666666665" PointY="9.8818232890624991" />
+          <ConnectorPoint PointX="2.9895833333333335" PointY="9.8818232890624991" />
+          <ConnectorPoint PointX="3" PointY="9.8818232890624991" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.activity_ibfk_4" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="4.4529652459935907" />
-          <ConnectorPoint PointX="2.5660744349011213" PointY="4.7690396808947115" />
-          <ConnectorPoint PointX="2.6839255650988791" PointY="4.88689081109247" />
-          <ConnectorPoint PointX="2.8125" PointY="5.0154652459935907" />
-          <ConnectorPoint PointX="2.8125" PointY="7.9875972148437508" />
-          <ConnectorPoint PointX="2.8229166666666665" PointY="7.98759721484375" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="7.9875972148437508" />
-          <ConnectorPoint PointX="3" PointY="7.9875972148437508" />
+          <ConnectorPoint PointX="2.25" PointY="6.2145037075320522" />
+          <ConnectorPoint PointX="2.5660744349011213" PointY="6.530578142433173" />
+          <ConnectorPoint PointX="2.6839255650988791" PointY="6.6484292726309313" />
+          <ConnectorPoint PointX="2.6875" PointY="6.6520037075320522" />
+          <ConnectorPoint PointX="2.6875" PointY="8.64403564453125" />
+          <ConnectorPoint PointX="2.8229166666666665" PointY="8.64403564453125" />
+          <ConnectorPoint PointX="2.9895833333333335" PointY="8.64403564453125" />
+          <ConnectorPoint PointX="3" PointY="8.64403564453125" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.detail_item_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="5.25" PointY="11.297841796875" />
-          <ConnectorPoint PointX="6.75" PointY="11.297841796875" />
-          <ConnectorPoint PointX="6.75" PointY="8.297587890625" />
+          <ConnectorPoint PointX="5.25" PointY="13.047841796875" />
+          <ConnectorPoint PointX="6.75" PointY="13.047841796875" />
+          <ConnectorPoint PointX="6.75" PointY="10.047587890625" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.detail_item_ibfk_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="1.5" PointY="5.75" />
-          <ConnectorPoint PointX="1.5" PointY="5.5" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="5.4999999999999991" />
-          <ConnectorPoint PointX="2.5833333333333335" PointY="5.5" />
-          <ConnectorPoint PointX="2.6354166666666665" PointY="5.4999999999999991" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="5.5" />
-          <ConnectorPoint PointX="5.625" PointY="5.5" />
-          <ConnectorPoint PointX="5.625" PointY="7.2112939453125" />
-          <ConnectorPoint PointX="6" PointY="7.2112939453125" />
+          <ConnectorPoint PointX="1.5" PointY="7.5" />
+          <ConnectorPoint PointX="1.5" PointY="7.25" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="7.2499999999999991" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="7.25" />
+          <ConnectorPoint PointX="2.6041666666666665" PointY="7.2499999999999991" />
+          <ConnectorPoint PointX="2.7708333333333335" PointY="7.25" />
+          <ConnectorPoint PointX="2.8229166666666665" PointY="7.2499999999999991" />
+          <ConnectorPoint PointX="2.9895833333333335" PointY="7.25" />
+          <ConnectorPoint PointX="5.625" PointY="7.25" />
+          <ConnectorPoint PointX="5.625" PointY="8.9612939453125" />
+          <ConnectorPoint PointX="6" PointY="8.9612939453125" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.directives_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="8.6294849274839756" />
-          <ConnectorPoint PointX="2.5660744349011217" PointY="8.9455593623850955" />
-          <ConnectorPoint PointX="2.7776755650988791" PointY="9.1571604925828538" />
-          <ConnectorPoint PointX="2.8125" PointY="9.1919849274839756" />
-          <ConnectorPoint PointX="2.8125" PointY="13.893992513020834" />
-          <ConnectorPoint PointX="2.8229166666666665" PointY="13.893992513020834" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="13.893992513020834" />
-          <ConnectorPoint PointX="3" PointY="13.893992513020834" />
+          <ConnectorPoint PointX="2.25" PointY="10.379484927483976" />
+          <ConnectorPoint PointX="2.5660744349011213" PointY="10.695559362385096" />
+          <ConnectorPoint PointX="2.6839255650988791" PointY="10.813410492582854" />
+          <ConnectorPoint PointX="2.6875" PointY="10.816984927483976" />
+          <ConnectorPoint PointX="2.6875" PointY="15.768992513020834" />
+          <ConnectorPoint PointX="2.7291666666666665" PointY="15.768992513020832" />
+          <ConnectorPoint PointX="2.9895833333333335" PointY="15.768992513020834" />
+          <ConnectorPoint PointX="3" PointY="15.768992513020834" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.document_segment_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.2499999999999996" PointY="4.4898893229166674" />
-          <ConnectorPoint PointX="2.5660744349011213" PointY="4.8059637578177883" />
-          <ConnectorPoint PointX="2.6839255650988791" PointY="4.9238148880155466" />
-          <ConnectorPoint PointX="2.90625" PointY="5.1461393229166674" />
-          <ConnectorPoint PointX="2.90625" PointY="16.893992513020834" />
-          <ConnectorPoint PointX="3" PointY="16.893992513020834" />
+          <ConnectorPoint PointX="1.5" PointY="3.875" />
+          <ConnectorPoint PointX="1.5" PointY="1.6439925130208337" />
+          <ConnectorPoint PointX="3" PointY="1.6439925130208337" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.note_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.2442307692307688" PointY="4.4898893229166674" />
-          <ConnectorPoint PointX="2.5660744349011213" PointY="4.8117329885870186" />
-          <ConnectorPoint PointX="2.6839255650988791" PointY="4.9295841187847769" />
-          <ConnectorPoint PointX="2.71875" PointY="4.9644085536858977" />
-          <ConnectorPoint PointX="2.71875" PointY="19.490143229166666" />
-          <ConnectorPoint PointX="3" PointY="19.490143229166666" />
+          <ConnectorPoint PointX="2.25" PointY="6.23296524599359" />
+          <ConnectorPoint PointX="2.5660744349011213" PointY="6.5490396808947109" />
+          <ConnectorPoint PointX="2.6839255650988791" PointY="6.6668908110924692" />
+          <ConnectorPoint PointX="2.90625" PointY="6.88921524599359" />
+          <ConnectorPoint PointX="2.90625" PointY="19.240143229166666" />
+          <ConnectorPoint PointX="3" PointY="19.240143229166666" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.release_request_ibfk_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="3.2577301229967945" />
-          <ConnectorPoint PointX="3" PointY="3.2577301229967945" />
+          <ConnectorPoint PointX="2.25" PointY="5.0134993537660257" />
+          <ConnectorPoint PointX="3" PointY="5.0134993537660257" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.release_request_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="5.75" />
-          <ConnectorPoint PointX="2.625" PointY="5.375" />
-          <ConnectorPoint PointX="2.625" PointY="3.9387124391025656" />
-          <ConnectorPoint PointX="3" PointY="3.9387124391025656" />
+          <ConnectorPoint PointX="2.25" PointY="7.5" />
+          <ConnectorPoint PointX="2.625" PointY="7.125" />
+          <ConnectorPoint PointX="2.625" PointY="5.6915970544871808" />
+          <ConnectorPoint PointX="3" PointY="5.6915970544871808" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.release_response_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="3.2689925130208355" />
-          <ConnectorPoint PointX="5.25" PointY="3.2689925130208355" />
+          <ConnectorPoint PointX="4.5" PointY="5.0189925130208355" />
+          <ConnectorPoint PointX="5.25" PointY="5.0189925130208355" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>
