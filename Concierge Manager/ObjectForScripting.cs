@@ -107,6 +107,7 @@ namespace Concierge_Manager
             }
             return result;
         }
+        /*
         public Hashtable AddActivities_(XElement root)
         {
             try
@@ -143,6 +144,7 @@ namespace Concierge_Manager
                 return result;
             }
         }
+        */
         public Hashtable UploadFile(XElement root)
         {
             var result = new Hashtable();

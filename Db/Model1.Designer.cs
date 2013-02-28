@@ -400,7 +400,8 @@ namespace Db
         /// <param name="procedure">Initial value of the procedure property.</param>
         /// <param name="location">Initial value of the location property.</param>
         /// <param name="document_id">Initial value of the document_id property.</param>
-        public static activity Createactivity(global::System.Int32 specialty_id, global::System.Int32 doctor_id, global::System.DateTime date, global::System.Int32 patient_id, global::System.String procedure, global::System.String location, global::System.Int32 document_id)
+        /// <param name="activity_id">Initial value of the activity_id property.</param>
+        public static activity Createactivity(global::System.Int32 specialty_id, global::System.Int32 doctor_id, global::System.DateTime date, global::System.Int32 patient_id, global::System.String procedure, global::System.String location, global::System.Int32 document_id, global::System.Int32 activity_id)
         {
             activity activity = new activity();
             activity.specialty_id = specialty_id;
@@ -410,6 +411,7 @@ namespace Db
             activity.procedure = procedure;
             activity.location = location;
             activity.document_id = document_id;
+            activity.activity_id = activity_id;
             return activity;
         }
 
@@ -419,7 +421,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 specialty_id
         {
@@ -429,14 +431,11 @@ namespace Db
             }
             set
             {
-                if (_specialty_id != value)
-                {
-                    Onspecialty_idChanging(value);
-                    ReportPropertyChanging("specialty_id");
-                    _specialty_id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("specialty_id");
-                    Onspecialty_idChanged();
-                }
+                Onspecialty_idChanging(value);
+                ReportPropertyChanging("specialty_id");
+                _specialty_id = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("specialty_id");
+                Onspecialty_idChanged();
             }
         }
         private global::System.Int32 _specialty_id;
@@ -446,7 +445,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 doctor_id
         {
@@ -456,14 +455,11 @@ namespace Db
             }
             set
             {
-                if (_doctor_id != value)
-                {
-                    Ondoctor_idChanging(value);
-                    ReportPropertyChanging("doctor_id");
-                    _doctor_id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("doctor_id");
-                    Ondoctor_idChanged();
-                }
+                Ondoctor_idChanging(value);
+                ReportPropertyChanging("doctor_id");
+                _doctor_id = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("doctor_id");
+                Ondoctor_idChanged();
             }
         }
         private global::System.Int32 _doctor_id;
@@ -473,7 +469,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.DateTime date
         {
@@ -483,14 +479,11 @@ namespace Db
             }
             set
             {
-                if (_date != value)
-                {
-                    OndateChanging(value);
-                    ReportPropertyChanging("date");
-                    _date = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("date");
-                    OndateChanged();
-                }
+                OndateChanging(value);
+                ReportPropertyChanging("date");
+                _date = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("date");
+                OndateChanged();
             }
         }
         private global::System.DateTime _date;
@@ -500,7 +493,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 patient_id
         {
@@ -510,14 +503,11 @@ namespace Db
             }
             set
             {
-                if (_patient_id != value)
-                {
-                    Onpatient_idChanging(value);
-                    ReportPropertyChanging("patient_id");
-                    _patient_id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("patient_id");
-                    Onpatient_idChanged();
-                }
+                Onpatient_idChanging(value);
+                ReportPropertyChanging("patient_id");
+                _patient_id = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("patient_id");
+                Onpatient_idChanged();
             }
         }
         private global::System.Int32 _patient_id;
@@ -527,7 +517,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String procedure
         {
@@ -537,14 +527,11 @@ namespace Db
             }
             set
             {
-                if (_procedure != value)
-                {
-                    OnprocedureChanging(value);
-                    ReportPropertyChanging("procedure");
-                    _procedure = StructuralObject.SetValidValue(value, false);
-                    ReportPropertyChanged("procedure");
-                    OnprocedureChanged();
-                }
+                OnprocedureChanging(value);
+                ReportPropertyChanging("procedure");
+                _procedure = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("procedure");
+                OnprocedureChanged();
             }
         }
         private global::System.String _procedure;
@@ -554,7 +541,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String location
         {
@@ -564,14 +551,11 @@ namespace Db
             }
             set
             {
-                if (_location != value)
-                {
-                    OnlocationChanging(value);
-                    ReportPropertyChanging("location");
-                    _location = StructuralObject.SetValidValue(value, false);
-                    ReportPropertyChanged("location");
-                    OnlocationChanged();
-                }
+                OnlocationChanging(value);
+                ReportPropertyChanging("location");
+                _location = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("location");
+                OnlocationChanged();
             }
         }
         private global::System.String _location;
@@ -581,7 +565,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 document_id
         {
@@ -591,19 +575,43 @@ namespace Db
             }
             set
             {
-                if (_document_id != value)
-                {
-                    Ondocument_idChanging(value);
-                    ReportPropertyChanging("document_id");
-                    _document_id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("document_id");
-                    Ondocument_idChanged();
-                }
+                Ondocument_idChanging(value);
+                ReportPropertyChanging("document_id");
+                _document_id = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("document_id");
+                Ondocument_idChanged();
             }
         }
         private global::System.Int32 _document_id;
         partial void Ondocument_idChanging(global::System.Int32 value);
         partial void Ondocument_idChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 activity_id
+        {
+            get
+            {
+                return _activity_id;
+            }
+            set
+            {
+                if (_activity_id != value)
+                {
+                    Onactivity_idChanging(value);
+                    ReportPropertyChanging("activity_id");
+                    _activity_id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("activity_id");
+                    Onactivity_idChanged();
+                }
+            }
+        }
+        private global::System.Int32 _activity_id;
+        partial void Onactivity_idChanging(global::System.Int32 value);
+        partial void Onactivity_idChanged();
 
         #endregion
     
@@ -887,13 +895,15 @@ namespace Db
         /// <param name="patient_id">Initial value of the patient_id property.</param>
         /// <param name="weight">Initial value of the weight property.</param>
         /// <param name="text">Initial value of the text property.</param>
-        public static detail_item Createdetail_item(global::System.Int32 detail_group_id, global::System.Int32 patient_id, global::System.Int32 weight, global::System.String text)
+        /// <param name="id">Initial value of the id property.</param>
+        public static detail_item Createdetail_item(global::System.Int32 detail_group_id, global::System.Int32 patient_id, global::System.Int32 weight, global::System.String text, global::System.Int32 id)
         {
             detail_item detail_item = new detail_item();
             detail_item.detail_group_id = detail_group_id;
             detail_item.patient_id = patient_id;
             detail_item.weight = weight;
             detail_item.text = text;
+            detail_item.id = id;
             return detail_item;
         }
 
@@ -903,7 +913,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 detail_group_id
         {
@@ -913,14 +923,11 @@ namespace Db
             }
             set
             {
-                if (_detail_group_id != value)
-                {
-                    Ondetail_group_idChanging(value);
-                    ReportPropertyChanging("detail_group_id");
-                    _detail_group_id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("detail_group_id");
-                    Ondetail_group_idChanged();
-                }
+                Ondetail_group_idChanging(value);
+                ReportPropertyChanging("detail_group_id");
+                _detail_group_id = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("detail_group_id");
+                Ondetail_group_idChanged();
             }
         }
         private global::System.Int32 _detail_group_id;
@@ -930,7 +937,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 patient_id
         {
@@ -940,14 +947,11 @@ namespace Db
             }
             set
             {
-                if (_patient_id != value)
-                {
-                    Onpatient_idChanging(value);
-                    ReportPropertyChanging("patient_id");
-                    _patient_id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("patient_id");
-                    Onpatient_idChanged();
-                }
+                Onpatient_idChanging(value);
+                ReportPropertyChanging("patient_id");
+                _patient_id = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("patient_id");
+                Onpatient_idChanged();
             }
         }
         private global::System.Int32 _patient_id;
@@ -957,7 +961,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 weight
         {
@@ -967,14 +971,11 @@ namespace Db
             }
             set
             {
-                if (_weight != value)
-                {
-                    OnweightChanging(value);
-                    ReportPropertyChanging("weight");
-                    _weight = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("weight");
-                    OnweightChanged();
-                }
+                OnweightChanging(value);
+                ReportPropertyChanging("weight");
+                _weight = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("weight");
+                OnweightChanged();
             }
         }
         private global::System.Int32 _weight;
@@ -984,7 +985,7 @@ namespace Db
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String text
         {
@@ -994,19 +995,43 @@ namespace Db
             }
             set
             {
-                if (_text != value)
-                {
-                    OntextChanging(value);
-                    ReportPropertyChanging("text");
-                    _text = StructuralObject.SetValidValue(value, false);
-                    ReportPropertyChanged("text");
-                    OntextChanged();
-                }
+                OntextChanging(value);
+                ReportPropertyChanging("text");
+                _text = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("text");
+                OntextChanged();
             }
         }
         private global::System.String _text;
         partial void OntextChanging(global::System.String value);
         partial void OntextChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                if (_id != value)
+                {
+                    OnidChanging(value);
+                    ReportPropertyChanging("id");
+                    _id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("id");
+                    OnidChanged();
+                }
+            }
+        }
+        private global::System.Int32 _id;
+        partial void OnidChanging(global::System.Int32 value);
+        partial void OnidChanged();
 
         #endregion
     

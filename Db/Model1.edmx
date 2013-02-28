@@ -4,28 +4,11 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="conciergeModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="conciergeModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="conciergeModelStoreContainer">
-          <EntitySet Name="activity" EntityType="conciergeModel.Store.activity" store:Type="Tables" store:Schema="concierge" store:Name="activity">
-            <DefiningQuery>SELECT
-      `activity`.`specialty_id`, 
-      `activity`.`doctor_id`, 
-      `activity`.`date`, 
-      `activity`.`patient_id`, 
-      `activity`.`procedure`, 
-      `activity`.`location`, 
-      `activity`.`document_id`
-      FROM `activity` AS `activity`</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="activity" EntityType="conciergeModel.Store.activity" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="detail_group" EntityType="conciergeModel.Store.detail_group" store:Type="Tables" Schema="concierge" />
-          <EntitySet Name="detail_item" EntityType="conciergeModel.Store.detail_item" store:Type="Tables" store:Schema="concierge" store:Name="detail_item">
-            <DefiningQuery>SELECT
-      `detail_item`.`detail_group_id`, 
-      `detail_item`.`patient_id`, 
-      `detail_item`.`weight`, 
-      `detail_item`.`text`
-      FROM `detail_item` AS `detail_item`</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="detail_item" EntityType="conciergeModel.Store.detail_item" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="directives" EntityType="conciergeModel.Store.directives" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="doctor" EntityType="conciergeModel.Store.doctor" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="document" EntityType="conciergeModel.Store.document" store:Type="Tables" Schema="concierge" />
@@ -84,19 +67,11 @@
             <End Role="release_response" EntitySet="release_response" />
           </AssociationSet>
         </EntityContainer>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'def.concierge.activity' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="activity">
           <Key>
-            <PropertyRef Name="specialty_id" />
-            <PropertyRef Name="doctor_id" />
-            <PropertyRef Name="date" />
-            <PropertyRef Name="patient_id" />
-            <PropertyRef Name="procedure" />
-            <PropertyRef Name="location" />
-            <PropertyRef Name="document_id" />
+            <PropertyRef Name="activity_id" />
           </Key>
+          <Property Name="activity_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="specialty_id" Type="int" Nullable="false" />
           <Property Name="doctor_id" Type="int" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
@@ -112,20 +87,15 @@
           <Property Name="id" Type="int" Nullable="false" />
           <Property Name="name" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'def.concierge.detail_item' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="detail_item">
           <Key>
-            <PropertyRef Name="detail_group_id" />
-            <PropertyRef Name="patient_id" />
-            <PropertyRef Name="weight" />
-            <PropertyRef Name="text" />
+            <PropertyRef Name="id" />
           </Key>
           <Property Name="detail_group_id" Type="int" Nullable="false" />
           <Property Name="patient_id" Type="int" Nullable="false" />
           <Property Name="weight" Type="int" Nullable="false" />
           <Property Name="text" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
         </EntityType>
         <EntityType Name="directives">
           <Key>
@@ -363,8 +333,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="conciergeModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -432,13 +401,7 @@
         </EntityContainer>
         <EntityType Name="activity">
           <Key>
-            <PropertyRef Name="specialty_id" />
-            <PropertyRef Name="doctor_id" />
-            <PropertyRef Name="date" />
-            <PropertyRef Name="patient_id" />
-            <PropertyRef Name="procedure" />
-            <PropertyRef Name="location" />
-            <PropertyRef Name="document_id" />
+            <PropertyRef Name="activity_id" />
           </Key>
           <Property Name="specialty_id" Type="Int32" Nullable="false" />
           <Property Name="doctor_id" Type="Int32" Nullable="false" />
@@ -451,6 +414,7 @@
           <NavigationProperty Name="patient" Relationship="conciergeModel.activity_ibfk_2" FromRole="activity" ToRole="patient" />
           <NavigationProperty Name="specialty" Relationship="conciergeModel.activity_ibfk_3" FromRole="activity" ToRole="specialty" />
           <NavigationProperty Name="document" Relationship="conciergeModel.activity_ibfk_4" FromRole="activity" ToRole="document" />
+          <Property Type="Int32" Name="activity_id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
         <EntityType Name="detail_group">
           <Key>
@@ -462,10 +426,7 @@
         </EntityType>
         <EntityType Name="detail_item">
           <Key>
-            <PropertyRef Name="detail_group_id" />
-            <PropertyRef Name="patient_id" />
-            <PropertyRef Name="weight" />
-            <PropertyRef Name="text" />
+            <PropertyRef Name="id" />
           </Key>
           <Property Name="detail_group_id" Type="Int32" Nullable="false" />
           <Property Name="patient_id" Type="Int32" Nullable="false" />
@@ -473,6 +434,7 @@
           <Property Name="text" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
           <NavigationProperty Name="detail_group" Relationship="conciergeModel.detail_item_ibfk_1" FromRole="detail_item" ToRole="detail_group" />
           <NavigationProperty Name="patient" Relationship="conciergeModel.detail_item_ibfk_2" FromRole="detail_item" ToRole="patient" />
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
         <EntityType Name="directives">
           <Key>
@@ -734,7 +696,8 @@
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="conciergeModelStoreContainer" CdmEntityContainer="conciergeEntities">
           <EntitySetMapping Name="activity"><EntityTypeMapping TypeName="conciergeModel.activity"><MappingFragment StoreEntitySet="activity">
-            <ScalarProperty Name="specialty_id" ColumnName="specialty_id" />
+            <ScalarProperty Name="activity_id" ColumnName="activity_id" />
+                <ScalarProperty Name="specialty_id" ColumnName="specialty_id" />
             <ScalarProperty Name="doctor_id" ColumnName="doctor_id" />
             <ScalarProperty Name="date" ColumnName="date" />
             <ScalarProperty Name="patient_id" ColumnName="patient_id" />
@@ -747,7 +710,8 @@
             <ScalarProperty Name="name" ColumnName="name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="detail_item"><EntityTypeMapping TypeName="conciergeModel.detail_item"><MappingFragment StoreEntitySet="detail_item">
-            <ScalarProperty Name="detail_group_id" ColumnName="detail_group_id" />
+            <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="detail_group_id" ColumnName="detail_group_id" />
             <ScalarProperty Name="patient_id" ColumnName="patient_id" />
             <ScalarProperty Name="weight" ColumnName="weight" />
             <ScalarProperty Name="text" ColumnName="text" />
