@@ -242,6 +242,73 @@ namespace Concierge_Manager
             }
             return result;
         }
+        public Hashtable SetCurrentDirectory(XElement root)
+        {
+            var result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                Hashtable fileInfo = new Hashtable();
+                result["fileInfo"] = fileInfo;
+                XElement pathElement = root.XPathSelectElement("//path");
+                if (pathElement != null)
+                {
+                    string path = pathElement.Value;
+                    if (path.Length == 2 && path[1] == ':')
+                        path = Path.GetFullPath(path);
+                     Directory.SetCurrentDirectory(path);
+                }
+
+
+                List<Hashtable> volumes = new List<Hashtable>();
+                fileInfo["volumes"] = volumes;
+                foreach (DriveInfo driveInfo in DriveInfo.GetDrives())
+                {
+                    Hashtable volume = new Hashtable();
+                    volume["Name"] = driveInfo.Name.Substring(0, 2);
+                    volumes.Add(volume);
+                }
+                string currentDirectory = Directory.GetCurrentDirectory();
+                fileInfo["currentPath"] = currentDirectory;
+                DirectoryInfo directoryInfoCurrent = new DirectoryInfo(currentDirectory);
+                List<Hashtable> folders = new List<Hashtable>();
+                fileInfo["folders"] = folders;
+                foreach(DirectoryInfo directoryInfo in directoryInfoCurrent.GetDirectories())
+                {
+                    Hashtable folder = new Hashtable();
+                    folders.Add(folder);
+                    folder["Name"] = directoryInfo.Name;
+                    folder["FullName"] = directoryInfo.FullName;
+                }
+                DirectoryInfo directoryInfoParent = directoryInfoCurrent.Parent;
+                if (directoryInfoParent != null)
+                {
+                    Hashtable folder = new Hashtable();
+                    folders.Add(folder);
+                    folder["Name"] = "..";
+                    folder["FullName"] = directoryInfoParent.FullName;
+                }
+                List<Hashtable> files = new List<Hashtable>();
+                fileInfo["files"] = files;
+                foreach (FileInfo fileInfo2 in directoryInfoCurrent.GetFiles())
+                {
+                    Hashtable file = new Hashtable();
+                    files.Add(file);
+                    file["Name"] = fileInfo2.Name;
+                    file["FullName"] = fileInfo2.FullName;
+                    file["Length"] = fileInfo2.Length;
+                    file["Extension"] = fileInfo2.Extension;
+                    file["LastWriteTime"] = fileInfo2.LastWriteTime.ToString();
+                    file["CreationTime"] = fileInfo2.CreationTime.ToString();
+                }
+            }
+            catch (Exception)
+            {
+                result["status"] = "error";
+                result["info"] = "SetCurrentDirectory exception";
+            }
+            return result;
+        }
         public Hashtable AddSpecialty(XElement root)
         {
             var result = new Hashtable();

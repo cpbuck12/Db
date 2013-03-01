@@ -119,6 +119,9 @@ namespace Concierge_Manager
 
                     switch (request.UriParts[1])
                     {
+                        case "SetCurrentDirectory":
+                            AjaxReply(objectForScripting.SetCurrentDirectory(xmlRequest), response);
+                            return true;
                         case "AddSpecialty":
                             AjaxReply(objectForScripting.AddSpecialty(xmlRequest), response);
                             return true;
