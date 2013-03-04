@@ -17,6 +17,8 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Xml.XPath;
 using System.Collections;
+using System.Reflection;
+using System.Resources;
 
 namespace Concierge_Manager
 {
@@ -240,6 +242,97 @@ namespace Concierge_Manager
                 result["status"] = "error";
                 result["reason"] = "AddPatient failed";
             }
+            return result;
+        }
+        public string Guid()
+        {
+            return "{FDA99B54-4F60-4345-8524-6F2B9DEA4845}";
+        }
+        private string ReplaceGuid(string original,string tag,string value)
+        {
+            return original.Replace(Guid()+tag,value);
+        }
+        public Hashtable CreateWebsite(XElement root)
+        {
+            // N.B. to boostrap the development process, lots of hard coding
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            string[] names = Assembly.GetEntryAssembly().GetManifestResourceNames();
+            Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("Concierge_Manager.Properties.Resources.resources");
+            stream.Position = 0;
+            //stream.Read(buffer,0,(int)(stream.Length));
+            //IResourceReader reader = new ResourceReader("Concierge_Manager.Properties.Resources.resources");
+            IResourceReader reader = new ResourceReader(stream);
+//            string hash = string.Concat((from b in hashBytes
+//                                         select string.Format("{0:X2}", b)).ToArray());
+            string rootDir = @"c:\temp\temp";
+            Directory.Delete(rootDir, true);
+            Directory.CreateDirectory(rootDir);
+            Directory.CreateDirectory(rootDir + "\\js");
+            Directory.CreateDirectory(rootDir + "\\css");
+            Directory.CreateDirectory(rootDir + "\\activities");
+            FileStream fs;
+            fs = new FileStream(rootDir + @"\index.htm", FileMode.Create, FileAccess.Write);
+            string v;
+            v = (from DictionaryEntry de in reader
+                        where de.Key as string == "index_htm"
+                        select de.Value).First() as string;
+            fs.Write(encoding.GetBytes(v), 0, v.Length);
+            fs.Close();
+            fs.Dispose();
+            fs = new FileStream(rootDir + @"\css\index.css", FileMode.Create, FileAccess.Write);
+            v = (from DictionaryEntry de in reader
+                        where de.Key as string == "index_css"
+                        select de.Value).First() as string;
+            fs.Write(encoding.GetBytes(v), 0, v.Length);
+            fs.Close();
+            fs.Dispose();
+            fs = new FileStream(rootDir + @"\main.htm", FileMode.Create, FileAccess.Write);
+            v = (from DictionaryEntry de in reader
+                 where de.Key as string == "main_htm"
+                 select de.Value).First() as string;
+            v = ReplaceGuid(v, "name", "FROST, JACK");
+            v = ReplaceGuid(v, "dob", "December 6, 1969");
+            v = ReplaceGuid(v, "gender", "Male");
+            v = ReplaceGuid(v, "emergencycontact", "nobody @ 212-555-1212");
+            v = ReplaceGuid(v, "alerts", "no alerts/healthy");
+            Db.Db db = Db.Db.Instance();
+            Hashtable activitiesResult = db.GetActivities(1);
+            List<Hashtable> items = activitiesResult["items"] as List<Hashtable>;
+            if (items.Count == 0)
+            {
+                v = ReplaceGuid(v, "activities", "None");
+            }
+            else
+            {
+                string acc = "";
+                int iDocument = 0;
+                foreach (Hashtable item in items)
+                {
+                    string fileName = rootDir+@"\activities\"+iDocument.ToString()+".pdf";
+                    FileStream docStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                    byte[] data = item["document"] as byte[];
+                    docStream.Write(data, 0, data.Length);
+                    docStream.Close();
+                    string zebra = (iDocument % 2) == 0 ? "even" : "odd";
+                    string row = string.Format(@"<a href='activities/{0}.pdf' target='_blank'><div ><div class='row {5}'><div class='specialty left'>{1}</div><div class='subspecialty'>{2}</div><div class='date'>{3}</div></div></div></a>", 
+                        iDocument, item["procedure"], item["specialty"], item["subspecialty"], item["date"],zebra);
+                    acc += row;
+                    iDocument++;
+                }
+                v = ReplaceGuid(v, "activities", acc);
+            }
+            fs.Write(encoding.GetBytes(v), 0, v.Length);
+            fs.Close();
+            fs.Dispose();
+            fs = new FileStream(rootDir + @"\css\main.css", FileMode.Create, FileAccess.Write);
+            v = (from DictionaryEntry de in reader
+                 where de.Key as string == "main_css"
+                 select de.Value).First() as string;
+            fs.Write(encoding.GetBytes(v), 0, v.Length);
+            fs.Close();
+            fs.Dispose();
             return result;
         }
         public Hashtable SetCurrentDirectory(XElement root)

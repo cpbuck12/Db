@@ -106,6 +106,8 @@ namespace Concierge_Manager
         }
         public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
         {
+ //           XElement xmlRequest0 = GetXmlRequestPayload(request);
+//            AjaxReply(objectForScripting.CreateWebsite(xmlRequest0), response);
             if (request.UriParts.Length == 0)
             {
                 string[] files = { "work.htm" };
@@ -119,6 +121,9 @@ namespace Concierge_Manager
 
                     switch (request.UriParts[1])
                     {
+                        case "CreateWebsite":
+                            AjaxReply(objectForScripting.CreateWebsite(xmlRequest), response);
+                            return true;
                         case "SetCurrentDirectory":
                             AjaxReply(objectForScripting.SetCurrentDirectory(xmlRequest), response);
                             return true;

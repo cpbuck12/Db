@@ -88,6 +88,102 @@ namespace Db
 
             return id;
         }
+        public byte[] GetDocumentData(int document_id)
+        {
+            byte[] result;
+            using (conciergeEntities conciergeEntities = new conciergeEntities())
+            {
+                int block = 0;
+                var query2 = (from seg in conciergeEntities.document_segment
+                              where seg.document_id == document_id
+                              orderby seg.position
+                              select seg.data);
+                byte[] acc = null;
+                foreach (byte[] buf in query2)
+                {
+                    if (acc == null)
+                    {
+                        acc = buf.Clone() as byte[];
+                    }
+                    else
+                    {
+                        byte[] temp = new byte[acc.Length + buf.Length];
+                        acc.CopyTo(temp, 0);
+                        buf.CopyTo(temp, acc.Length);
+                        acc = temp;
+                    }
+                    block++;
+                }
+                result = acc;
+            }
+            return result;
+        }
+        doctor GetDoctor(int doctor_id)
+        {
+            doctor result;
+            conciergeEntities conciergeEntities;
+            using (conciergeEntities = new conciergeEntities())
+            {
+                var query = (from d in conciergeEntities.doctor
+                             where d.id == doctor_id
+                             select d);
+                result = query.First();
+            }
+            return result;
+        }
+        string[] GetSpecialty(int specialty_id)
+        {
+            string[] result = new string[2];
+            conciergeEntities conciergeEntities;
+            using (conciergeEntities = new conciergeEntities())
+            {
+                var query = (from s in conciergeEntities.specialty
+                             where s.id == specialty_id
+                             select s);
+                result[0] = query.First().specialty_name;
+                result[1] = query.First().subspecialty_name;
+            }
+            return result;
+        }
+        public Hashtable GetActivities(int patient)
+        {
+            conciergeEntities conciergeEntities;
+            List<Hashtable> acts = new List<Hashtable>();
+            Hashtable result = new Hashtable();
+            using (conciergeEntities = new conciergeEntities())
+            {
+                var query = (from a in conciergeEntities.activity
+                             where a.patient_id == patient
+                             select a);
+
+                // [query.Count()];
+                int i = 0;
+                foreach (activity a in query)
+                {
+                    Hashtable current = new Hashtable();
+                    current["procedure"] = a.procedure;
+                    current["specialtyid"] = a.specialty_id;
+                    current["doctorid"] = a.doctor_id;
+                    current["documentid"] = a.document_id;
+                    current["location"] = a.location;
+                    current["date"] = a.date.ToShortDateString();
+                    acts.Add(current);
+                    i++;
+                }
+                result["items"] = acts;
+                conciergeEntities.Connection.Open();
+            }
+            foreach (Hashtable act in acts)
+            {
+                act["document"] = GetDocumentData((int)(act["documentid"]));
+                act["doctor"] = GetDoctor((int)(act["doctorid"]));
+                string[] sp = GetSpecialty((int)(act["specialtyid"]));
+                act["specialty"] = sp[0];
+                act["subspecialty"] = sp[1];
+            }
+            return result;
+        }
+
         public Hashtable[] Specialties()
         {
             conciergeEntities conciergeEntities;
@@ -325,7 +421,7 @@ namespace Db
                             throw;
                         }
                     }
-                    //                transaction.Commit();
+                                    transaction.Commit();
                 }
             }
             return result;

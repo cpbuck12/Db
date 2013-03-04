@@ -1,0 +1,65 @@
+﻿body
+{
+    background-color : Black;
+    font-family : Sans-Serif;
+    color : White;
+}
+
+body>div
+{
+    width:960px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+body>div>div h5
+{
+    background-color: #222222;
+}
+
+body>div>div
+{
+    border-width : 1px;
+    border-color : Blue;
+    border-style:solid;
+    margin: 15px;
+}
+
+div.row
+{
+    width:100px;
+}
+
+div.even
+{
+    background-color: Black;   
+}
+div.odd
+{
+    background-color: #111111
+}
+div.summary div span.value
+{
+    color: #FF4444;
+}
+
+h1,h2,h3,h4,h5
+{
+    margin: 0;
+    text-align : center;
+}
+
+:link
+{
+    color: White;
+}
+
+:visited
+{
+    color: White;
+}
+
+.left
+{
+    float:left;
+}
