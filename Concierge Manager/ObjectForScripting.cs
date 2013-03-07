@@ -19,6 +19,7 @@ using System.Xml.XPath;
 using System.Collections;
 using System.Reflection;
 using System.Resources;
+using Microsoft.VisualBasic;
 
 namespace Concierge_Manager
 {
@@ -335,6 +336,7 @@ namespace Concierge_Manager
             fs.Dispose();
             return result;
         }
+        Hashtable savedPaths = new Hashtable();
         public Hashtable SetCurrentDirectory(XElement root)
         {
             var result = new Hashtable();
@@ -348,8 +350,23 @@ namespace Concierge_Manager
                 {
                     string path = pathElement.Value;
                     if (path.Length == 2 && path[1] == ':')
-                        path = Path.GetFullPath(path);
-                     Directory.SetCurrentDirectory(path);
+                    {
+                        string currentDirectoryPath = Directory.GetCurrentDirectory();
+                        if (currentDirectoryPath[1] == ':')
+                        {
+                            savedPaths[currentDirectoryPath[0]] = currentDirectoryPath;
+                        }
+                        string saved = savedPaths[path[0]] as string;
+                        if (saved == null)
+                        {
+                            savedPaths[path[0]] = saved = string.Format("{0}:\\", path[0]);
+                        }
+                        Directory.SetCurrentDirectory(saved);
+                    }
+                    else
+                    {
+                        Directory.SetCurrentDirectory(path);
+                    }
                 }
 
 
@@ -357,6 +374,8 @@ namespace Concierge_Manager
                 fileInfo["volumes"] = volumes;
                 foreach (DriveInfo driveInfo in DriveInfo.GetDrives())
                 {
+                    if (!driveInfo.IsReady)
+                        continue;
                     Hashtable volume = new Hashtable();
                     volume["Name"] = driveInfo.Name.Substring(0, 2);
                     volumes.Add(volume);
@@ -366,13 +385,6 @@ namespace Concierge_Manager
                 DirectoryInfo directoryInfoCurrent = new DirectoryInfo(currentDirectory);
                 List<Hashtable> folders = new List<Hashtable>();
                 fileInfo["folders"] = folders;
-                foreach(DirectoryInfo directoryInfo in directoryInfoCurrent.GetDirectories())
-                {
-                    Hashtable folder = new Hashtable();
-                    folders.Add(folder);
-                    folder["Name"] = directoryInfo.Name;
-                    folder["FullName"] = directoryInfo.FullName;
-                }
                 DirectoryInfo directoryInfoParent = directoryInfoCurrent.Parent;
                 if (directoryInfoParent != null)
                 {
@@ -380,6 +392,15 @@ namespace Concierge_Manager
                     folders.Add(folder);
                     folder["Name"] = "..";
                     folder["FullName"] = directoryInfoParent.FullName;
+                }
+                foreach (DirectoryInfo directoryInfo in directoryInfoCurrent.GetDirectories())
+                {
+                    if ((directoryInfo.Attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0)
+                        continue;
+                    Hashtable folder = new Hashtable();
+                    folders.Add(folder);
+                    folder["Name"] = directoryInfo.Name;
+                    folder["FullName"] = directoryInfo.FullName;
                 }
                 List<Hashtable> files = new List<Hashtable>();
                 fileInfo["files"] = files;
