@@ -133,6 +133,12 @@ namespace Concierge_Manager
                         case "AddPatient":
                             AjaxReply(objectForScripting.AddPatient(xmlRequest), response);
                             return true;
+                        case "UpdateDoctor":
+                            AjaxReply(objectForScripting.UpdateDoctor(xmlRequest), response);
+                            return true;
+                        case "GetDoctors":
+                            AjaxReply(objectForScripting.GetDoctors(), response);
+                            return true;
                         case "AddDoctor":
                             AjaxReply(objectForScripting.AddDoctor(xmlRequest), response);
                             return true;

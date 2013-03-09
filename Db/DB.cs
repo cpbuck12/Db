@@ -131,6 +131,45 @@ namespace Db
             }
             return result;
         }
+        public doctor[] GetDoctors()
+        {
+            conciergeEntities conciergeEntities;
+            using (conciergeEntities = new conciergeEntities())
+            {
+                var query = (from d in conciergeEntities.doctor
+                             select d);
+                return query.ToArray();
+            }
+        }
+        //        public int AddDoctor(string firstName,string lastName,string shortName,string address1,string address2,string address3,string city,string locality1,string locality2,
+//            string postalCode,string country,string voice,string fax,string email,string contact)
+        public void UpdateDoctor(string firstName, string lastName, string shortName, string address1, string address2, string address3, string city, string locality1, string locality2,
+            string postalCode, string country, string voice, string fax, string email, string contact)
+        {
+            conciergeEntities conciergeEntities;
+            using (conciergeEntities = new conciergeEntities())
+            {
+                doctor dr = (from d in conciergeEntities.doctor
+                             where shortName == d.shortname
+                             select d).First();
+                dr.address1 = address1;
+                dr.address2 = address2;
+                dr.address3 = address3;
+                dr.city = city;
+                dr.contact_person = contact;
+                dr.country = country;
+                dr.email = email;
+                dr.fax = fax;
+                dr.firstname = firstName;
+                dr.lastname = lastName;
+                dr.locality1 = locality1;
+                dr.locality2 = locality2;
+                dr.postal_code = postalCode;
+                dr.telephone = voice;
+                conciergeEntities.SaveChanges();
+            }
+
+        }
         string[] GetSpecialty(int specialty_id)
         {
             string[] result = new string[2];
@@ -183,7 +222,40 @@ namespace Db
             }
             return result;
         }
-
+        public Hashtable[] Doctors()
+        {
+            conciergeEntities conciergeEntities;
+            using (conciergeEntities = new conciergeEntities())
+            {
+                conciergeEntities.Connection.Open();
+                Hashtable[] result = new Hashtable[(from d in conciergeEntities.doctor
+                                                    select d).Count()];
+                int i = 0;
+                foreach (var d in (from d in conciergeEntities.doctor select d))
+                {
+                    result[i] = new Hashtable();
+                    result[i]["address1"] = d.address1;
+                    result[i]["address2"] = d.address2;
+                    result[i]["address3"] = d.address3;
+                    result[i]["city"] = d.city;
+                    result[i]["contact_person"] = d.contact_person;
+                    result[i]["country"] = d.country;
+                    result[i]["email"] = d.email;
+                    result[i]["fax"] = d.fax;
+                    result[i]["firstname"] = d.firstname;
+                    result[i]["id"] = d.id;
+                    result[i]["lastname"] = d.lastname;
+                    result[i]["locality1"] = d.locality1;
+                    result[i]["locality2"] = d.locality2;
+                    result[i]["postal_code"] = d.postal_code;
+                    result[i]["shortname"] = d.shortname;
+                    result[i]["telephone"] = d.telephone;
+                    i++;
+                }
+                conciergeEntities.SaveChanges();
+                return result;
+            }
+        }
         public Hashtable[] Specialties()
         {
             conciergeEntities conciergeEntities;
@@ -296,6 +368,22 @@ namespace Db
         public int AddDoctor(string firstName,string lastName,string shortName,string address1,string address2,string address3,string city,string locality1,string locality2,
             string postalCode,string country,string voice,string fax,string email,string contact)
         {
+            List<string> missings = new List<string>();
+            if (firstName == string.Empty)
+                missings.Add("First Name");
+            if (lastName == string.Empty)
+                missings.Add("Last Name");
+            if (shortName == string.Empty)
+                missings.Add("Short Name");
+            if (missings.Count > 0)
+            {
+                string acc = "Missing fields:";
+                foreach(string missing in missings)
+                {
+                    acc += missing + " ";
+                }
+                throw new Exception(acc);
+            }
             conciergeEntities conciergeEntities;
             using (conciergeEntities = new conciergeEntities())
             {
@@ -305,7 +393,7 @@ namespace Db
                      where dr0.shortname == shortName
                      select dr0).Count() > 0)
                 {
-                    return -1; // TODO: handle short name already extant
+                    throw new Exception("Short name already exists");
                 }
                 doctor dr = conciergeEntities.doctor.CreateObject();
                 dr.firstname = firstName;

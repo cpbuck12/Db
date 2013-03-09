@@ -182,6 +182,22 @@ namespace Concierge_Manager
             }
             return result;
         }
+        public Hashtable GetDoctors()
+        {
+            var result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                Db.Db db = Db.Db.Instance();
+                result["doctors"] = db.Doctors();
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = "Could not get patients:"+ex.Message;
+            }
+            return result;
+        }
         public Hashtable GetPatients()
         {
             var result = new Hashtable();
@@ -441,6 +457,40 @@ namespace Concierge_Manager
             }
             return result;
         }
+        public Hashtable UpdateDoctor(XElement root)
+        {
+            var result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string firstName = string.Empty, lastName = string.Empty, shortName = string.Empty, address1 = string.Empty, address2 = string.Empty;
+                string address3 = string.Empty, city = string.Empty, locality1 = string.Empty, locality2 = string.Empty, postalCode = string.Empty;
+                string country = string.Empty, telephone = string.Empty, fax = string.Empty, email = string.Empty, contact = string.Empty;
+                firstName = root.XPathSelectElement("//firstname").Value.Trim();
+                lastName = root.XPathSelectElement("//lastname").Value.Trim();
+                shortName = root.XPathSelectElement("//shortname").Value.Trim();
+                address1 = root.XPathSelectElement("//address1").Value.Trim();
+                address2 = root.XPathSelectElement("//address2").Value.Trim();
+                address3 = root.XPathSelectElement("//address3").Value.Trim();
+                city = root.XPathSelectElement("//city").Value.Trim();
+                locality1 = root.XPathSelectElement("//locality1").Value.Trim();
+                locality2 = root.XPathSelectElement("//locality2").Value.Trim();
+                postalCode = root.XPathSelectElement("//postalcode").Value.Trim();
+                country = root.XPathSelectElement("//country").Value.Trim();
+                telephone = root.XPathSelectElement("//telephone").Value.Trim();
+                fax = root.XPathSelectElement("//fax").Value.Trim();
+                email = root.XPathSelectElement("//email").Value.Trim();
+                contact = root.XPathSelectElement("//contactperson").Value.Trim();
+                Db.Db db = Db.Db.Instance();
+                db.UpdateDoctor(firstName, lastName, shortName, address1, address2, address3, city, locality1, locality2, postalCode, country, telephone, fax, email, contact);
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = "Database error:" + ex.Message;
+            }
+            return result;
+        }
         public Hashtable AddDoctor(XElement root)
         {
             var result = new Hashtable();
@@ -450,28 +500,28 @@ namespace Concierge_Manager
                 string firstName = string.Empty, lastName = string.Empty, shortName = string.Empty, address1 = string.Empty, address2 = string.Empty;
                 string address3 = string.Empty, city = string.Empty, locality1 = string.Empty, locality2 = string.Empty, postalCode = string.Empty;
                 string country = string.Empty, voice = string.Empty, fax = string.Empty, email = string.Empty, contact = string.Empty;
-                firstName = root.XPathSelectElement("//firstname").Value;
-                lastName = root.XPathSelectElement("//lastname").Value;
-                shortName = root.XPathSelectElement("//shortname").Value;
-                address1 = root.XPathSelectElement("//address1").Value;
-                address2 = root.XPathSelectElement("//address2").Value;
-                address3 = root.XPathSelectElement("//address3").Value;
-                city = root.XPathSelectElement("//city").Value;
-                locality1 = root.XPathSelectElement("//locality1").Value;
-                locality2 = root.XPathSelectElement("//locality2").Value;
-                postalCode = root.XPathSelectElement("//postalcode").Value;
-                country = root.XPathSelectElement("//country").Value;
-                voice = root.XPathSelectElement("//voice").Value;
-                voice = root.XPathSelectElement("//fax").Value;
-                email = root.XPathSelectElement("//email").Value;
-                contact = root.XPathSelectElement("//contact").Value;
+                firstName = root.XPathSelectElement("//firstname").Value.Trim();
+                lastName = root.XPathSelectElement("//lastname").Value.Trim();
+                shortName = root.XPathSelectElement("//shortname").Value.Trim();
+                address1 = root.XPathSelectElement("//address1").Value.Trim();
+                address2 = root.XPathSelectElement("//address2").Value.Trim();
+                address3 = root.XPathSelectElement("//address3").Value.Trim();
+                city = root.XPathSelectElement("//city").Value.Trim();
+                locality1 = root.XPathSelectElement("//locality1").Value.Trim();
+                locality2 = root.XPathSelectElement("//locality2").Value.Trim();
+                postalCode = root.XPathSelectElement("//postalcode").Value.Trim();
+                country = root.XPathSelectElement("//country").Value.Trim();
+                voice = root.XPathSelectElement("//voice").Value.Trim();
+                voice = root.XPathSelectElement("//fax").Value.Trim();
+                email = root.XPathSelectElement("//email").Value.Trim();
+                contact = root.XPathSelectElement("//contact").Value.Trim();
                 Db.Db db = Db.Db.Instance();
                 db.AddDoctor(firstName, lastName, shortName, address1, address2, address3, city, locality1, locality2, postalCode, country, voice, fax, email, contact);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 result["status"] = "error";
-                result["reason"] = "AddDoctor failed";
+                result["reason"] = "Database error:"+ex.Message;
             }
             return result;
 
