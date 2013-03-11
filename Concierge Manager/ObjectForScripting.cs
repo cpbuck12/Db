@@ -254,10 +254,10 @@ namespace Concierge_Manager
                 Db.Db db = Db.Db.Instance();
                 db.AddPatient(firstName, lastName, dateOfBirth, gender, emergencyContact);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 result["status"] = "error";
-                result["reason"] = "AddPatient failed";
+                result["reason"] = "AddPatient failed. Exception message:" + ex.Message;
             }
             return result;
         }

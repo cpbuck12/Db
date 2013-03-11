@@ -327,7 +327,7 @@ namespace Db
         }
         #endregion 
         // called by AddPatient(XElement)
-        public int AddPatient(string firstName, string lastName,string dateOfBirth,string gender,string emergencyContact)
+        public void AddPatient(string firstName, string lastName,string dateOfBirth,string gender,string emergencyContact)
         {
             conciergeEntities conciergeEntities;
             using (conciergeEntities = new conciergeEntities())
@@ -337,7 +337,7 @@ namespace Db
                      where patient.first == firstName && patient.last == lastName
                      select patient).Count() > 0)
                 {
-                    return -1; // TODO: handle patient already added.
+                    throw new Exception("Patient already exists");
                 }
                 patient p = conciergeEntities.patient.CreateObject();
                 p.first = firstName;
@@ -347,7 +347,6 @@ namespace Db
                 p.emergency_contact = emergencyContact;
                 conciergeEntities.patient.AddObject(p);
                 conciergeEntities.SaveChanges();
-                return 0;
             }
         }
         public int AddSpecialty(string specialty, string subspecialty)
