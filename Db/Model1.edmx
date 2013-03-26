@@ -7,36 +7,24 @@
     <Schema Namespace="conciergeModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="conciergeModelStoreContainer">
           <EntitySet Name="activity" EntityType="conciergeModel.Store.activity" store:Type="Tables" Schema="concierge" />
-          <EntitySet Name="detail_group" EntityType="conciergeModel.Store.detail_group" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="detail_item" EntityType="conciergeModel.Store.detail_item" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="directives" EntityType="conciergeModel.Store.directives" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="doctor" EntityType="conciergeModel.Store.doctor" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="doctor_patient" EntityType="conciergeModel.Store.doctor_patient" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="doctor_specialty" EntityType="conciergeModel.Store.doctor_specialty" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="document" EntityType="conciergeModel.Store.document" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="document_segment" EntityType="conciergeModel.Store.document_segment" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="location" EntityType="conciergeModel.Store.location" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="note" EntityType="conciergeModel.Store.note" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="patient" EntityType="conciergeModel.Store.patient" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="procedure" EntityType="conciergeModel.Store.procedure" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="release_request" EntityType="conciergeModel.Store.release_request" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="release_response" EntityType="conciergeModel.Store.release_response" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="specialty" EntityType="conciergeModel.Store.specialty" store:Type="Tables" Schema="concierge" />
-          <AssociationSet Name="activity_ibfk_1" Association="conciergeModel.Store.activity_ibfk_1">
-            <End Role="doctor" EntitySet="doctor" />
-            <End Role="activity" EntitySet="activity" />
-          </AssociationSet>
-          <AssociationSet Name="activity_ibfk_2" Association="conciergeModel.Store.activity_ibfk_2">
-            <End Role="patient" EntitySet="patient" />
-            <End Role="activity" EntitySet="activity" />
-          </AssociationSet>
-          <AssociationSet Name="activity_ibfk_3" Association="conciergeModel.Store.activity_ibfk_3">
-            <End Role="specialty" EntitySet="specialty" />
-            <End Role="activity" EntitySet="activity" />
-          </AssociationSet>
+          <EntitySet Name="suffix" EntityType="conciergeModel.Store.suffix" store:Type="Tables" Schema="concierge" />
           <AssociationSet Name="activity_ibfk_4" Association="conciergeModel.Store.activity_ibfk_4">
             <End Role="document" EntitySet="document" />
             <End Role="activity" EntitySet="activity" />
-          </AssociationSet>
-          <AssociationSet Name="detail_item_ibfk_1" Association="conciergeModel.Store.detail_item_ibfk_1">
-            <End Role="detail_group" EntitySet="detail_group" />
-            <End Role="detail_item" EntitySet="detail_item" />
           </AssociationSet>
           <AssociationSet Name="detail_item_ibfk_2" Association="conciergeModel.Store.detail_item_ibfk_2">
             <End Role="patient" EntitySet="patient" />
@@ -46,56 +34,65 @@
             <End Role="patient" EntitySet="patient" />
             <End Role="directives" EntitySet="directives" />
           </AssociationSet>
+          <AssociationSet Name="doctor_patient_ibfk_1" Association="conciergeModel.Store.doctor_patient_ibfk_1">
+            <End Role="doctor" EntitySet="doctor" />
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+          </AssociationSet>
+          <AssociationSet Name="doctor_patient_ibfk_2" Association="conciergeModel.Store.doctor_patient_ibfk_2">
+            <End Role="patient" EntitySet="patient" />
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+          </AssociationSet>
+          <AssociationSet Name="doctor_specialty_ibfk_1" Association="conciergeModel.Store.doctor_specialty_ibfk_1">
+            <End Role="doctor" EntitySet="doctor" />
+            <End Role="doctor_specialty" EntitySet="doctor_specialty" />
+          </AssociationSet>
+          <AssociationSet Name="doctor_specialty_ibfk_2" Association="conciergeModel.Store.doctor_specialty_ibfk_2">
+            <End Role="specialty" EntitySet="specialty" />
+            <End Role="doctor_specialty" EntitySet="doctor_specialty" />
+          </AssociationSet>
           <AssociationSet Name="document_segment_ibfk_1" Association="conciergeModel.Store.document_segment_ibfk_1">
             <End Role="document" EntitySet="document" />
             <End Role="document_segment" EntitySet="document_segment" />
-          </AssociationSet>
-          <AssociationSet Name="note_ibfk_1" Association="conciergeModel.Store.note_ibfk_1">
-            <End Role="document" EntitySet="document" />
-            <End Role="note" EntitySet="note" />
-          </AssociationSet>
-          <AssociationSet Name="release_request_ibfk_1" Association="conciergeModel.Store.release_request_ibfk_1">
-            <End Role="patient" EntitySet="patient" />
-            <End Role="release_request" EntitySet="release_request" />
           </AssociationSet>
           <AssociationSet Name="release_request_ibfk_2" Association="conciergeModel.Store.release_request_ibfk_2">
             <End Role="document" EntitySet="document" />
             <End Role="release_request" EntitySet="release_request" />
           </AssociationSet>
-          <AssociationSet Name="release_response_ibfk_1" Association="conciergeModel.Store.release_response_ibfk_1">
+          <AssociationSet Name="release_request_ibfk_3" Association="conciergeModel.Store.release_request_ibfk_3">
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
             <End Role="release_request" EntitySet="release_request" />
+          </AssociationSet>
+          <AssociationSet Name="release_response_ibfk_1" Association="conciergeModel.Store.release_response_ibfk_1">
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+            <End Role="release_response" EntitySet="release_response" />
+          </AssociationSet>
+          <AssociationSet Name="release_response_ibfk_3" Association="conciergeModel.Store.release_response_ibfk_3">
+            <End Role="document" EntitySet="document" />
             <End Role="release_response" EntitySet="release_response" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="activity">
           <Key>
-            <PropertyRef Name="activity_id" />
+            <PropertyRef Name="id" />
           </Key>
-          <Property Name="activity_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="specialty_id" Type="int" Nullable="false" />
-          <Property Name="doctor_id" Type="int" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="doctor_specialty_id" Type="int" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
-          <Property Name="patient_id" Type="int" Nullable="false" />
+          <Property Name="doctor_patient_id" Type="int" Nullable="false" />
           <Property Name="procedure" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="location" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="document_id" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="detail_group">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" Nullable="false" />
-          <Property Name="name" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="detail_item">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="detail_group_id" Type="int" Nullable="false" />
           <Property Name="patient_id" Type="int" Nullable="false" />
           <Property Name="weight" Type="int" Nullable="false" />
-          <Property Name="text" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="text" Type="varchar" Nullable="false" MaxLength="2000" />
           <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="alert" Type="bool" Nullable="false" />
+          <Property Name="title" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="directives">
           <Key>
@@ -126,6 +123,24 @@
           <Property Name="email" Type="varchar" Nullable="false" MaxLength="40" />
           <Property Name="contact_person" Type="varchar" Nullable="false" MaxLength="100" />
         </EntityType>
+        <EntityType Name="doctor_patient">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="doctor_id" Type="int" Nullable="false" />
+          <Property Name="patient_id" Type="int" Nullable="false" />
+          <Property Name="released" Type="bool" Nullable="false" />
+          <Property Name="recent" Type="bool" Nullable="false" />
+        </EntityType>
+        <EntityType Name="doctor_specialty">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="doctor_id" Type="int" Nullable="false" />
+          <Property Name="specialty_id" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="document">
           <Key>
             <PropertyRef Name="id" />
@@ -133,6 +148,7 @@
           <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="checksum" Type="varchar" Nullable="false" MaxLength="1024" />
           <Property Name="path" Type="varchar" Nullable="false" MaxLength="260" />
+          <Property Name="added_date" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="document_segment">
           <Key>
@@ -140,17 +156,23 @@
             <PropertyRef Name="position" />
           </Key>
           <Property Name="document_id" Type="int" Nullable="false" />
+          <Property Name="position" Type="bigint" Nullable="false" />
           <Property Name="data" Type="blob" Nullable="false" />
-          <Property Name="position" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="location">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Name="value" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="note">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="text" Type="text" Nullable="false" />
           <Property Name="user" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="document_id" Type="int" Nullable="false" />
+          <Property Name="text" Type="varchar" Nullable="false" MaxLength="500" />
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="when" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="patient">
           <Key>
@@ -163,23 +185,30 @@
           <Property Name="gender" Type="char" Nullable="false" MaxLength="1" />
           <Property Name="emergency_contact" Type="text" Nullable="false" />
         </EntityType>
+        <EntityType Name="procedure">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Name="value" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
         <EntityType Name="release_request">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="patient_id" Type="int" Nullable="false" />
+          <Property Name="doctor_patient_id" Type="int" Nullable="false" />
           <Property Name="document_id" Type="int" Nullable="false" />
           <Property Name="sent_date" Type="date" Nullable="false" />
-          <Property Name="state" Type="varchar" Nullable="false" MaxLength="10" />
         </EntityType>
         <EntityType Name="release_response">
           <Key>
-            <PropertyRef Name="request_id" />
+            <PropertyRef Name="id" />
           </Key>
-          <Property Name="request_id" Type="int" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="received_date" Type="date" Nullable="false" />
           <Property Name="scanned_date" Type="date" Nullable="false" />
+          <Property Name="doctor_patient_id" Type="int" Nullable="false" />
+          <Property Name="document_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="specialty">
           <Key>
@@ -189,42 +218,12 @@
           <Property Name="specialty_name" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="subspecialty_name" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
-        <Association Name="activity_ibfk_1">
-          <End Role="doctor" Type="conciergeModel.Store.doctor" Multiplicity="1" />
-          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="doctor">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="activity">
-              <PropertyRef Name="doctor_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="activity_ibfk_2">
-          <End Role="patient" Type="conciergeModel.Store.patient" Multiplicity="1" />
-          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="activity">
-              <PropertyRef Name="patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="activity_ibfk_3">
-          <End Role="specialty" Type="conciergeModel.Store.specialty" Multiplicity="1" />
-          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="specialty">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="activity">
-              <PropertyRef Name="specialty_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <EntityType Name="suffix">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Name="value" Type="varchar" Nullable="false" MaxLength="12" />
+        </EntityType>
         <Association Name="activity_ibfk_4">
           <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
           <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
@@ -234,18 +233,6 @@
             </Principal>
             <Dependent Role="activity">
               <PropertyRef Name="document_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="detail_item_ibfk_1">
-          <End Role="detail_group" Type="conciergeModel.Store.detail_group" Multiplicity="1" />
-          <End Role="detail_item" Type="conciergeModel.Store.detail_item" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="detail_group">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="detail_item">
-              <PropertyRef Name="detail_group_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -273,6 +260,54 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="doctor_patient_ibfk_1">
+          <End Role="doctor" Type="conciergeModel.Store.doctor" Multiplicity="1" />
+          <End Role="doctor_patient" Type="conciergeModel.Store.doctor_patient" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="doctor_patient">
+              <PropertyRef Name="doctor_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="doctor_patient_ibfk_2">
+          <End Role="patient" Type="conciergeModel.Store.patient" Multiplicity="1" />
+          <End Role="doctor_patient" Type="conciergeModel.Store.doctor_patient" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="patient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="doctor_patient">
+              <PropertyRef Name="patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="doctor_specialty_ibfk_1">
+          <End Role="doctor" Type="conciergeModel.Store.doctor" Multiplicity="1" />
+          <End Role="doctor_specialty" Type="conciergeModel.Store.doctor_specialty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="doctor_specialty">
+              <PropertyRef Name="doctor_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="doctor_specialty_ibfk_2">
+          <End Role="specialty" Type="conciergeModel.Store.specialty" Multiplicity="1" />
+          <End Role="doctor_specialty" Type="conciergeModel.Store.doctor_specialty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="specialty">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="doctor_specialty">
+              <PropertyRef Name="specialty_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="document_segment_ibfk_1">
           <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
           <End Role="document_segment" Type="conciergeModel.Store.document_segment" Multiplicity="*" />
@@ -285,30 +320,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="note_ibfk_1">
-          <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
-          <End Role="note" Type="conciergeModel.Store.note" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="document">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="note">
-              <PropertyRef Name="document_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="release_request_ibfk_1">
-          <End Role="patient" Type="conciergeModel.Store.patient" Multiplicity="1" />
-          <End Role="release_request" Type="conciergeModel.Store.release_request" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="release_request">
-              <PropertyRef Name="patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="release_request_ibfk_2">
           <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
           <End Role="release_request" Type="conciergeModel.Store.release_request" Multiplicity="*" />
@@ -321,55 +332,72 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="release_response_ibfk_1">
-          <End Role="release_request" Type="conciergeModel.Store.release_request" Multiplicity="1" />
-          <End Role="release_response" Type="conciergeModel.Store.release_response" Multiplicity="0..1" />
+        <Association Name="release_request_ibfk_3">
+          <End Role="doctor_patient" Type="conciergeModel.Store.doctor_patient" Multiplicity="1" />
+          <End Role="release_request" Type="conciergeModel.Store.release_request" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="release_request">
+            <Principal Role="doctor_patient">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="release_response">
-              <PropertyRef Name="request_id" />
+            <Dependent Role="release_request">
+              <PropertyRef Name="doctor_patient_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="release_response_ibfk_1">
+          <End Role="doctor_patient" Type="conciergeModel.Store.doctor_patient" Multiplicity="1" />
+          <End Role="release_response" Type="conciergeModel.Store.release_response" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor_patient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="release_response">
+              <PropertyRef Name="doctor_patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="release_response_ibfk_3">
+          <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
+          <End Role="release_response" Type="conciergeModel.Store.release_response" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="document">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="release_response">
+              <PropertyRef Name="document_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetServerDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="concierge">
+          <Parameter Name="CurrentDate" Type="date" Mode="Out" />
+        </Function>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="conciergeModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
         <EntityContainer Name="conciergeEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="activity" EntityType="conciergeModel.activity" />
-          <EntitySet Name="detail_group" EntityType="conciergeModel.detail_group" />
-          <EntitySet Name="detail_item" EntityType="conciergeModel.detail_item" />
           <EntitySet Name="directives" EntityType="conciergeModel.directives" />
-          <EntitySet Name="doctor" EntityType="conciergeModel.doctor" />
           <EntitySet Name="document" EntityType="conciergeModel.document" />
-          <EntitySet Name="document_segment" EntityType="conciergeModel.document_segment" />
-          <EntitySet Name="note" EntityType="conciergeModel.note" />
-          <EntitySet Name="patient" EntityType="conciergeModel.patient" />
+          <EntitySet Name="specialty" EntityType="conciergeModel.specialty" />
+          <EntitySet Name="detail_item" EntityType="conciergeModel.detail_item" />
+          <EntitySet Name="doctor_specialty" EntityType="conciergeModel.doctor_specialty" />
           <EntitySet Name="release_request" EntityType="conciergeModel.release_request" />
           <EntitySet Name="release_response" EntityType="conciergeModel.release_response" />
-          <EntitySet Name="specialty" EntityType="conciergeModel.specialty" />
-          <AssociationSet Name="activity_ibfk_1" Association="conciergeModel.activity_ibfk_1">
-            <End Role="doctor" EntitySet="doctor" />
-            <End Role="activity" EntitySet="activity" />
-          </AssociationSet>
-          <AssociationSet Name="activity_ibfk_2" Association="conciergeModel.activity_ibfk_2">
-            <End Role="patient" EntitySet="patient" />
-            <End Role="activity" EntitySet="activity" />
-          </AssociationSet>
-          <AssociationSet Name="activity_ibfk_3" Association="conciergeModel.activity_ibfk_3">
+          <AssociationSet Name="doctor_specialty_ibfk_2" Association="conciergeModel.doctor_specialty_ibfk_2">
             <End Role="specialty" EntitySet="specialty" />
-            <End Role="activity" EntitySet="activity" />
+            <End Role="doctor_specialty" EntitySet="doctor_specialty" />
           </AssociationSet>
-          <AssociationSet Name="activity_ibfk_4" Association="conciergeModel.activity_ibfk_4">
+          <AssociationSet Name="release_request_ibfk_2" Association="conciergeModel.release_request_ibfk_2">
             <End Role="document" EntitySet="document" />
-            <End Role="activity" EntitySet="activity" />
+            <End Role="release_request" EntitySet="release_request" />
           </AssociationSet>
-          <AssociationSet Name="detail_item_ibfk_1" Association="conciergeModel.detail_item_ibfk_1">
-            <End Role="detail_group" EntitySet="detail_group" />
-            <End Role="detail_item" EntitySet="detail_item" />
+          <AssociationSet Name="release_response_ibfk_3" Association="conciergeModel.release_response_ibfk_3">
+            <End Role="document" EntitySet="document" />
+            <End Role="release_response" EntitySet="release_response" />
           </AssociationSet>
+          <EntitySet Name="note" EntityType="conciergeModel.note" />
+          <EntitySet Name="doctor_patient" EntityType="conciergeModel.doctor_patient" />
+          <EntitySet Name="patient" EntityType="conciergeModel.patient" />
           <AssociationSet Name="detail_item_ibfk_2" Association="conciergeModel.detail_item_ibfk_2">
             <End Role="patient" EntitySet="patient" />
             <End Role="detail_item" EntitySet="detail_item" />
@@ -378,64 +406,45 @@
             <End Role="patient" EntitySet="patient" />
             <End Role="directives" EntitySet="directives" />
           </AssociationSet>
+          <AssociationSet Name="doctor_patient_ibfk_2" Association="conciergeModel.doctor_patient_ibfk_2">
+            <End Role="patient" EntitySet="patient" />
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+          </AssociationSet>
+          <AssociationSet Name="release_request_ibfk_3" Association="conciergeModel.release_request_ibfk_3">
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+            <End Role="release_request" EntitySet="release_request" />
+          </AssociationSet>
+          <AssociationSet Name="release_response_ibfk_1" Association="conciergeModel.release_response_ibfk_1">
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+            <End Role="release_response" EntitySet="release_response" />
+          </AssociationSet>
+          <EntitySet Name="document_segment" EntityType="conciergeModel.document_segment" />
           <AssociationSet Name="document_segment_ibfk_1" Association="conciergeModel.document_segment_ibfk_1">
             <End Role="document" EntitySet="document" />
             <End Role="document_segment" EntitySet="document_segment" />
           </AssociationSet>
-          <AssociationSet Name="note_ibfk_1" Association="conciergeModel.note_ibfk_1">
+          <FunctionImport Name="ServerDate" ReturnType="Collection(String)" />
+          <FunctionImport Name="GetServerDate">
+          <Parameter Name="CurrentDate" Mode="Out" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="doctor" EntityType="conciergeModel.doctor" />
+          <AssociationSet Name="doctor_patient_ibfk_1" Association="conciergeModel.doctor_patient_ibfk_1">
+            <End Role="doctor" EntitySet="doctor" />
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+          </AssociationSet>
+          <AssociationSet Name="doctor_specialty_ibfk_1" Association="conciergeModel.doctor_specialty_ibfk_1">
+            <End Role="doctor" EntitySet="doctor" />
+            <End Role="doctor_specialty" EntitySet="doctor_specialty" />
+          </AssociationSet>
+          <EntitySet Name="location" EntityType="conciergeModel.location" />
+          <EntitySet Name="procedure" EntityType="conciergeModel.procedure" />
+          <EntitySet Name="suffix" EntityType="conciergeModel.suffix" />
+          <EntitySet Name="activity" EntityType="conciergeModel.activity" />
+          <AssociationSet Name="activity_ibfk_4" Association="conciergeModel.activity_ibfk_4">
             <End Role="document" EntitySet="document" />
-            <End Role="note" EntitySet="note" />
+            <End Role="activity" EntitySet="activity" />
           </AssociationSet>
-          <AssociationSet Name="release_request_ibfk_2" Association="conciergeModel.release_request_ibfk_2">
-            <End Role="document" EntitySet="document" />
-            <End Role="release_request" EntitySet="release_request" />
-          </AssociationSet>
-          <AssociationSet Name="release_request_ibfk_1" Association="conciergeModel.release_request_ibfk_1">
-            <End Role="patient" EntitySet="patient" />
-            <End Role="release_request" EntitySet="release_request" />
-          </AssociationSet>
-          <AssociationSet Name="release_response_ibfk_1" Association="conciergeModel.release_response_ibfk_1">
-            <End Role="release_request" EntitySet="release_request" />
-            <End Role="release_response" EntitySet="release_response" />
-          </AssociationSet>
-        </EntityContainer>
-        <EntityType Name="activity">
-          <Key>
-            <PropertyRef Name="activity_id" />
-          </Key>
-          <Property Name="specialty_id" Type="Int32" Nullable="false" />
-          <Property Name="doctor_id" Type="Int32" Nullable="false" />
-          <Property Name="date" Type="DateTime" Nullable="false" />
-          <Property Name="patient_id" Type="Int32" Nullable="false" />
-          <Property Name="procedure" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="location" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="document_id" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="doctor" Relationship="conciergeModel.activity_ibfk_1" FromRole="activity" ToRole="doctor" />
-          <NavigationProperty Name="patient" Relationship="conciergeModel.activity_ibfk_2" FromRole="activity" ToRole="patient" />
-          <NavigationProperty Name="specialty" Relationship="conciergeModel.activity_ibfk_3" FromRole="activity" ToRole="specialty" />
-          <NavigationProperty Name="document" Relationship="conciergeModel.activity_ibfk_4" FromRole="activity" ToRole="document" />
-          <Property Type="Int32" Name="activity_id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-        </EntityType>
-        <EntityType Name="detail_group">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" />
-          <Property Name="name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="detail_item" Relationship="conciergeModel.detail_item_ibfk_1" FromRole="detail_group" ToRole="detail_item" />
-        </EntityType>
-        <EntityType Name="detail_item">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="detail_group_id" Type="Int32" Nullable="false" />
-          <Property Name="patient_id" Type="Int32" Nullable="false" />
-          <Property Name="weight" Type="Int32" Nullable="false" />
-          <Property Name="text" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="detail_group" Relationship="conciergeModel.detail_item_ibfk_1" FromRole="detail_item" ToRole="detail_group" />
-          <NavigationProperty Name="patient" Relationship="conciergeModel.detail_item_ibfk_2" FromRole="detail_item" ToRole="patient" />
-          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-        </EntityType>
+          </EntityContainer>
         <EntityType Name="directives">
           <Key>
             <PropertyRef Name="id" />
@@ -445,28 +454,6 @@
           <Property Name="patient_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="patient" Relationship="conciergeModel.directives_ibfk_1" FromRole="directives" ToRole="patient" />
         </EntityType>
-        <EntityType Name="doctor">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="firstname" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="lastname" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="shortname" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="address1" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="address2" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="address3" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="city" Type="String" Nullable="false" MaxLength="30" Unicode="false" FixedLength="false" />
-          <Property Name="locality1" Type="String" Nullable="false" MaxLength="30" Unicode="false" FixedLength="false" />
-          <Property Name="locality2" Type="String" Nullable="false" MaxLength="30" Unicode="false" FixedLength="false" />
-          <Property Name="postal_code" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
-          <Property Name="country" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
-          <Property Name="telephone" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
-          <Property Name="fax" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
-          <Property Name="email" Type="String" Nullable="false" MaxLength="40" Unicode="false" FixedLength="false" />
-          <Property Name="contact_person" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_1" FromRole="doctor" ToRole="activity" />
-        </EntityType>
         <EntityType Name="document">
           <Key>
             <PropertyRef Name="id" />
@@ -474,67 +461,11 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="checksum" Type="String" Nullable="false" MaxLength="1024" Unicode="false" FixedLength="false" />
           <Property Name="path" Type="String" Nullable="false" MaxLength="260" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_4" FromRole="document" ToRole="activity" />
-          <NavigationProperty Name="document_segment" Relationship="conciergeModel.document_segment_ibfk_1" FromRole="document" ToRole="document_segment" />
-          <NavigationProperty Name="note" Relationship="conciergeModel.note_ibfk_1" FromRole="document" ToRole="note" />
           <NavigationProperty Name="release_request" Relationship="conciergeModel.release_request_ibfk_2" FromRole="document" ToRole="release_request" />
-        </EntityType>
-        <EntityType Name="document_segment">
-          <Key>
-            <PropertyRef Name="document_id" />
-            <PropertyRef Name="position" />
-          </Key>
-          <Property Name="document_id" Type="Int32" Nullable="false" />
-          <Property Name="data" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
-          <Property Name="position" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="document" Relationship="conciergeModel.document_segment_ibfk_1" FromRole="document_segment" ToRole="document" />
-        </EntityType>
-        <EntityType Name="note">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="text" Type="String" Nullable="false" MaxLength="65535" Unicode="false" FixedLength="false" />
-          <Property Name="user" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="document_id" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="document" Relationship="conciergeModel.note_ibfk_1" FromRole="note" ToRole="document" />
-        </EntityType>
-        <EntityType Name="patient">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="first" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="last" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="dob" Type="DateTime" Nullable="false" />
-          <Property Name="gender" Type="String" Nullable="false" MaxLength="1" Unicode="false" FixedLength="false" />
-          <Property Name="emergency_contact" Type="String" Nullable="false" MaxLength="65535" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_2" FromRole="patient" ToRole="activity" />
-          <NavigationProperty Name="detail_item" Relationship="conciergeModel.detail_item_ibfk_2" FromRole="patient" ToRole="detail_item" />
-          <NavigationProperty Name="directives" Relationship="conciergeModel.directives_ibfk_1" FromRole="patient" ToRole="directives" />
-          <NavigationProperty Name="release_request" Relationship="conciergeModel.release_request_ibfk_1" FromRole="patient" ToRole="release_request" />
-        </EntityType>
-        <EntityType Name="release_request">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="patient_id" Type="Int32" Nullable="false" />
-          <Property Name="document_id" Type="Int32" Nullable="false" />
-          <Property Name="sent_date" Type="DateTime" Nullable="false" />
-          <Property Name="state" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="document" Relationship="conciergeModel.release_request_ibfk_2" FromRole="release_request" ToRole="document" />
-          <NavigationProperty Name="patient" Relationship="conciergeModel.release_request_ibfk_1" FromRole="release_request" ToRole="patient" />
-          <NavigationProperty Name="release_response" Relationship="conciergeModel.release_response_ibfk_1" FromRole="release_request" ToRole="release_response" />
-        </EntityType>
-        <EntityType Name="release_response">
-          <Key>
-            <PropertyRef Name="request_id" />
-          </Key>
-          <Property Name="request_id" Type="Int32" Nullable="false" />
-          <Property Name="received_date" Type="DateTime" Nullable="false" />
-          <Property Name="scanned_date" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="release_request" Relationship="conciergeModel.release_response_ibfk_1" FromRole="release_response" ToRole="release_request" />
+          <NavigationProperty Name="release_response" Relationship="conciergeModel.release_response_ibfk_3" FromRole="document" ToRole="release_response" />
+          <Property Type="DateTime" Name="added_date" Nullable="false" />
+          <NavigationProperty Name="document_segment" Relationship="conciergeModel.document_segment_ibfk_1" FromRole="document" ToRole="document_segment" />
+          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_4" FromRole="document" ToRole="activity" />
         </EntityType>
         <EntityType Name="specialty">
           <Key>
@@ -543,71 +474,129 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="specialty_name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="subspecialty_name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_3" FromRole="specialty" ToRole="activity" />
+          <NavigationProperty Name="doctor_specialty" Relationship="conciergeModel.doctor_specialty_ibfk_2" FromRole="specialty" ToRole="doctor_specialty" />
         </EntityType>
-        <Association Name="activity_ibfk_1">
-          <End Role="doctor" Type="conciergeModel.doctor" Multiplicity="1" />
-          <End Role="activity" Type="conciergeModel.activity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="doctor">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="activity">
-              <PropertyRef Name="doctor_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="activity_ibfk_2">
-          <End Role="patient" Type="conciergeModel.patient" Multiplicity="1" />
-          <End Role="activity" Type="conciergeModel.activity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="activity">
-              <PropertyRef Name="patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="activity_ibfk_3">
-          <End Role="specialty" Type="conciergeModel.specialty" Multiplicity="1" />
-          <End Role="activity" Type="conciergeModel.activity" Multiplicity="*" />
+        <EntityType Name="detail_item">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="patient_id" Nullable="false" />
+          <Property Type="Int32" Name="weight" Nullable="false" />
+          <Property Type="String" Name="text" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Boolean" Name="alert" Nullable="false" />
+          <Property Type="String" Name="title" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="patient" Relationship="conciergeModel.detail_item_ibfk_2" FromRole="detail_item" ToRole="patient" />
+        </EntityType>
+        <EntityType Name="doctor_specialty">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="doctor_id" Nullable="false" />
+          <Property Type="Int32" Name="specialty_id" Nullable="false" />
+          <NavigationProperty Name="specialty" Relationship="conciergeModel.doctor_specialty_ibfk_2" FromRole="doctor_specialty" ToRole="specialty" />
+          <NavigationProperty Name="doctor" Relationship="conciergeModel.doctor_specialty_ibfk_1" FromRole="doctor_specialty" ToRole="doctor" />
+        </EntityType>
+        <EntityType Name="release_request">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="doctor_patient_id" Nullable="false" />
+          <Property Type="Int32" Name="document_id" Nullable="false" />
+          <Property Type="DateTime" Name="sent_date" Nullable="false" />
+          <NavigationProperty Name="document" Relationship="conciergeModel.release_request_ibfk_2" FromRole="release_request" ToRole="document" />
+          <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.release_request_ibfk_3" FromRole="release_request" ToRole="doctor_patient" />
+        </EntityType>
+        <EntityType Name="release_response">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="received_date" Nullable="false" />
+          <Property Type="DateTime" Name="scanned_date" Nullable="false" />
+          <Property Type="Int32" Name="doctor_patient_id" Nullable="false" />
+          <Property Type="Int32" Name="document_id" Nullable="false" />
+          <NavigationProperty Name="document" Relationship="conciergeModel.release_response_ibfk_3" FromRole="release_response" ToRole="document" />
+          <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.release_response_ibfk_1" FromRole="release_response" ToRole="doctor_patient" />
+        </EntityType>
+        <Association Name="doctor_specialty_ibfk_2">
+          <End Type="conciergeModel.specialty" Role="specialty" Multiplicity="1" />
+          <End Type="conciergeModel.doctor_specialty" Role="doctor_specialty" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="specialty">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="activity">
+            <Dependent Role="doctor_specialty">
               <PropertyRef Name="specialty_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="activity_ibfk_4">
-          <End Role="document" Type="conciergeModel.document" Multiplicity="1" />
-          <End Role="activity" Type="conciergeModel.activity" Multiplicity="*" />
+        <Association Name="release_request_ibfk_2">
+          <End Type="conciergeModel.document" Role="document" Multiplicity="1" />
+          <End Type="conciergeModel.release_request" Role="release_request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="document">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="activity">
+            <Dependent Role="release_request">
               <PropertyRef Name="document_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="detail_item_ibfk_1">
-          <End Role="detail_group" Type="conciergeModel.detail_group" Multiplicity="1" />
-          <End Role="detail_item" Type="conciergeModel.detail_item" Multiplicity="*" />
+        <Association Name="release_response_ibfk_3">
+          <End Type="conciergeModel.document" Role="document" Multiplicity="1" />
+          <End Type="conciergeModel.release_response" Role="release_response" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="detail_group">
+            <Principal Role="document">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="detail_item">
-              <PropertyRef Name="detail_group_id" />
+            <Dependent Role="release_response">
+              <PropertyRef Name="document_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="note">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="String" Name="user" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="text" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="when" Nullable="false" />
+        </EntityType>
+        <EntityType Name="doctor_patient">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="doctor_id" Nullable="false" />
+          <Property Type="Int32" Name="patient_id" Nullable="false" />
+          <Property Type="Boolean" Name="released" Nullable="false" />
+          <Property Type="Boolean" Name="recent" Nullable="false" />
+          <NavigationProperty Name="patient" Relationship="conciergeModel.doctor_patient_ibfk_2" FromRole="doctor_patient" ToRole="patient" />
+          <NavigationProperty Name="release_request" Relationship="conciergeModel.release_request_ibfk_3" FromRole="doctor_patient" ToRole="release_request" />
+          <NavigationProperty Name="release_response" Relationship="conciergeModel.release_response_ibfk_1" FromRole="doctor_patient" ToRole="release_response" />
+          <NavigationProperty Name="doctor" Relationship="conciergeModel.doctor_patient_ibfk_1" FromRole="doctor_patient" ToRole="doctor" />
+        </EntityType>
+        <EntityType Name="patient">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="first" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="last" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="dob" Nullable="false" />
+          <Property Type="String" Name="gender" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="emergency_contact" Nullable="false" MaxLength="65535" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="detail_item" Relationship="conciergeModel.detail_item_ibfk_2" FromRole="patient" ToRole="detail_item" />
+          <NavigationProperty Name="directives" Relationship="conciergeModel.directives_ibfk_1" FromRole="patient" ToRole="directives" />
+          <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.doctor_patient_ibfk_2" FromRole="patient" ToRole="doctor_patient" />
+        </EntityType>
         <Association Name="detail_item_ibfk_2">
-          <End Role="patient" Type="conciergeModel.patient" Multiplicity="1" />
-          <End Role="detail_item" Type="conciergeModel.detail_item" Multiplicity="*" />
+          <End Type="conciergeModel.patient" Role="patient" Multiplicity="1" />
+          <End Type="conciergeModel.detail_item" Role="detail_item" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="patient">
               <PropertyRef Name="id" />
@@ -618,8 +607,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="directives_ibfk_1">
-          <End Role="patient" Type="conciergeModel.patient" Multiplicity="1" />
-          <End Role="directives" Type="conciergeModel.directives" Multiplicity="*" />
+          <End Type="conciergeModel.patient" Role="patient" Multiplicity="1" />
+          <End Type="conciergeModel.directives" Role="directives" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="patient">
               <PropertyRef Name="id" />
@@ -629,9 +618,55 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="doctor_patient_ibfk_2">
+          <End Type="conciergeModel.patient" Role="patient" Multiplicity="1" />
+          <End Type="conciergeModel.doctor_patient" Role="doctor_patient" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="patient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="doctor_patient">
+              <PropertyRef Name="patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="release_request_ibfk_3">
+          <End Type="conciergeModel.doctor_patient" Role="doctor_patient" Multiplicity="1" />
+          <End Type="conciergeModel.release_request" Role="release_request" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor_patient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="release_request">
+              <PropertyRef Name="doctor_patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="release_response_ibfk_1">
+          <End Type="conciergeModel.doctor_patient" Role="doctor_patient" Multiplicity="1" />
+          <End Type="conciergeModel.release_response" Role="release_response" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor_patient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="release_response">
+              <PropertyRef Name="doctor_patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="document_segment">
+          <Key>
+            <PropertyRef Name="document_id" />
+            <PropertyRef Name="position" />
+          </Key>
+          <Property Type="Int32" Name="document_id" Nullable="false" />
+          <Property Type="Int64" Name="position" Nullable="false" />
+          <Property Type="Binary" Name="data" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="document" Relationship="conciergeModel.document_segment_ibfk_1" FromRole="document_segment" ToRole="document" />
+        </EntityType>
         <Association Name="document_segment_ibfk_1">
-          <End Role="document" Type="conciergeModel.document" Multiplicity="1" />
-          <End Role="document_segment" Type="conciergeModel.document_segment" Multiplicity="*" />
+          <End Type="conciergeModel.document" Role="document" Multiplicity="1" />
+          <End Type="conciergeModel.document_segment" Role="document_segment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="document">
               <PropertyRef Name="id" />
@@ -641,145 +676,259 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="note_ibfk_1">
-          <End Role="document" Type="conciergeModel.document" Multiplicity="1" />
-          <End Role="note" Type="conciergeModel.note" Multiplicity="*" />
+        <EntityType Name="doctor">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="firstname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="lastname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="shortname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address1" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address2" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address3" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="city" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="locality1" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="locality2" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="postal_code" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="country" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="telephone" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="fax" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="email" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="contact_person" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.doctor_patient_ibfk_1" FromRole="doctor" ToRole="doctor_patient" />
+          <NavigationProperty Name="doctor_specialty" Relationship="conciergeModel.doctor_specialty_ibfk_1" FromRole="doctor" ToRole="doctor_specialty" />
+        </EntityType>
+        <Association Name="doctor_patient_ibfk_1">
+          <End Type="conciergeModel.doctor" Role="doctor" Multiplicity="1" />
+          <End Type="conciergeModel.doctor_patient" Role="doctor_patient" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="doctor_patient">
+              <PropertyRef Name="doctor_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="doctor_specialty_ibfk_1">
+          <End Type="conciergeModel.doctor" Role="doctor" Multiplicity="1" />
+          <End Type="conciergeModel.doctor_specialty" Role="doctor_specialty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="doctor_specialty">
+              <PropertyRef Name="doctor_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="location">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Type="String" Name="value" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="procedure">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Type="String" Name="value" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="suffix">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Type="String" Name="value" Nullable="false" MaxLength="12" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="activity">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="doctor_specialty_id" Nullable="false" />
+          <Property Type="DateTime" Name="date" Nullable="false" />
+          <Property Type="Int32" Name="doctor_patient_id" Nullable="false" />
+          <Property Type="String" Name="procedure" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="location" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="document_id" Nullable="false" />
+          <NavigationProperty Name="document" Relationship="conciergeModel.activity_ibfk_4" FromRole="activity" ToRole="document" />
+        </EntityType>
+        <Association Name="activity_ibfk_4">
+          <End Type="conciergeModel.document" Role="document" Multiplicity="1" />
+          <End Type="conciergeModel.activity" Role="activity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="document">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="note">
+            <Dependent Role="activity">
               <PropertyRef Name="document_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="release_request_ibfk_2">
-          <End Role="document" Type="conciergeModel.document" Multiplicity="1" />
-          <End Role="release_request" Type="conciergeModel.release_request" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="document">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="release_request">
-              <PropertyRef Name="document_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="release_request_ibfk_1">
-          <End Role="patient" Type="conciergeModel.patient" Multiplicity="1" />
-          <End Role="release_request" Type="conciergeModel.release_request" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="release_request">
-              <PropertyRef Name="patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="release_response_ibfk_1">
-          <End Role="release_request" Type="conciergeModel.release_request" Multiplicity="1" />
-          <End Role="release_response" Type="conciergeModel.release_response" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="release_request">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="release_response">
-              <PropertyRef Name="request_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="conciergeModelStoreContainer" CdmEntityContainer="conciergeEntities">
-          <EntitySetMapping Name="activity"><EntityTypeMapping TypeName="conciergeModel.activity"><MappingFragment StoreEntitySet="activity">
-            <ScalarProperty Name="activity_id" ColumnName="activity_id" />
-                <ScalarProperty Name="specialty_id" ColumnName="specialty_id" />
-            <ScalarProperty Name="doctor_id" ColumnName="doctor_id" />
-            <ScalarProperty Name="date" ColumnName="date" />
-            <ScalarProperty Name="patient_id" ColumnName="patient_id" />
-            <ScalarProperty Name="procedure" ColumnName="procedure" />
-            <ScalarProperty Name="location" ColumnName="location" />
-            <ScalarProperty Name="document_id" ColumnName="document_id" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="detail_group"><EntityTypeMapping TypeName="conciergeModel.detail_group"><MappingFragment StoreEntitySet="detail_group">
-            <ScalarProperty Name="id" ColumnName="id" />
-            <ScalarProperty Name="name" ColumnName="name" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="detail_item"><EntityTypeMapping TypeName="conciergeModel.detail_item"><MappingFragment StoreEntitySet="detail_item">
-            <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="detail_group_id" ColumnName="detail_group_id" />
-            <ScalarProperty Name="patient_id" ColumnName="patient_id" />
-            <ScalarProperty Name="weight" ColumnName="weight" />
-            <ScalarProperty Name="text" ColumnName="text" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="directives"><EntityTypeMapping TypeName="conciergeModel.directives"><MappingFragment StoreEntitySet="directives">
             <ScalarProperty Name="id" ColumnName="id" />
             <ScalarProperty Name="text" ColumnName="text" />
             <ScalarProperty Name="patient_id" ColumnName="patient_id" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="doctor"><EntityTypeMapping TypeName="conciergeModel.doctor"><MappingFragment StoreEntitySet="doctor">
-            <ScalarProperty Name="id" ColumnName="id" />
-            <ScalarProperty Name="firstname" ColumnName="firstname" />
-            <ScalarProperty Name="lastname" ColumnName="lastname" />
-            <ScalarProperty Name="shortname" ColumnName="shortname" />
-            <ScalarProperty Name="address1" ColumnName="address1" />
-            <ScalarProperty Name="address2" ColumnName="address2" />
-            <ScalarProperty Name="address3" ColumnName="address3" />
-            <ScalarProperty Name="city" ColumnName="city" />
-            <ScalarProperty Name="locality1" ColumnName="locality1" />
-            <ScalarProperty Name="locality2" ColumnName="locality2" />
-            <ScalarProperty Name="postal_code" ColumnName="postal_code" />
-            <ScalarProperty Name="country" ColumnName="country" />
-            <ScalarProperty Name="telephone" ColumnName="telephone" />
-            <ScalarProperty Name="fax" ColumnName="fax" />
-            <ScalarProperty Name="email" ColumnName="email" />
-            <ScalarProperty Name="contact_person" ColumnName="contact_person" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="document"><EntityTypeMapping TypeName="conciergeModel.document"><MappingFragment StoreEntitySet="document">
-            <ScalarProperty Name="id" ColumnName="id" />
+            <ScalarProperty Name="added_date" ColumnName="added_date" />
+                <ScalarProperty Name="id" ColumnName="id" />
             <ScalarProperty Name="checksum" ColumnName="checksum" />
             <ScalarProperty Name="path" ColumnName="path" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="document_segment"><EntityTypeMapping TypeName="conciergeModel.document_segment"><MappingFragment StoreEntitySet="document_segment">
-            <ScalarProperty Name="document_id" ColumnName="document_id" />
-            <ScalarProperty Name="data" ColumnName="data" />
-            <ScalarProperty Name="position" ColumnName="position" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="note"><EntityTypeMapping TypeName="conciergeModel.note"><MappingFragment StoreEntitySet="note">
-            <ScalarProperty Name="id" ColumnName="id" />
-            <ScalarProperty Name="text" ColumnName="text" />
-            <ScalarProperty Name="user" ColumnName="user" />
-            <ScalarProperty Name="document_id" ColumnName="document_id" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="patient"><EntityTypeMapping TypeName="conciergeModel.patient"><MappingFragment StoreEntitySet="patient">
-            <ScalarProperty Name="id" ColumnName="id" />
-            <ScalarProperty Name="first" ColumnName="first" />
-            <ScalarProperty Name="last" ColumnName="last" />
-            <ScalarProperty Name="dob" ColumnName="dob" />
-            <ScalarProperty Name="gender" ColumnName="gender" />
-            <ScalarProperty Name="emergency_contact" ColumnName="emergency_contact" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="release_request"><EntityTypeMapping TypeName="conciergeModel.release_request"><MappingFragment StoreEntitySet="release_request">
-            <ScalarProperty Name="id" ColumnName="id" />
-            <ScalarProperty Name="patient_id" ColumnName="patient_id" />
-            <ScalarProperty Name="document_id" ColumnName="document_id" />
-            <ScalarProperty Name="sent_date" ColumnName="sent_date" />
-            <ScalarProperty Name="state" ColumnName="state" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="release_response"><EntityTypeMapping TypeName="conciergeModel.release_response"><MappingFragment StoreEntitySet="release_response">
-            <ScalarProperty Name="request_id" ColumnName="request_id" />
-            <ScalarProperty Name="received_date" ColumnName="received_date" />
-            <ScalarProperty Name="scanned_date" ColumnName="scanned_date" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="specialty"><EntityTypeMapping TypeName="conciergeModel.specialty"><MappingFragment StoreEntitySet="specialty">
             <ScalarProperty Name="id" ColumnName="id" />
             <ScalarProperty Name="specialty_name" ColumnName="specialty_name" />
             <ScalarProperty Name="subspecialty_name" ColumnName="subspecialty_name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="detail_item">
+            <EntityTypeMapping TypeName="conciergeModel.detail_item">
+              <MappingFragment StoreEntitySet="detail_item">
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="alert" ColumnName="alert" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="text" ColumnName="text" />
+                <ScalarProperty Name="weight" ColumnName="weight" />
+                <ScalarProperty Name="patient_id" ColumnName="patient_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="doctor_specialty">
+            <EntityTypeMapping TypeName="conciergeModel.doctor_specialty">
+              <MappingFragment StoreEntitySet="doctor_specialty">
+                <ScalarProperty Name="specialty_id" ColumnName="specialty_id" />
+                <ScalarProperty Name="doctor_id" ColumnName="doctor_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="release_request">
+            <EntityTypeMapping TypeName="conciergeModel.release_request">
+              <MappingFragment StoreEntitySet="release_request">
+                <ScalarProperty Name="sent_date" ColumnName="sent_date" />
+                <ScalarProperty Name="document_id" ColumnName="document_id" />
+                <ScalarProperty Name="doctor_patient_id" ColumnName="doctor_patient_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="release_response">
+            <EntityTypeMapping TypeName="conciergeModel.release_response">
+              <MappingFragment StoreEntitySet="release_response">
+                <ScalarProperty Name="document_id" ColumnName="document_id" />
+                <ScalarProperty Name="doctor_patient_id" ColumnName="doctor_patient_id" />
+                <ScalarProperty Name="scanned_date" ColumnName="scanned_date" />
+                <ScalarProperty Name="received_date" ColumnName="received_date" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="note">
+            <EntityTypeMapping TypeName="conciergeModel.note">
+              <MappingFragment StoreEntitySet="note">
+                <ScalarProperty Name="when" ColumnName="when" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="text" ColumnName="text" />
+                <ScalarProperty Name="user" ColumnName="user" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="doctor_patient">
+            <EntityTypeMapping TypeName="conciergeModel.doctor_patient">
+              <MappingFragment StoreEntitySet="doctor_patient">
+                <ScalarProperty Name="recent" ColumnName="recent" />
+                <ScalarProperty Name="released" ColumnName="released" />
+                <ScalarProperty Name="patient_id" ColumnName="patient_id" />
+                <ScalarProperty Name="doctor_id" ColumnName="doctor_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="patient">
+            <EntityTypeMapping TypeName="conciergeModel.patient">
+              <MappingFragment StoreEntitySet="patient">
+                <ScalarProperty Name="emergency_contact" ColumnName="emergency_contact" />
+                <ScalarProperty Name="gender" ColumnName="gender" />
+                <ScalarProperty Name="dob" ColumnName="dob" />
+                <ScalarProperty Name="last" ColumnName="last" />
+                <ScalarProperty Name="first" ColumnName="first" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="document_segment">
+            <EntityTypeMapping TypeName="conciergeModel.document_segment">
+              <MappingFragment StoreEntitySet="document_segment">
+                <ScalarProperty Name="data" ColumnName="data" />
+                <ScalarProperty Name="position" ColumnName="position" />
+                <ScalarProperty Name="document_id" ColumnName="document_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetServerDate" FunctionName="conciergeModel.Store.GetServerDate" />
+          <EntitySetMapping Name="doctor">
+            <EntityTypeMapping TypeName="conciergeModel.doctor">
+              <MappingFragment StoreEntitySet="doctor">
+                <ScalarProperty Name="contact_person" ColumnName="contact_person" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="fax" ColumnName="fax" />
+                <ScalarProperty Name="telephone" ColumnName="telephone" />
+                <ScalarProperty Name="country" ColumnName="country" />
+                <ScalarProperty Name="postal_code" ColumnName="postal_code" />
+                <ScalarProperty Name="locality2" ColumnName="locality2" />
+                <ScalarProperty Name="locality1" ColumnName="locality1" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="address3" ColumnName="address3" />
+                <ScalarProperty Name="address2" ColumnName="address2" />
+                <ScalarProperty Name="address1" ColumnName="address1" />
+                <ScalarProperty Name="shortname" ColumnName="shortname" />
+                <ScalarProperty Name="lastname" ColumnName="lastname" />
+                <ScalarProperty Name="firstname" ColumnName="firstname" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="location">
+            <EntityTypeMapping TypeName="conciergeModel.location">
+              <MappingFragment StoreEntitySet="location">
+                <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="procedure">
+            <EntityTypeMapping TypeName="conciergeModel.procedure">
+              <MappingFragment StoreEntitySet="procedure">
+                <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="suffix">
+            <EntityTypeMapping TypeName="conciergeModel.suffix">
+              <MappingFragment StoreEntitySet="suffix">
+                <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="activity">
+            <EntityTypeMapping TypeName="conciergeModel.activity">
+              <MappingFragment StoreEntitySet="activity">
+                <ScalarProperty Name="document_id" ColumnName="document_id" />
+                <ScalarProperty Name="location" ColumnName="location" />
+                <ScalarProperty Name="procedure" ColumnName="procedure" />
+                <ScalarProperty Name="doctor_patient_id" ColumnName="doctor_patient_id" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="doctor_specialty_id" ColumnName="doctor_specialty_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -794,115 +943,92 @@
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="Model1">
-        <EntityTypeShape EntityType="conciergeModel.activity" Width="1.5" PointX="3" PointY="7.5" Height="3.1340950520833326" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.detail_group" Width="1.5" PointX="3.75" PointY="12.25" Height="1.5956835937499996" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.detail_item" Width="1.5" PointX="6" PointY="7.875" Height="2.1725878906249996" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.directives" Width="1.5" PointX="3" PointY="14.875" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.doctor" Width="1.5" PointX="0.75" PointY="11.625" Height="4.2879036458333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.document" Width="1.5" PointX="0.75" PointY="3.875" Height="2.364889322916667" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.document_segment" Width="1.5" PointX="3" PointY="0.75" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.note" Width="1.5" PointX="3" PointY="18.25" Height="1.9802864583333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.patient" Width="1.5" PointX="0.75" PointY="7.5" Height="2.9417936197916683" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.release_request" Width="1.5" PointX="3" PointY="3.75" Height="2.5571907552083353" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.release_response" Width="1.5" PointX="5.25" PointY="4.125" Height="1.787985026041671" IsExpanded="true" />
-        <EntityTypeShape EntityType="conciergeModel.specialty" Width="1.5" PointX="0.75" PointY="16.625" Height="1.7879850260416745" IsExpanded="true" />
-        <AssociationConnector Association="conciergeModel.activity_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="11.626152846153847" />
-          <ConnectorPoint PointX="2.625" PointY="11.251152846153847" />
-          <ConnectorPoint PointX="2.625" PointY="9.0670475260416659" />
-          <ConnectorPoint PointX="2.8229166666666665" PointY="9.0670475260416659" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="9.0670475260416659" />
-          <ConnectorPoint PointX="3" PointY="9.0670475260416659" />
+      <Diagram Name="Model1" ZoomLevel="75">
+        <EntityTypeShape EntityType="conciergeModel.directives" Width="1.5" PointX="6.625" PointY="11.25" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.document" Width="1.5" PointX="4.875" PointY="3.5" Height="2.3648893229166665" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.specialty" Width="1.5" PointX="0.625" PointY="10.375" Height="1.7879850260416745" IsExpanded="true" />
+        <EntityTypeShape EntityType="conciergeModel.detail_item" Width="1.5" PointX="8.25" PointY="7.625" Height="2.1725878906250031" />
+        <EntityTypeShape EntityType="conciergeModel.doctor_specialty" Width="1.5" PointX="1.875" PointY="14" Height="1.9802864583333388" />
+        <EntityTypeShape EntityType="conciergeModel.release_request" Width="1.5" PointX="8.25" PointY="3.875" Height="2.172587890624996" />
+        <EntityTypeShape EntityType="conciergeModel.release_response" Width="1.5" PointX="8.25" PointY="0.75" Height="2.3648893229166674" />
+        <AssociationConnector Association="conciergeModel.doctor_specialty_ibfk_2" >
+          <ConnectorPoint PointX="2.125" PointY="11.268992513020834" />
+          <ConnectorPoint PointX="2.84375" PointY="11.268992513020834" />
+          <ConnectorPoint PointX="2.84375" PointY="14" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.activity_ibfk_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="8.2210237630208329" />
-          <ConnectorPoint PointX="2.6041666666666665" PointY="8.2210237630208329" />
-          <ConnectorPoint PointX="2.7708333333333335" PointY="8.2210237630208329" />
-          <ConnectorPoint PointX="2.8229166666666665" PointY="8.2210237630208329" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="8.2210237630208329" />
-          <ConnectorPoint PointX="3" PointY="8.2210237630208329" />
+        <AssociationConnector Association="conciergeModel.release_request_ibfk_2" >
+          <ConnectorPoint PointX="6.375" PointY="4.961293945312498" />
+          <ConnectorPoint PointX="8.25" PointY="4.961293945312498" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.activity_ibfk_3" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="16.688460538461534" />
-          <ConnectorPoint PointX="2.8125" PointY="16.125960538461534" />
-          <ConnectorPoint PointX="2.8125" PointY="9.8818232890624991" />
-          <ConnectorPoint PointX="2.8229166666666665" PointY="9.8818232890624991" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="9.8818232890624991" />
-          <ConnectorPoint PointX="3" PointY="9.8818232890624991" />
+        <AssociationConnector Association="conciergeModel.release_response_ibfk_3" >
+          <ConnectorPoint PointX="6.15625" PointY="3.5" />
+          <ConnectorPoint PointX="6.15625" PointY="2.8576871744791674" />
+          <ConnectorPoint PointX="8.25" PointY="2.8576871744791674" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.activity_ibfk_4" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="6.2145037075320522" />
-          <ConnectorPoint PointX="2.5660744349011213" PointY="6.530578142433173" />
-          <ConnectorPoint PointX="2.6839255650988791" PointY="6.6484292726309313" />
-          <ConnectorPoint PointX="2.6875" PointY="6.6520037075320522" />
-          <ConnectorPoint PointX="2.6875" PointY="8.64403564453125" />
-          <ConnectorPoint PointX="2.8229166666666665" PointY="8.64403564453125" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="8.64403564453125" />
-          <ConnectorPoint PointX="3" PointY="8.64403564453125" />
+        <EntityTypeShape EntityType="conciergeModel.note" Width="1.5" PointX="4.375" PointY="0.75" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="conciergeModel.doctor_patient" Width="1.5" PointX="10.75" PointY="12.25" Height="2.749492187499996" />
+        <EntityTypeShape EntityType="conciergeModel.patient" Width="1.5" PointX="5.5" PointY="9" Height="2.7494921875000102" />
+        <AssociationConnector Association="conciergeModel.detail_item_ibfk_2" >
+          <ConnectorPoint PointX="7" PointY="9.4949446614583337" />
+          <ConnectorPoint PointX="8.25" PointY="9.4949446614583337" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.detail_item_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="5.25" PointY="13.047841796875" />
-          <ConnectorPoint PointX="6.75" PointY="13.047841796875" />
-          <ConnectorPoint PointX="6.75" PointY="10.047587890625" />
+        <AssociationConnector Association="conciergeModel.directives_ibfk_1" >
+          <ConnectorPoint PointX="6.25" PointY="11.74949218750001" />
+          <ConnectorPoint PointX="6.25" PointY="13.287985026041667" />
+          <ConnectorPoint PointX="7.375" PointY="13.287985026041667" />
+          <ConnectorPoint PointX="7.375" PointY="13.037985026041666" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.detail_item_ibfk_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="1.5" PointY="7.5" />
-          <ConnectorPoint PointX="1.5" PointY="7.25" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="7.2499999999999991" />
-          <ConnectorPoint PointX="2.5833333333333335" PointY="7.25" />
-          <ConnectorPoint PointX="2.6041666666666665" PointY="7.2499999999999991" />
-          <ConnectorPoint PointX="2.7708333333333335" PointY="7.25" />
-          <ConnectorPoint PointX="2.8229166666666665" PointY="7.2499999999999991" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="7.25" />
-          <ConnectorPoint PointX="5.625" PointY="7.25" />
-          <ConnectorPoint PointX="5.625" PointY="8.9612939453125" />
-          <ConnectorPoint PointX="6" PointY="8.9612939453125" />
+        <AssociationConnector Association="conciergeModel.doctor_patient_ibfk_2" >
+          <ConnectorPoint PointX="7" PointY="10.619944661458334" />
+          <ConnectorPoint PointX="11.026040416666666" PointY="10.619944661458334" />
+          <ConnectorPoint PointX="11.192707083333334" PointY="10.619944661458334" />
+          <ConnectorPoint PointX="11.5312525" PointY="10.619944661458334" />
+          <ConnectorPoint PointX="11.5312525" PointY="12.25" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.directives_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="10.379484927483976" />
-          <ConnectorPoint PointX="2.5660744349011213" PointY="10.695559362385096" />
-          <ConnectorPoint PointX="2.6839255650988791" PointY="10.813410492582854" />
-          <ConnectorPoint PointX="2.6875" PointY="10.816984927483976" />
-          <ConnectorPoint PointX="2.6875" PointY="15.768992513020834" />
-          <ConnectorPoint PointX="2.7291666666666665" PointY="15.768992513020832" />
-          <ConnectorPoint PointX="2.9895833333333335" PointY="15.768992513020834" />
-          <ConnectorPoint PointX="3" PointY="15.768992513020834" />
+        <AssociationConnector Association="conciergeModel.release_request_ibfk_3" >
+          <ConnectorPoint PointX="11.10937375" PointY="12.25" />
+          <ConnectorPoint PointX="11.10937375" PointY="4.9612939453125" />
+          <ConnectorPoint PointX="9.75" PointY="4.9612939453125" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.document_segment_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="1.5" PointY="3.875" />
-          <ConnectorPoint PointX="1.5" PointY="1.6439925130208337" />
-          <ConnectorPoint PointX="3" PointY="1.6439925130208337" />
+        <AssociationConnector Association="conciergeModel.release_response_ibfk_1" >
+          <ConnectorPoint PointX="11.921878750000001" PointY="12.25" />
+          <ConnectorPoint PointX="11.921878750000001" PointY="1.9324446614583331" />
+          <ConnectorPoint PointX="9.75" PointY="1.9324446614583331" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.note_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="6.23296524599359" />
-          <ConnectorPoint PointX="2.5660744349011213" PointY="6.5490396808947109" />
-          <ConnectorPoint PointX="2.6839255650988791" PointY="6.6668908110924692" />
-          <ConnectorPoint PointX="2.90625" PointY="6.88921524599359" />
-          <ConnectorPoint PointX="2.90625" PointY="19.240143229166666" />
-          <ConnectorPoint PointX="3" PointY="19.240143229166666" />
+        <EntityTypeShape EntityType="conciergeModel.document_segment" Width="1.5" PointX="7.125" PointY="17.875" Height="1.7879850260416674" />
+        <AssociationConnector Association="conciergeModel.document_segment_ibfk_1" >
+          <ConnectorPoint PointX="5.15625" PointY="6.0571907552083326" />
+          <ConnectorPoint PointX="5.15625" PointY="18.768992513020834" />
+          <ConnectorPoint PointX="7.125" PointY="18.768992513020834" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.release_request_ibfk_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="5.0134993537660257" />
-          <ConnectorPoint PointX="3" PointY="5.0134993537660257" />
+        <EntityTypeShape EntityType="conciergeModel.doctor" Width="1.5" PointX="10.375" PointY="15.75" Height="4.48020507812501" />
+        <AssociationConnector Association="conciergeModel.doctor_patient_ibfk_1" >
+          <ConnectorPoint PointX="11.3125" PointY="15.75" />
+          <ConnectorPoint PointX="11.3125" PointY="14.9994921875" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.release_request_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="7.5" />
-          <ConnectorPoint PointX="2.625" PointY="7.125" />
-          <ConnectorPoint PointX="2.625" PointY="5.6915970544871808" />
-          <ConnectorPoint PointX="3" PointY="5.6915970544871808" />
+        <AssociationConnector Association="conciergeModel.doctor_specialty_ibfk_1" >
+          <ConnectorPoint PointX="10.375" PointY="17.466095377604169" />
+          <ConnectorPoint PointX="5.239583333333333" PointY="17.466095377604169" />
+          <ConnectorPoint PointX="5.072916666666667" PointY="17.466095377604169" />
+          <ConnectorPoint PointX="2.625" PointY="17.466095377604169" />
+          <ConnectorPoint PointX="2.625" PointY="15.980286458333339" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.release_response_ibfk_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="5.0189925130208355" />
-          <ConnectorPoint PointX="5.25" PointY="5.0189925130208355" />
+        <EntityTypeShape EntityType="conciergeModel.location" Width="1.5" PointX="0.75" PointY="0.75" Height="1.2110807291666674" />
+        <EntityTypeShape EntityType="conciergeModel.procedure" Width="1.5" PointX="0.75" PointY="2.75" Height="1.2110807291666674" />
+        <EntityTypeShape EntityType="conciergeModel.suffix" Width="1.5" PointX="0.75" PointY="4.75" Height="1.2110807291666674" />
+        <EntityTypeShape EntityType="conciergeModel.activity" Width="1.5" PointX="3" PointY="7.375" Height="2.5571907552083388" />
+        <AssociationConnector Association="conciergeModel.activity_ibfk_4" >
+          <ConnectorPoint PointX="4.9843725" PointY="6.0571907552083326" />
+          <ConnectorPoint PointX="4.9843725" PointY="8.15625" />
+          <ConnectorPoint PointX="4.5" PointY="8.15625" />
         </AssociationConnector>
-      </Diagram>
+        </Diagram>
     </Diagrams>
   </Designer>
 </edmx:Edmx>

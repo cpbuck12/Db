@@ -20,6 +20,7 @@ using System.Collections;
 using System.Reflection;
 using System.Resources;
 using Microsoft.VisualBasic;
+using Ionic.Zip;
 
 namespace Concierge_Manager
 {
@@ -166,6 +167,22 @@ namespace Concierge_Manager
             }
             return result;
         }
+        public Hashtable BrowseDocuments()
+        {
+            var result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                Db.Db db = Db.Db.Instance();
+                result["documents"] = db.BrowseDocuments();
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = ex.Message;
+            }
+            return result;
+        }
         public Hashtable GetSpecialties()
         {
             var result = new Hashtable();
@@ -181,6 +198,11 @@ namespace Concierge_Manager
                 result["reason"] = "Could not get patients";
             }
             return result;
+        }
+        public byte[] DownloadFile(int fileId)
+        {
+            Db.Db db = Db.Db.Instance();
+            return db.DownloadFile(fileId);
         }
         public Hashtable GetDoctors()
         {
@@ -269,9 +291,188 @@ namespace Concierge_Manager
         {
             return original.Replace(Guid()+tag,value);
         }
+        string Zebra(int i)
+        {
+            if ((i / 2) > 0)
+                return "odd";
+            else
+                return "even";
+        }
+
         public Hashtable CreateWebsite(XElement root)
         {
-            // N.B. to boostrap the development process, lots of hard coding
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try 
+	        {
+                Db.Db db = Db.Db.Instance();
+                string destination = root.XPathSelectElement("//destination").Value;
+                int id = int.Parse(root.XPathSelectElement("//id").Value);
+                Directory.CreateDirectory(destination + @"\info");
+                Directory.CreateDirectory(destination + @"\info\activities");
+                Stream libStream = GetResourceAsStream("library_zip");
+                using (ZipFile zf = ZipFile.Read(libStream))
+                {
+                    foreach (ZipEntry e in zf)
+                    {
+                        e.Extract(destination+@"\info");
+                    }
+                }
+
+                string index_htm = GetResource("index_htm");
+                WriteFile(destination + @"\index.html", index_htm);
+                Hashtable h = db.GetPatient(id);
+                string main_htm = GetResource("main_htm");
+                h =(Hashtable) h["data"];
+                main_htm = ReplaceGuid(main_htm, "name", string.Format("{0},{1}", h["last"], h["first"]));
+                object o = h["dob"];
+                DateTime o_dt = (DateTime)o;
+                main_htm = ReplaceGuid(main_htm, "dob", ((DateTime)h["dob"]).ToString());
+                main_htm = ReplaceGuid(main_htm, "gender", h["gender"] as string);
+                main_htm = ReplaceGuid(main_htm, "emergencycontact", h["emergency_contact"] as string);
+                StringBuilder sb = new StringBuilder();
+                int i = 0;
+
+                Db.doctor[] alldoctors = db.GetDoctors(recentOnly: true, patient: id);
+                sb.AppendLine("<table class='doctors'><thead><tr><th>Name</th><th>id</id></tr></thead><tbody>");
+                foreach (var ddr in alldoctors)
+                {
+                    sb.AppendLine("<tr><td>" + ddr.lastname + "," + ddr.firstname + "</td><td>" + ddr.id.ToString() + "</td></tr>");
+                }
+                sb.AppendLine("</tbody></table>");
+                main_htm = ReplaceGuid(main_htm, "doctors", sb.ToString());
+                sb.Clear();
+                sb.AppendLine("<table><thead><tr><th>YYYY-MM-DD</th><th>Procedure</th><th>Specialty</th><th>Practitioner</th><th>Location</th><th>doctor_id</th><th>document_id</th></tr></thead><tbody>");
+                Hashtable activities = db.GetActivities(recent: true, patient: id);
+                List<Hashtable> activitiesList = activities["items"] as List<Hashtable>;
+                foreach (Hashtable activity in activitiesList)
+                {
+                    DateTime dt = (DateTime)activity["binarydate"];
+                    Db.doctor doctor = activity["doctor"] as Db.doctor;
+                    sb.AppendLine(string.Format("<tr><td>{0}</td><td>{1}</td><td>{2}/{3}</td><td>{4},{5}</td><td>{6}</td><td>{7}</td><td>{8}</td></tr>",
+                        dt.ToString("yyyy-MM-dd"),
+                        activity["procedure"],
+                        activity["specialty"],
+                        activity["subspecialty"],
+                        doctor.lastname,
+                        doctor.firstname,
+                        activity["location"],
+                        activity["doctorid"],
+                        activity["documentid"]));
+                }
+                sb.AppendLine("</tbody></table>");
+                main_htm = ReplaceGuid(main_htm, "allprocedures", sb.ToString());
+                sb.Clear();
+                foreach(var ddr in alldoctors)
+                {
+                    sb.AppendLine(string.Format("<a name='doctor{0}'/>", ddr.id));
+                    sb.AppendLine(string.Format("<br /><h4>Practitioner:{0},{1}</h4><br />", ddr.lastname, ddr.firstname));
+                    sb.AppendLine(string.Format("<table class='doctor{0}'><thead><tr><th>YYYY-MM-DD</th><th>Procedure</th><th>docment_id</th></tr></thead><tbody>", ddr.id));
+                    Hashtable actsHashtable = db.GetActivities(recent: true, patient: id, doctor: ddr.id);
+                    List<Hashtable> acts = actsHashtable["items"] as List<Hashtable>;
+                    foreach (Hashtable act in acts)
+                    {
+                        DateTime dt = (DateTime)act["binarydate"];
+                        string date = dt.ToString("yyyy-MM-dd");
+                        sb.AppendLine(string.Format("<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>",
+                            date,
+                            act["procedure"],
+                            act["documentid"]));
+                    }
+                    sb.AppendLine("</tbody></table><br />");
+                    sb.AppendLine(string.Format("<input type='button' class='openreport{0}' value='Open Procedure Report' />", ddr.id));
+                    sb.AppendLine("<input type='button' class='gotosummary' value='Go back to summary' /><br />");
+                }
+                main_htm = ReplaceGuid(main_htm, "doctordocuments", sb.ToString());
+                WriteFile(destination + @"\info\main.html", main_htm);
+                
+                Db.detail_item[] details = db.GetDetails(patient: id);
+                if (details == null)
+                {
+                    main_htm = ReplaceGuid(main_htm, "detail_items", "");
+                }
+                else
+                {
+                    foreach (var detail in details)
+                    {
+                        sb.Append(string.Format("<div class='detail-title {0}'>{1}</div>", Zebra(i++), detail.title));
+                        string[] lines = detail.text.Trim().Split(new char[] { '\n' });
+                        foreach (string line in lines)
+                        {
+                            sb.Append(string.Format("<div class='{0}'>{1}</div>", Zebra(i++), line));
+                        }
+                    }
+                    main_htm = ReplaceGuid(main_htm, "detail_items", sb.ToString());
+                }
+
+                sb.Clear();
+                Db.doctor[] drs = db.GetDoctors(recentOnly: true, patient: id);
+                if (drs == null)
+                    throw new Exception("No recent doctors");
+                foreach (var d in drs)
+                {
+                    sb.Append(string.Format("<div class='name {0}'>",Zebra(i++)));
+                    if (d.firstname != string.Empty)
+                        sb.Append(d.firstname);
+                    if (d.lastname != string.Empty)
+                        sb.Append(d.lastname);
+                    sb.Append("</div>");
+                    if (d.telephone != string.Empty)
+                    {
+                        sb.Append(string.Format("<div class='{0}'>Phone:",Zebra(i++)));
+                        sb.Append(d.telephone);
+                        sb.Append("</div>");
+                    }
+                }
+                main_htm = ReplaceGuid(main_htm, "doctors", sb.ToString());
+                sb.Clear();
+                WriteFile(destination + "main.html", main_htm);
+                 
+            }
+	        catch (Exception ex)
+	        {
+                result["status"] = "error";
+                result["reason"] = ex.Message;
+	        }
+            return result;
+        }
+        private Stream GetResourceAsStream(string name)
+        {
+            Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("Concierge_Manager.Properties.Resources.resources");
+            ResourceReader reader = new ResourceReader(stream);
+            string resourceType = "";
+            byte[] data = null;
+            reader.GetResourceData(name, out resourceType , out data );
+            MemoryStream ms = new MemoryStream(data, 4, data.Length - 4); // it seems that we are getting the file length in the first four bytes
+            return ms;
+        }
+        private string GetResource(string name)
+        {
+            string result = string.Empty;
+            Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("Concierge_Manager.Properties.Resources.resources");
+            IResourceReader reader = new ResourceReader(stream);
+            var query = from DictionaryEntry entry in reader
+                        where entry.Key as string == name
+                        select entry.Value;
+            if (query.Count() == 1)
+            {
+                result = query.First() as string;
+            }
+            reader.Dispose();
+            stream.Dispose();
+            return result;
+        }
+        private void WriteFile(string name, string value)
+        {
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            FileStream fs = new FileStream(name, FileMode.Create, FileAccess.Write);
+            byte[] data = encoding.GetBytes(value);
+            fs.Write(data, 0, data.Length);
+            fs.Close();
+            fs.Dispose();
+        }
+        public Hashtable CreateWebsite_(XElement root)
+        {
             ASCIIEncoding encoding = new ASCIIEncoding();
             Hashtable result = new Hashtable();
             result["status"] = "ok";
@@ -286,8 +487,6 @@ namespace Concierge_Manager
             string rootDir = @"c:\temp\temp";
             Directory.Delete(rootDir, true);
             Directory.CreateDirectory(rootDir);
-            Directory.CreateDirectory(rootDir + "\\js");
-            Directory.CreateDirectory(rootDir + "\\css");
             Directory.CreateDirectory(rootDir + "\\activities");
             FileStream fs;
             fs = new FileStream(rootDir + @"\index.htm", FileMode.Create, FileAccess.Write);
@@ -439,6 +638,24 @@ namespace Concierge_Manager
             }
             return result;
         }
+        public Hashtable DeleteDocument(XElement root)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string id = root.XPathSelectElement("//id").Value;
+                Db.Db db = Db.Db.Instance();
+                db.DeleteDocument(int.Parse(id));
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = ex.Message;
+            }
+            return result;
+        }
+
         public Hashtable AddSpecialty(XElement root)
         {
             var result = new Hashtable();

@@ -48,6 +48,18 @@ namespace Concierge_Manager
             response.Status = HttpStatusCode.OK;
             response.ContentType = "applixation/text";
         }
+        public bool PdfReply(byte[] payload, IHttpResponse response)
+        {
+            if (payload == null || payload.Length <= 0)
+            {
+                response.Status = HttpStatusCode.NotFound;
+                return false;
+            }
+            response.Body.Write(payload, 0, payload.Length);
+            response.Status = HttpStatusCode.OK;
+            response.ContentType = "application/pdf";
+            return true;
+        }
         public bool GetFile(string[] parts, IHttpResponse response)
         {
             string basePath;
@@ -113,6 +125,11 @@ namespace Concierge_Manager
                 string[] files = { "work.htm" };
                 return GetFile(files, response);
             }
+            else if (request.UriParts[0].ToLower() == "downloadfile")
+            {
+                int fileId = int.Parse(request.UriParts[1].Split(new char[] { '.' })[0]);
+                return PdfReply(objectForScripting.DownloadFile(fileId),response);
+            }
             else if (request.UriParts[0].ToLower() == "ajax")
             {
                 try
@@ -121,6 +138,9 @@ namespace Concierge_Manager
 
                     switch (request.UriParts[1])
                     {
+                        case "DeleteDocument":
+                            AjaxReply(objectForScripting.DeleteDocument(xmlRequest), response);
+                            return true;
                         case "CreateWebsite":
                             AjaxReply(objectForScripting.CreateWebsite(xmlRequest), response);
                             return true;
@@ -159,6 +179,9 @@ namespace Concierge_Manager
                             return true;
                         case "GetSpecialties":
                             AjaxReply(objectForScripting.GetSpecialties(), response);
+                            return true;
+                        case "BrowseDocuments":
+                            AjaxReply(objectForScripting.BrowseDocuments(), response);
                             return true;
                     }
                     return false; // TODO finish this

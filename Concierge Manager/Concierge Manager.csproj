@@ -69,6 +69,9 @@
     <Reference Include="HttpServer">
       <HintPath>..\..\WebServer\HttpServer\bin\Debug\HttpServer.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\..\..\DotNetZipLib-DevKit-v1.9\zip-v1.9\Debug\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -94,6 +97,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\full.htm" />
     <Content Include="Resources\index.htm" />
     <Content Include="Resources\main.css" />
     <Content Include="Resources\main.htm" />
@@ -113,6 +117,7 @@
     <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_a83300_256x240.png" />
     <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_cccccc_256x240.png" />
     <Content Include="web\public\css\jquery-ui-theme\images\ui-icons_ffffff_256x240.png" />
+    <None Include="Resources\library.zip" />
     <None Include="web\public\css\jquery-ui-theme\jquery-ui-1.9.2.custom.css" />
     <None Include="web\public\css\jquery-ui-theme\jquery-ui-1.9.2.custom.min.css" />
     <None Include="web\public\css\jquery-ui.css" />
