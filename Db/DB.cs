@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Security.Principal;
-
+using System.Drawing;
 namespace Db
 {
     public class Db
@@ -183,7 +183,7 @@ namespace Db
                 return doctors;
             }
         }
-        public doctor[] GetDoctors()
+        public doctor[] _GetDoctors()
         {
             conciergeEntities conciergeEntities;
             using (conciergeEntities = new conciergeEntities())
@@ -277,6 +277,185 @@ namespace Db
 		
 	        }
         }*/
+        private string Explain(Exception ex)
+        {
+            if (ex.InnerException == null)
+                return ex.Message;
+            else
+                return string.Format(ex.Message + " ::::" + ex.InnerException.Message);
+        }
+        public Hashtable GetDoctors()
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> doctorList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    foreach (doctor d in (from d in ent.doctor select d))
+                    {
+                        Hashtable next = new Hashtable();
+                        next["address1"] = d.address1;
+                        next["address2"] = d.address2;
+                        next["address3"] = d.address3;
+                        next["city"] = d.city;
+                        next["contact_person"] = d.contact_person;
+                        next["country"] = d.country;
+                        next["email"] = d.email;
+                        next["fax"] = d.fax;
+                        next["firstname"] = d.firstname;
+                        next["id"] = d.id;
+                        next["lastname"] = d.lastname;
+                        next["locality1"] = d.locality1;
+                        next["locality2"] = d.locality2;
+                        next["postal_cod"] = d.postal_code;
+                        next["shortname"] = d.shortname;
+                        next["telephone"] = d.telephone;
+                        doctorList.Add(next);
+                    }
+                    result["data"] = doctorList;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable GetPatients()
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> patientList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    foreach (patient p in (from p in ent.patient select p))
+                    {                  
+                        Hashtable next = new Hashtable();
+                        next["doc"] = p.dob;
+                        next["emergency_contact"] = p.emergency_contact;
+                        next["first"] = p.first;
+                        next["gender"] = p.gender;
+                        next["id"] = p.id;
+                        next["last"] = p.last;
+                        next["stamp_id"] = p.stamp_id;
+                        patientList.Add(next);
+                    }
+                    result["data"] = patientList;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable GetSuffixes()
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> suffixList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    foreach (suffix s in (from s in ent.suffix select s))
+                    {
+                        Hashtable next = new Hashtable();
+                        next["value"] = s.value;
+                        suffixList.Add(next);
+                    }
+                    result["data"] = suffixList;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable GetProcedures()
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> procedureList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    foreach (procedure p in (from p in ent.procedure select p))
+                    {
+                        Hashtable next = new Hashtable();
+                        next["value"] = p.value;
+                        procedureList.Add(next);
+                    }
+                    result["data"] = procedureList;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable GetSpecialties()
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> specialtyList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    foreach (specialty sp in (from sp in ent.specialty select sp))
+                    {
+                        Hashtable next = new Hashtable();
+                        next["specialty"] = sp.specialty_name;
+                        next["subspecialty"] = sp.subspecialty_name;
+                        specialtyList.Add(next);
+                    }
+                    result["data"] = specialtyList;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable GetLocations()
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> locationList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    foreach (location l in (from l in ent.location select l))
+                    {
+                        Hashtable next = new Hashtable();
+                        next["value"] = l.value;
+                        locationList.Add(next);
+                    }
+                    result["data"] = locationList;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
         public Hashtable GetActivities(bool recent, int patient, int doctor)
         {
             conciergeEntities conciergeEntities;
@@ -753,6 +932,155 @@ namespace Db
                 return 0;
             }
         }
+        public Hashtable GetStamp(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            conciergeEntities conciergeEntities;
+            try
+            {
+                if (values["patient_id"] == null)
+                    throw new Exception("patient_id not specified when calling GetStamp");
+                int patient_id = (int)values["patient_id"];
+                using (conciergeEntities = new conciergeEntities())
+                {
+                    conciergeEntities.Connection.Open();
+                    var patientQuery = (from pa in conciergeEntities.patient
+                                        where pa.id == patient_id
+                                        select pa);
+                    if (patientQuery.Count() < 1)
+                        throw new Exception("Invalid patient_id when calling GetStamp");
+                    patient p = patientQuery.First();
+                    if (p.stamp_id != null)
+                    {
+                        int stamp_id = p.stamp_id ?? -1;
+                        var stampQuery = (from st in conciergeEntities.stamp
+                                          where st.id == stamp_id
+                                          select st);
+                        if (stampQuery.Count() < 1)
+                            throw new Exception("The patient has an invalid stamp_id");
+                        stamp stamp = stampQuery.First();
+                        var stampSegmentQuery = (from ss in conciergeEntities.stamp_segment
+                                                 where ss.id == stamp_id
+                                                 orderby ss.position
+                                                 select ss.data);
+                        if (stampSegmentQuery.Count() < 1)
+                            throw new Exception("The patient has an empty stamp");
+                        MemoryStream ms = new MemoryStream();
+                        foreach (byte[] data in stampSegmentQuery)
+                            ms.Write(data, 0, data.Length);
+                        ms.Position = 0;
+                        Image image = Image.FromStream(ms, false, true);
+                        ms.Dispose();
+                        if (image == null)
+                            throw new Exception("The patient has a corrupted stamp");
+                        result["image"] = image;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable AddStamp(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            conciergeEntities conciergeEntities;
+            try
+            {
+                if (values["image"] == null)
+                    throw new Exception("image not specified when calling AddStamp");
+                Image image = values["image"] as Image;
+                if (values["patient_id"] == null)
+                    throw new Exception("patient_id not specified when calling AddStamp");
+                int patient_id = (int)values["patient_id"];
+                using (conciergeEntities = new conciergeEntities())
+                {
+                    conciergeEntities.Connection.Open();
+                    System.Data.Objects.ObjectParameter op = new System.Data.Objects.ObjectParameter("CurrentDate", typeof(DateTime));
+                    conciergeEntities.GetServerDate(op);
+                    DateTime now = (DateTime)op.Value;
+                    using (DbTransaction transaction = conciergeEntities.Connection.BeginTransaction())
+                    {
+                        var query = from p in conciergeEntities.patient
+                                    where p.id == patient_id
+                                    select p;
+                        if (query.Count() < 1)
+                            throw new Exception("Invalid patient_id when calling AddStamp");
+                        patient pat = query.First();
+                        int stamp_id;
+                        if (pat.stamp_id != null)
+                        {
+                            stamp_id = (int)pat.stamp_id;
+                            pat.stamp_id = null;
+                            conciergeEntities.SaveChanges();
+                            var querySegments = (from ss in conciergeEntities.stamp_segment
+                                                 where ss.id == stamp_id
+                                                 select ss);
+                            foreach (stamp_segment ss in querySegments)
+                            {
+                                conciergeEntities.stamp_segment.DeleteObject(ss);
+                            }
+                            conciergeEntities.SaveChanges();
+                            var queryStamp = (from st in conciergeEntities.stamp
+                                              where st.id == stamp_id
+                                              select st);
+                            conciergeEntities.stamp.DeleteObject(queryStamp.First());
+                            conciergeEntities.SaveChanges();
+                        }
+                        MemoryStream ms = new MemoryStream();
+                        image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                        stamp stamp = conciergeEntities.stamp.CreateObject();
+                        stamp.added_date = now;
+                        conciergeEntities.stamp.AddObject(stamp);
+                        conciergeEntities.SaveChanges();
+                        stamp_id = (from st in conciergeEntities.stamp
+                                        select st.id).Max();
+                        const int MaxSegSize = 0x4000;
+                        int fullSegments = (int)(ms.Length / MaxSegSize);
+                        int leftOver = (int)(ms.Length % MaxSegSize);
+                        ms.Position = 0;
+                        for (int iSegment = 0; iSegment < fullSegments; iSegment++)
+                        {
+                            byte[] buffer = new byte[MaxSegSize];
+                            int position = iSegment * MaxSegSize;
+                            ms.Read(buffer, 0, MaxSegSize);
+                            stamp_segment stamp_segment = conciergeEntities.stamp_segment.CreateObject();
+                            stamp_segment.id = stamp_id;
+                            stamp_segment.data = buffer;
+                            stamp_segment.position = iSegment;
+                            conciergeEntities.stamp_segment.AddObject(stamp_segment);
+                        }
+                        if (leftOver > 0)
+                        {
+                            byte[] buffer = new byte[leftOver];
+                            int position = (int)(ms.Length - leftOver);
+                            ms.Read(buffer, 0, leftOver);
+                            stamp_segment stamp_segment = conciergeEntities.stamp_segment.CreateObject();
+                            stamp_segment.id = stamp_id;
+                            stamp_segment.data = buffer;
+                            stamp_segment.position = fullSegments;
+                            conciergeEntities.stamp_segment.AddObject(stamp_segment);
+                        }
+                        conciergeEntities.SaveChanges();
+                        pat.stamp_id = stamp_id;
+                        conciergeEntities.SaveChanges();
+                        transaction.Commit();
+                        conciergeEntities.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
         public Hashtable AddActivities(List<Hashtable> items)
         {
             Hashtable result = new Hashtable();
@@ -914,7 +1242,7 @@ namespace Db
                             conciergeEntities.SaveChanges();
                             conciergeEntities.Refresh(System.Data.Objects.RefreshMode.StoreWins, conciergeEntities.activity);
                         }
-                        catch (Exception ex)
+                        catch (Exception )
                         {
 
                             throw;
