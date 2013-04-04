@@ -405,6 +405,69 @@ namespace Db
             }
             return result;
         }
+        public Hashtable GetPatientSpecialties(int patient_id)
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> specialtyList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                 /*
+                    var q = from s in ent.specialty
+                            let count = (from p in ent.patient
+                                         join dp in ent.doctor_patient on p.id equals dp.patient_id
+                                         join a in ent.activity on dp.id equals a.doctor_patient_id
+                                         join ds in ent.doctor_specialty on a.doctor_specialty_id equals ds.id
+                                         where (p.id == patient_id && s.id == ds.specialty_id)
+                                         select a).Count()
+                            join ds in ent.doctor_specialty on s.id equals ds.specialty_id
+                            join a in ent.activity on ds.id equals a.doctor_specialty_id
+                            join dp in ent.doctor_patient on a.doctor_patient_id equals dp.id
+                            where 
+                            orderby s.specialty_name, s.subspecialty_name ascending
+                            select new { Specialty = s, Count = count };
+                    foreach (var item in q)
+                    {
+                        Hashtable h = new Hashtable();
+                        h["specialty"] = item.Specialty.specialty_name;
+                        h["subspecialty"] = item.Specialty.subspecialty_name;
+                        h["id"] = item.Specialty.id;
+                        h["count"] = item.Count;
+                        specialtyList.Add(h);
+                    }
+                  */
+                    ArrayList specialties = new ArrayList();
+                    foreach (specialty s in (from s in ent.specialty select s))
+                    {
+                        specialties.Add(s);
+                    }
+                    foreach(specialty s in specialties)
+                    {
+                        int count = (from p in ent.patient
+                                     join dp in ent.doctor_patient on p.id equals dp.patient_id
+                                     join a in ent.activity on dp.id equals a.doctor_patient_id
+                                     join ds in ent.doctor_specialty on a.doctor_specialty_id equals ds.id
+                                     where (p.id == patient_id && s.id == ds.specialty_id)
+                                     select a).Count();
+                        Hashtable h = new Hashtable();
+                        h["specialty"] = s.specialty_name;
+                        h["subspecialty"] = s.subspecialty_name;
+                        h["id"] = s.id;
+                        h["count"] = count;
+                        specialtyList.Add(h);
+                    }
+                }
+                result["data"] = specialtyList;
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
         public Hashtable GetSpecialties()
         {
             Hashtable result = new Hashtable();
@@ -419,6 +482,7 @@ namespace Db
                         Hashtable next = new Hashtable();
                         next["specialty"] = sp.specialty_name;
                         next["subspecialty"] = sp.subspecialty_name;
+                        next["id"] = sp.id;
                         specialtyList.Add(next);
                     }
                     result["data"] = specialtyList;
@@ -803,6 +867,26 @@ namespace Db
                                  select b.ToString("X2"));
         }
         #endregion 
+        public Hashtable AddPatient(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            try
+            {
+                string firstName = (values["firstName"] ?? string.Empty) as string;
+                string lastName = (values["lastName"] ?? string.Empty) as string;
+                string dateOfBirth = (values["dateOfBirth"] ?? string.Empty) as string;
+                string gender = (values["gender"] ?? string.Empty) as string;
+                string emergencyContact = (values["emergencyContact"] ?? string.Empty) as string;
+                AddPatient(firstName, lastName, dateOfBirth, gender, emergencyContact);
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            result["status"] = "ok";
+            return result;
+        }
         // called by AddPatient(XElement)
         public void AddPatient(string firstName, string lastName,string dateOfBirth,string gender,string emergencyContact)
         {
@@ -880,6 +964,36 @@ namespace Db
                 return 0;
             }
         }
+        public Hashtable AddDoctor(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string firstName = (values["firstName"] ?? string.Empty) as string;
+                string lastName = (values["lastName"] ?? string.Empty) as string;
+                string shortName = (values["shortName"] ?? string.Empty) as string;
+                string address1 = (values["address1"] ?? string.Empty) as string;
+                string address2 = (values["address2"] ?? string.Empty) as string;
+                string address3 = (values["address3"] ?? string.Empty) as string;
+                string city = (values["city"] ?? string.Empty) as string;
+                string locality1 = (values["locality1"] ?? string.Empty) as string;
+                string locality2 = (values["locality2"] ?? string.Empty) as string;
+                string postalCode = (values["postalCode"] ?? string.Empty) as string;
+                string country = (values["country"] ?? string.Empty) as string;
+                string voice = (values["voice"] ?? string.Empty) as string;
+                string fax = (values["fax"] ?? string.Empty) as string;
+                string email = (values["email"] ?? string.Empty) as string;
+                string contact = (values["contact"] ?? string.Empty) as string;
+                AddDoctor(firstName, lastName, shortName, address1, address2, address3, city, locality1, locality2, postalCode, country, voice, fax, email, contact);
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
         // called by AddDoctor(XElement)
         public int AddDoctor(string firstName,string lastName,string shortName,string address1,string address2,string address3,string city,string locality1,string locality2,
             string postalCode,string country,string voice,string fax,string email,string contact)
@@ -896,7 +1010,7 @@ namespace Db
                 string acc = "Missing fields:";
                 foreach(string missing in missings)
                 {
-                    acc += missing + " ";
+                    acc += string.Format("\"{0}\" ", missing);
                 }
                 throw new Exception(acc);
             }
@@ -1085,6 +1199,8 @@ namespace Db
         {
             Hashtable result = new Hashtable();
             result["status"] = "ok";
+            List<Hashtable> dataResults = new List<Hashtable>();
+            result["data"] = dataResults;
             string fileName = string.Empty;
             conciergeEntities conciergeEntities;
             using (conciergeEntities = new conciergeEntities())
@@ -1127,8 +1243,15 @@ namespace Db
                         FileInfo fileInfo = new FileInfo(fullFileName);
                         fileName = fileInfo.Name;
                         //  (fileInfo.Name
-                        Match m = Regex.Match(fileName, @"^.*\-\-DOCTOR\-\-(?<name>[^\-]*)\-\-.*$");
-                        string doctorName = m.Groups["name"].Value;
+                        string doctorName;
+                        Match m;
+                        if (item["doctorName"] == null)
+                        {
+                            m = Regex.Match(fileName, @"^.*\-\-DOCTOR\-\-(?<name>[^\-]*)\-\-.*$");
+                            doctorName = m.Groups["name"].Value;
+                        }
+                        else
+                            doctorName = item["doctorName"] as string;
                         var doctorQuery = (from s in conciergeEntities.doctor
                                            where s.shortname == doctorName
                                            select s.id);
@@ -1140,12 +1263,50 @@ namespace Db
                             return result;
                         }
                         int doctor_id = doctorQuery.First();
-                        m = Regex.Match(fileName, @"^(?<month>\d{2})(?<day>\d{2})(?<year>\d{4}).*$");
-                        DateTime dt = new DateTime(int.Parse(m.Groups["year"].Value), int.Parse(m.Groups["month"].Value), int.Parse(m.Groups["day"].Value));
-                        m = Regex.Match(fileName, @"^.*\-\-PROCEDURE\-\-(?<name>[^\-]*)\-\-.*$");
-                        string procedureName = m.Groups["name"].Value;
-                        m = Regex.Match(fileName, @"^.*\-\-LOCATION\-\-(?<name>[^\-]*)\-\-.*$");
-                        string location = m.Groups["name"].Value;
+                        DateTime dt;
+                        if (item["procedureDate"] == null)
+                        {
+                            m = Regex.Match(fileName, @"^(?<month>\d{2})(?<day>\d{2})(?<year>\d{4}).*$");
+                            dt = new DateTime(int.Parse(m.Groups["year"].Value), int.Parse(m.Groups["month"].Value), int.Parse(m.Groups["day"].Value));
+                        }
+                        else
+                            dt = (DateTime)item["procedureDate"];
+                        string procedureName;
+                        if (item["procedureName"] == null)
+                        {
+                            m = Regex.Match(fileName, @"^.*\-\-PROCEDURE\-\-(?<name>[^\-]*)\-\-.*$");
+                            procedureName = m.Groups["name"].Value;
+                        }
+                        else
+                            procedureName = item["procedureName"] as string;
+                        var procedureNameQuery = (from pn in conciergeEntities.procedure
+                                                  where pn.value == procedureName
+                                                  select pn);
+                        if (procedureNameQuery.Count() == 0)
+                        {
+                            procedure p = conciergeEntities.procedure.CreateObject();
+                            p.value = procedureName;
+                            conciergeEntities.procedure.AddObject(p);
+                            conciergeEntities.SaveChanges();
+                        }
+                        string location;
+                        if (item["location"] == null)
+                        {
+                            m = Regex.Match(fileName, @"^.*\-\-LOCATION\-\-(?<name>[^\-]*)\-\-.*$");
+                            location = m.Groups["name"].Value;
+                        }
+                        else
+                            location = item["location"] as string;
+                        var locationNameQuery = (from ln in conciergeEntities.location
+                                                 where ln.value == location
+                                                 select ln);
+                        if (locationNameQuery.Count() == 0)
+                        {
+                            location l = conciergeEntities.location.CreateObject();
+                            l.value = location;
+                            conciergeEntities.location.AddObject(l);
+                            conciergeEntities.SaveChanges();
+                        }
                         int file_id = AddFile_(fileInfo, conciergeEntities);
                         conciergeEntities.SaveChanges();
 
@@ -1244,11 +1405,13 @@ namespace Db
                         }
                         catch (Exception )
                         {
-
                             throw;
                         }
+                        Hashtable dataResultItem = new Hashtable();
+                        dataResultItem["file_id"] = file_id;
+                        dataResults.Add(dataResultItem);
                     }
-                                    transaction.Commit();
+                    transaction.Commit();
                 }
             }
             return result;
