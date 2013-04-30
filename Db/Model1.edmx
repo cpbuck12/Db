@@ -8,33 +8,52 @@
         <EntityContainer Name="conciergeModelStoreContainer">
           <EntitySet Name="activity" EntityType="conciergeModel.Store.activity" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="detail_item" EntityType="conciergeModel.Store.detail_item" store:Type="Tables" Schema="concierge" />
-          <EntitySet Name="directives" EntityType="conciergeModel.Store.directives" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="doctor" EntityType="conciergeModel.Store.doctor" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="doctor_patient" EntityType="conciergeModel.Store.doctor_patient" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="doctor_specialty" EntityType="conciergeModel.Store.doctor_specialty" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="document" EntityType="conciergeModel.Store.document" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="document_segment" EntityType="conciergeModel.Store.document_segment" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="legacy_specialty" EntityType="conciergeModel.Store.legacy_specialty" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="location" EntityType="conciergeModel.Store.location" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="note" EntityType="conciergeModel.Store.note" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="patient" EntityType="conciergeModel.Store.patient" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="patient_signature" EntityType="conciergeModel.Store.patient_signature" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="procedure" EntityType="conciergeModel.Store.procedure" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="procedure_specialty" EntityType="conciergeModel.Store.procedure_specialty" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="procedure_target" EntityType="conciergeModel.Store.procedure_target" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="release_request" EntityType="conciergeModel.Store.release_request" store:Type="Tables" Schema="concierge" />
-          <EntitySet Name="release_response" EntityType="conciergeModel.Store.release_response" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="search_engine" EntityType="conciergeModel.Store.search_engine" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="special_document" EntityType="conciergeModel.Store.special_document" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="specialty" EntityType="conciergeModel.Store.specialty" store:Type="Tables" Schema="concierge" />
-          <EntitySet Name="stamp" EntityType="conciergeModel.Store.stamp" store:Type="Tables" Schema="concierge" />
-          <EntitySet Name="stamp_segment" EntityType="conciergeModel.Store.stamp_segment" store:Type="Tables" Schema="concierge" />
           <EntitySet Name="suffix" EntityType="conciergeModel.Store.suffix" store:Type="Tables" Schema="concierge" />
+          <EntitySet Name="target" EntityType="conciergeModel.Store.target" store:Type="Tables" Schema="concierge" />
+          <AssociationSet Name="activity_ibfk_10" Association="conciergeModel.Store.activity_ibfk_10">
+            <End Role="doctor_specialty" EntitySet="doctor_specialty" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_11" Association="conciergeModel.Store.activity_ibfk_11">
+            <End Role="location" EntitySet="location" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
           <AssociationSet Name="activity_ibfk_4" Association="conciergeModel.Store.activity_ibfk_4">
             <End Role="document" EntitySet="document" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_7" Association="conciergeModel.Store.activity_ibfk_7">
+            <End Role="procedure_target" EntitySet="procedure_target" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_8" Association="conciergeModel.Store.activity_ibfk_8">
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_9" Association="conciergeModel.Store.activity_ibfk_9">
+            <End Role="procedure_specialty" EntitySet="procedure_specialty" />
             <End Role="activity" EntitySet="activity" />
           </AssociationSet>
           <AssociationSet Name="detail_item_ibfk_2" Association="conciergeModel.Store.detail_item_ibfk_2">
             <End Role="patient" EntitySet="patient" />
             <End Role="detail_item" EntitySet="detail_item" />
-          </AssociationSet>
-          <AssociationSet Name="directives_ibfk_1" Association="conciergeModel.Store.directives_ibfk_1">
-            <End Role="patient" EntitySet="patient" />
-            <End Role="directives" EntitySet="directives" />
           </AssociationSet>
           <AssociationSet Name="doctor_patient_ibfk_1" Association="conciergeModel.Store.doctor_patient_ibfk_1">
             <End Role="doctor" EntitySet="doctor" />
@@ -56,9 +75,33 @@
             <End Role="document" EntitySet="document" />
             <End Role="document_segment" EntitySet="document_segment" />
           </AssociationSet>
-          <AssociationSet Name="patient_ibfk_1" Association="conciergeModel.Store.patient_ibfk_1">
-            <End Role="stamp" EntitySet="stamp" />
+          <AssociationSet Name="legacy_specialty_ibfk_1" Association="conciergeModel.Store.legacy_specialty_ibfk_1">
+            <End Role="specialty" EntitySet="specialty" />
+            <End Role="legacy_specialty" EntitySet="legacy_specialty" />
+          </AssociationSet>
+          <AssociationSet Name="patient_signature_ibfk_1" Association="conciergeModel.Store.patient_signature_ibfk_1">
             <End Role="patient" EntitySet="patient" />
+            <End Role="patient_signature" EntitySet="patient_signature" />
+          </AssociationSet>
+          <AssociationSet Name="patient_signature_ibfk_2" Association="conciergeModel.Store.patient_signature_ibfk_2">
+            <End Role="document" EntitySet="document" />
+            <End Role="patient_signature" EntitySet="patient_signature" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_specialty_ibfk_1" Association="conciergeModel.Store.procedure_specialty_ibfk_1">
+            <End Role="procedure" EntitySet="procedure" />
+            <End Role="procedure_specialty" EntitySet="procedure_specialty" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_specialty_ibfk_2" Association="conciergeModel.Store.procedure_specialty_ibfk_2">
+            <End Role="specialty" EntitySet="specialty" />
+            <End Role="procedure_specialty" EntitySet="procedure_specialty" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_target_ibfk_1" Association="conciergeModel.Store.procedure_target_ibfk_1">
+            <End Role="procedure" EntitySet="procedure" />
+            <End Role="procedure_target" EntitySet="procedure_target" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_target_ibfk_2" Association="conciergeModel.Store.procedure_target_ibfk_2">
+            <End Role="target" EntitySet="target" />
+            <End Role="procedure_target" EntitySet="procedure_target" />
           </AssociationSet>
           <AssociationSet Name="release_request_ibfk_2" Association="conciergeModel.Store.release_request_ibfk_2">
             <End Role="document" EntitySet="document" />
@@ -68,13 +111,9 @@
             <End Role="doctor_patient" EntitySet="doctor_patient" />
             <End Role="release_request" EntitySet="release_request" />
           </AssociationSet>
-          <AssociationSet Name="release_response_ibfk_1" Association="conciergeModel.Store.release_response_ibfk_1">
-            <End Role="doctor_patient" EntitySet="doctor_patient" />
-            <End Role="release_response" EntitySet="release_response" />
-          </AssociationSet>
-          <AssociationSet Name="release_response_ibfk_3" Association="conciergeModel.Store.release_response_ibfk_3">
+          <AssociationSet Name="special_document_ibfk_1" Association="conciergeModel.Store.special_document_ibfk_1">
             <End Role="document" EntitySet="document" />
-            <End Role="release_response" EntitySet="release_response" />
+            <End Role="special_document" EntitySet="special_document" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="activity">
@@ -85,9 +124,10 @@
           <Property Name="doctor_specialty_id" Type="int" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
           <Property Name="doctor_patient_id" Type="int" Nullable="false" />
-          <Property Name="procedure" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="location" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="location_name" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="document_id" Type="int" Nullable="false" />
+          <Property Name="procedure_target_id" Type="int" Nullable="false" />
+          <Property Name="procedure_specialty_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="detail_item">
           <Key>
@@ -100,14 +140,6 @@
           <Property Name="alert" Type="bool" Nullable="false" />
           <Property Name="title" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
-        <EntityType Name="directives">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="text" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="patient_id" Type="int" Nullable="false" />
-        </EntityType>
         <EntityType Name="doctor">
           <Key>
             <PropertyRef Name="id" />
@@ -115,7 +147,6 @@
           <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="firstname" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="lastname" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="shortname" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="address1" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="address2" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="address3" Type="varchar" Nullable="false" MaxLength="50" />
@@ -128,6 +159,7 @@
           <Property Name="fax" Type="varchar" Nullable="false" MaxLength="20" />
           <Property Name="email" Type="varchar" Nullable="false" MaxLength="40" />
           <Property Name="contact_person" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="dob" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="doctor_patient">
           <Key>
@@ -145,7 +177,7 @@
           </Key>
           <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="doctor_id" Type="int" Nullable="false" />
-          <Property Name="specialty_id" Type="int" Nullable="false" />
+          <Property Name="specialty_name" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="document">
           <Key>
@@ -165,11 +197,31 @@
           <Property Name="position" Type="bigint" Nullable="false" />
           <Property Name="data" Type="blob" Nullable="false" />
         </EntityType>
+        <EntityType Name="legacy_specialty">
+          <Key>
+            <PropertyRef Name="specialty_name" />
+          </Key>
+          <Property Name="specialty_name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="folder" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="subfolder" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
         <EntityType Name="location">
           <Key>
-            <PropertyRef Name="value" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Name="value" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="address1" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="address2" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="address3" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="city" Type="varchar" Nullable="false" MaxLength="30" />
+          <Property Name="locality1" Type="varchar" Nullable="false" MaxLength="30" />
+          <Property Name="locality2" Type="varchar" Nullable="false" MaxLength="30" />
+          <Property Name="postal_code" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="country" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="telephone" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="fax" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="email" Type="varchar" Nullable="false" MaxLength="40" />
+          <Property Name="contact_person" Type="varchar" Nullable="false" MaxLength="100" />
         </EntityType>
         <EntityType Name="note">
           <Key>
@@ -190,13 +242,36 @@
           <Property Name="dob" Type="date" Nullable="false" />
           <Property Name="gender" Type="char" Nullable="false" MaxLength="1" />
           <Property Name="emergency_contact" Type="text" Nullable="false" />
-          <Property Name="stamp_id" Type="int" />
+        </EntityType>
+        <EntityType Name="patient_signature">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="patient_id" Type="int" Nullable="false" />
+          <Property Name="document_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="procedure">
           <Key>
-            <PropertyRef Name="value" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Name="value" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="name" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="procedure_specialty">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="procedure_name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="specialty_name" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="procedure_target">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="procedure_name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="target_name" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="release_request">
           <Key>
@@ -207,38 +282,25 @@
           <Property Name="document_id" Type="int" Nullable="false" />
           <Property Name="sent_date" Type="date" Nullable="false" />
         </EntityType>
-        <EntityType Name="release_response">
+        <EntityType Name="search_engine">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="received_date" Type="date" Nullable="false" />
-          <Property Name="scanned_date" Type="date" Nullable="false" />
-          <Property Name="doctor_patient_id" Type="int" Nullable="false" />
+          <Property Name="name" Type="varchar" Nullable="false" MaxLength="15" />
+          <Property Name="query_string" Type="varchar" Nullable="false" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="special_document">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
           <Property Name="document_id" Type="int" Nullable="false" />
+          <Property Name="name" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="specialty">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="specialty_name" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="subspecialty_name" Type="varchar" Nullable="false" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="stamp">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="added_date" Type="date" Nullable="false" />
-        </EntityType>
-        <EntityType Name="stamp_segment">
-          <Key>
-            <PropertyRef Name="position" />
-          </Key>
-          <Property Name="id" Type="int" Nullable="false" />
-          <Property Name="position" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="data" Type="blob" Nullable="false" />
+          <Property Name="name" Type="varchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="suffix">
           <Key>
@@ -246,6 +308,36 @@
           </Key>
           <Property Name="value" Type="varchar" Nullable="false" MaxLength="12" />
         </EntityType>
+        <EntityType Name="target">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <Association Name="activity_ibfk_10">
+          <End Role="doctor_specialty" Type="conciergeModel.Store.doctor_specialty" Multiplicity="1" />
+          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor_specialty">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="doctor_specialty_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_11">
+          <End Role="location" Type="conciergeModel.Store.location" Multiplicity="1" />
+          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="location">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="location_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="activity_ibfk_4">
           <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
           <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
@@ -258,6 +350,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="activity_ibfk_7">
+          <End Role="procedure_target" Type="conciergeModel.Store.procedure_target" Multiplicity="1" />
+          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure_target">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="procedure_target_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_8">
+          <End Role="doctor_patient" Type="conciergeModel.Store.doctor_patient" Multiplicity="1" />
+          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor_patient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="doctor_patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_9">
+          <End Role="procedure_specialty" Type="conciergeModel.Store.procedure_specialty" Multiplicity="1" />
+          <End Role="activity" Type="conciergeModel.Store.activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure_specialty">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="procedure_specialty_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="detail_item_ibfk_2">
           <End Role="patient" Type="conciergeModel.Store.patient" Multiplicity="1" />
           <End Role="detail_item" Type="conciergeModel.Store.detail_item" Multiplicity="*" />
@@ -266,18 +394,6 @@
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="detail_item">
-              <PropertyRef Name="patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="directives_ibfk_1">
-          <End Role="patient" Type="conciergeModel.Store.patient" Multiplicity="1" />
-          <End Role="directives" Type="conciergeModel.Store.directives" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="directives">
               <PropertyRef Name="patient_id" />
             </Dependent>
           </ReferentialConstraint>
@@ -323,10 +439,10 @@
           <End Role="doctor_specialty" Type="conciergeModel.Store.doctor_specialty" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="specialty">
-              <PropertyRef Name="id" />
+              <PropertyRef Name="name" />
             </Principal>
             <Dependent Role="doctor_specialty">
-              <PropertyRef Name="specialty_id" />
+              <PropertyRef Name="specialty_name" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -342,15 +458,87 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="patient_ibfk_1">
-          <End Role="stamp" Type="conciergeModel.Store.stamp" Multiplicity="0..1" />
-          <End Role="patient" Type="conciergeModel.Store.patient" Multiplicity="*" />
+        <Association Name="legacy_specialty_ibfk_1">
+          <End Role="specialty" Type="conciergeModel.Store.specialty" Multiplicity="1" />
+          <End Role="legacy_specialty" Type="conciergeModel.Store.legacy_specialty" Multiplicity="0..1" />
           <ReferentialConstraint>
-            <Principal Role="stamp">
+            <Principal Role="specialty">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="legacy_specialty">
+              <PropertyRef Name="specialty_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="patient_signature_ibfk_1">
+          <End Role="patient" Type="conciergeModel.Store.patient" Multiplicity="1" />
+          <End Role="patient_signature" Type="conciergeModel.Store.patient_signature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="patient">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="patient">
-              <PropertyRef Name="stamp_id" />
+            <Dependent Role="patient_signature">
+              <PropertyRef Name="patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="patient_signature_ibfk_2">
+          <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
+          <End Role="patient_signature" Type="conciergeModel.Store.patient_signature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="document">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="patient_signature">
+              <PropertyRef Name="document_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_specialty_ibfk_1">
+          <End Role="procedure" Type="conciergeModel.Store.procedure" Multiplicity="1" />
+          <End Role="procedure_specialty" Type="conciergeModel.Store.procedure_specialty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_specialty">
+              <PropertyRef Name="procedure_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_specialty_ibfk_2">
+          <End Role="specialty" Type="conciergeModel.Store.specialty" Multiplicity="1" />
+          <End Role="procedure_specialty" Type="conciergeModel.Store.procedure_specialty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="specialty">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_specialty">
+              <PropertyRef Name="specialty_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_target_ibfk_1">
+          <End Role="procedure" Type="conciergeModel.Store.procedure" Multiplicity="1" />
+          <End Role="procedure_target" Type="conciergeModel.Store.procedure_target" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_target">
+              <PropertyRef Name="procedure_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_target_ibfk_2">
+          <End Role="target" Type="conciergeModel.Store.target" Multiplicity="1" />
+          <End Role="procedure_target" Type="conciergeModel.Store.procedure_target" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="target">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_target">
+              <PropertyRef Name="target_name" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -378,26 +566,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="release_response_ibfk_1">
-          <End Role="doctor_patient" Type="conciergeModel.Store.doctor_patient" Multiplicity="1" />
-          <End Role="release_response" Type="conciergeModel.Store.release_response" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="doctor_patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="release_response">
-              <PropertyRef Name="doctor_patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="release_response_ibfk_3">
+        <Association Name="special_document_ibfk_1">
           <End Role="document" Type="conciergeModel.Store.document" Multiplicity="1" />
-          <End Role="release_response" Type="conciergeModel.Store.release_response" Multiplicity="*" />
+          <End Role="special_document" Type="conciergeModel.Store.special_document" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="document">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="release_response">
+            <Dependent Role="special_document">
               <PropertyRef Name="document_id" />
             </Dependent>
           </ReferentialConstraint>
@@ -416,33 +592,52 @@
           </FunctionImport>
           <EntitySet Name="activity" EntityType="conciergeModel.activity" />
           <EntitySet Name="detail_item" EntityType="conciergeModel.detail_item" />
-          <EntitySet Name="directives" EntityType="conciergeModel.directives" />
           <EntitySet Name="doctor" EntityType="conciergeModel.doctor" />
           <EntitySet Name="doctor_patient" EntityType="conciergeModel.doctor_patient" />
           <EntitySet Name="doctor_specialty" EntityType="conciergeModel.doctor_specialty" />
           <EntitySet Name="document" EntityType="conciergeModel.document" />
           <EntitySet Name="document_segment" EntityType="conciergeModel.document_segment" />
+          <EntitySet Name="legacy_specialty" EntityType="conciergeModel.legacy_specialty" />
           <EntitySet Name="location" EntityType="conciergeModel.location" />
           <EntitySet Name="note" EntityType="conciergeModel.note" />
           <EntitySet Name="patient" EntityType="conciergeModel.patient" />
+          <EntitySet Name="patient_signature" EntityType="conciergeModel.patient_signature" />
           <EntitySet Name="procedure" EntityType="conciergeModel.procedure" />
+          <EntitySet Name="procedure_specialty" EntityType="conciergeModel.procedure_specialty" />
+          <EntitySet Name="procedure_target" EntityType="conciergeModel.procedure_target" />
           <EntitySet Name="release_request" EntityType="conciergeModel.release_request" />
-          <EntitySet Name="release_response" EntityType="conciergeModel.release_response" />
+          <EntitySet Name="search_engine" EntityType="conciergeModel.search_engine" />
+          <EntitySet Name="special_document" EntityType="conciergeModel.special_document" />
           <EntitySet Name="specialty" EntityType="conciergeModel.specialty" />
-          <EntitySet Name="stamp" EntityType="conciergeModel.stamp" />
-          <EntitySet Name="stamp_segment" EntityType="conciergeModel.stamp_segment" />
           <EntitySet Name="suffix" EntityType="conciergeModel.suffix" />
+          <EntitySet Name="target" EntityType="conciergeModel.target" />
+          <AssociationSet Name="activity_ibfk_10" Association="conciergeModel.activity_ibfk_10">
+            <End Role="doctor_specialty" EntitySet="doctor_specialty" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_11" Association="conciergeModel.activity_ibfk_11">
+            <End Role="location" EntitySet="location" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
           <AssociationSet Name="activity_ibfk_4" Association="conciergeModel.activity_ibfk_4">
             <End Role="document" EntitySet="document" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_7" Association="conciergeModel.activity_ibfk_7">
+            <End Role="procedure_target" EntitySet="procedure_target" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_8" Association="conciergeModel.activity_ibfk_8">
+            <End Role="doctor_patient" EntitySet="doctor_patient" />
+            <End Role="activity" EntitySet="activity" />
+          </AssociationSet>
+          <AssociationSet Name="activity_ibfk_9" Association="conciergeModel.activity_ibfk_9">
+            <End Role="procedure_specialty" EntitySet="procedure_specialty" />
             <End Role="activity" EntitySet="activity" />
           </AssociationSet>
           <AssociationSet Name="detail_item_ibfk_2" Association="conciergeModel.detail_item_ibfk_2">
             <End Role="patient" EntitySet="patient" />
             <End Role="detail_item" EntitySet="detail_item" />
-          </AssociationSet>
-          <AssociationSet Name="directives_ibfk_1" Association="conciergeModel.directives_ibfk_1">
-            <End Role="patient" EntitySet="patient" />
-            <End Role="directives" EntitySet="directives" />
           </AssociationSet>
           <AssociationSet Name="doctor_patient_ibfk_1" Association="conciergeModel.doctor_patient_ibfk_1">
             <End Role="doctor" EntitySet="doctor" />
@@ -460,10 +655,6 @@
             <End Role="doctor_patient" EntitySet="doctor_patient" />
             <End Role="release_request" EntitySet="release_request" />
           </AssociationSet>
-          <AssociationSet Name="release_response_ibfk_1" Association="conciergeModel.release_response_ibfk_1">
-            <End Role="doctor_patient" EntitySet="doctor_patient" />
-            <End Role="release_response" EntitySet="release_response" />
-          </AssociationSet>
           <AssociationSet Name="doctor_specialty_ibfk_2" Association="conciergeModel.doctor_specialty_ibfk_2">
             <End Role="specialty" EntitySet="specialty" />
             <End Role="doctor_specialty" EntitySet="doctor_specialty" />
@@ -472,17 +663,41 @@
             <End Role="document" EntitySet="document" />
             <End Role="document_segment" EntitySet="document_segment" />
           </AssociationSet>
+          <AssociationSet Name="patient_signature_ibfk_2" Association="conciergeModel.patient_signature_ibfk_2">
+            <End Role="document" EntitySet="document" />
+            <End Role="patient_signature" EntitySet="patient_signature" />
+          </AssociationSet>
           <AssociationSet Name="release_request_ibfk_2" Association="conciergeModel.release_request_ibfk_2">
             <End Role="document" EntitySet="document" />
             <End Role="release_request" EntitySet="release_request" />
           </AssociationSet>
-          <AssociationSet Name="release_response_ibfk_3" Association="conciergeModel.release_response_ibfk_3">
+          <AssociationSet Name="special_document_ibfk_1" Association="conciergeModel.special_document_ibfk_1">
             <End Role="document" EntitySet="document" />
-            <End Role="release_response" EntitySet="release_response" />
+            <End Role="special_document" EntitySet="special_document" />
           </AssociationSet>
-          <AssociationSet Name="patient_ibfk_1" Association="conciergeModel.patient_ibfk_1">
-            <End Role="stamp" EntitySet="stamp" />
+          <AssociationSet Name="legacy_specialty_ibfk_1" Association="conciergeModel.legacy_specialty_ibfk_1">
+            <End Role="specialty" EntitySet="specialty" />
+            <End Role="legacy_specialty" EntitySet="legacy_specialty" />
+          </AssociationSet>
+          <AssociationSet Name="patient_signature_ibfk_1" Association="conciergeModel.patient_signature_ibfk_1">
             <End Role="patient" EntitySet="patient" />
+            <End Role="patient_signature" EntitySet="patient_signature" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_specialty_ibfk_1" Association="conciergeModel.procedure_specialty_ibfk_1">
+            <End Role="procedure" EntitySet="procedure" />
+            <End Role="procedure_specialty" EntitySet="procedure_specialty" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_target_ibfk_1" Association="conciergeModel.procedure_target_ibfk_1">
+            <End Role="procedure" EntitySet="procedure" />
+            <End Role="procedure_target" EntitySet="procedure_target" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_specialty_ibfk_2" Association="conciergeModel.procedure_specialty_ibfk_2">
+            <End Role="specialty" EntitySet="specialty" />
+            <End Role="procedure_specialty" EntitySet="procedure_specialty" />
+          </AssociationSet>
+          <AssociationSet Name="procedure_target_ibfk_2" Association="conciergeModel.procedure_target_ibfk_2">
+            <End Role="target" EntitySet="target" />
+            <End Role="procedure_target" EntitySet="procedure_target" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="activity">
@@ -493,10 +708,16 @@
           <Property Type="Int32" Name="doctor_specialty_id" Nullable="false" />
           <Property Type="DateTime" Name="date" Nullable="false" />
           <Property Type="Int32" Name="doctor_patient_id" Nullable="false" />
-          <Property Type="String" Name="procedure" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="location" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="location_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="document_id" Nullable="false" />
+          <Property Type="Int32" Name="procedure_target_id" Nullable="false" />
+          <Property Type="Int32" Name="procedure_specialty_id" Nullable="false" />
+          <NavigationProperty Name="doctor_specialty" Relationship="conciergeModel.activity_ibfk_10" FromRole="activity" ToRole="doctor_specialty" />
+          <NavigationProperty Name="location" Relationship="conciergeModel.activity_ibfk_11" FromRole="activity" ToRole="location" />
           <NavigationProperty Name="document" Relationship="conciergeModel.activity_ibfk_4" FromRole="activity" ToRole="document" />
+          <NavigationProperty Name="procedure_target" Relationship="conciergeModel.activity_ibfk_7" FromRole="activity" ToRole="procedure_target" />
+          <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.activity_ibfk_8" FromRole="activity" ToRole="doctor_patient" />
+          <NavigationProperty Name="procedure_specialty" Relationship="conciergeModel.activity_ibfk_9" FromRole="activity" ToRole="procedure_specialty" />
         </EntityType>
         <EntityType Name="detail_item">
           <Key>
@@ -510,15 +731,6 @@
           <Property Type="String" Name="title" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="patient" Relationship="conciergeModel.detail_item_ibfk_2" FromRole="detail_item" ToRole="patient" />
         </EntityType>
-        <EntityType Name="directives">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="text" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="patient_id" Nullable="false" />
-          <NavigationProperty Name="patient" Relationship="conciergeModel.directives_ibfk_1" FromRole="directives" ToRole="patient" />
-        </EntityType>
         <EntityType Name="doctor">
           <Key>
             <PropertyRef Name="id" />
@@ -526,7 +738,6 @@
           <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="firstname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="lastname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="shortname" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="address1" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="address2" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="address3" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -539,6 +750,7 @@
           <Property Type="String" Name="fax" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="email" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="contact_person" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="dob" Nullable="false" />
           <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.doctor_patient_ibfk_1" FromRole="doctor" ToRole="doctor_patient" />
           <NavigationProperty Name="doctor_specialty" Relationship="conciergeModel.doctor_specialty_ibfk_1" FromRole="doctor" ToRole="doctor_specialty" />
         </EntityType>
@@ -551,10 +763,10 @@
           <Property Type="Int32" Name="patient_id" Nullable="false" />
           <Property Type="Boolean" Name="released" Nullable="false" />
           <Property Type="Boolean" Name="recent" Nullable="false" />
+          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_8" FromRole="doctor_patient" ToRole="activity" />
           <NavigationProperty Name="doctor" Relationship="conciergeModel.doctor_patient_ibfk_1" FromRole="doctor_patient" ToRole="doctor" />
           <NavigationProperty Name="patient" Relationship="conciergeModel.doctor_patient_ibfk_2" FromRole="doctor_patient" ToRole="patient" />
           <NavigationProperty Name="release_request" Relationship="conciergeModel.release_request_ibfk_3" FromRole="doctor_patient" ToRole="release_request" />
-          <NavigationProperty Name="release_response" Relationship="conciergeModel.release_response_ibfk_1" FromRole="doctor_patient" ToRole="release_response" />
         </EntityType>
         <EntityType Name="doctor_specialty">
           <Key>
@@ -562,7 +774,8 @@
           </Key>
           <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="doctor_id" Nullable="false" />
-          <Property Type="Int32" Name="specialty_id" Nullable="false" />
+          <Property Type="String" Name="specialty_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_10" FromRole="doctor_specialty" ToRole="activity" />
           <NavigationProperty Name="doctor" Relationship="conciergeModel.doctor_specialty_ibfk_1" FromRole="doctor_specialty" ToRole="doctor" />
           <NavigationProperty Name="specialty" Relationship="conciergeModel.doctor_specialty_ibfk_2" FromRole="doctor_specialty" ToRole="specialty" />
         </EntityType>
@@ -576,8 +789,9 @@
           <Property Type="DateTime" Name="added_date" Nullable="false" />
           <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_4" FromRole="document" ToRole="activity" />
           <NavigationProperty Name="document_segment" Relationship="conciergeModel.document_segment_ibfk_1" FromRole="document" ToRole="document_segment" />
+          <NavigationProperty Name="patient_signature" Relationship="conciergeModel.patient_signature_ibfk_2" FromRole="document" ToRole="patient_signature" />
           <NavigationProperty Name="release_request" Relationship="conciergeModel.release_request_ibfk_2" FromRole="document" ToRole="release_request" />
-          <NavigationProperty Name="release_response" Relationship="conciergeModel.release_response_ibfk_3" FromRole="document" ToRole="release_response" />
+          <NavigationProperty Name="special_document" Relationship="conciergeModel.special_document_ibfk_1" FromRole="document" ToRole="special_document" />
         </EntityType>
         <EntityType Name="document_segment">
           <Key>
@@ -589,11 +803,33 @@
           <Property Type="Binary" Name="data" Nullable="false" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="document" Relationship="conciergeModel.document_segment_ibfk_1" FromRole="document_segment" ToRole="document" />
         </EntityType>
+        <EntityType Name="legacy_specialty">
+          <Key>
+            <PropertyRef Name="specialty_name" />
+          </Key>
+          <Property Type="String" Name="specialty_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="folder" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="subfolder" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="specialty" Relationship="conciergeModel.legacy_specialty_ibfk_1" FromRole="legacy_specialty" ToRole="specialty" />
+        </EntityType>
         <EntityType Name="location">
           <Key>
-            <PropertyRef Name="value" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Type="String" Name="value" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address1" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address2" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address3" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="city" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="locality1" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="locality2" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="postal_code" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="country" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="telephone" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="fax" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="email" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="contact_person" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_11" FromRole="location" ToRole="activity" />
         </EntityType>
         <EntityType Name="note">
           <Key>
@@ -614,17 +850,49 @@
           <Property Type="DateTime" Name="dob" Nullable="false" />
           <Property Type="String" Name="gender" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="emergency_contact" Nullable="false" MaxLength="65535" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="stamp_id" />
           <NavigationProperty Name="detail_item" Relationship="conciergeModel.detail_item_ibfk_2" FromRole="patient" ToRole="detail_item" />
-          <NavigationProperty Name="directives" Relationship="conciergeModel.directives_ibfk_1" FromRole="patient" ToRole="directives" />
           <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.doctor_patient_ibfk_2" FromRole="patient" ToRole="doctor_patient" />
-          <NavigationProperty Name="stamp" Relationship="conciergeModel.patient_ibfk_1" FromRole="patient" ToRole="stamp" />
+          <NavigationProperty Name="patient_signature" Relationship="conciergeModel.patient_signature_ibfk_1" FromRole="patient" ToRole="patient_signature" />
+        </EntityType>
+        <EntityType Name="patient_signature">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="patient_id" Nullable="false" />
+          <Property Type="Int32" Name="document_id" Nullable="false" />
+          <NavigationProperty Name="document" Relationship="conciergeModel.patient_signature_ibfk_2" FromRole="patient_signature" ToRole="document" />
+          <NavigationProperty Name="patient" Relationship="conciergeModel.patient_signature_ibfk_1" FromRole="patient_signature" ToRole="patient" />
         </EntityType>
         <EntityType Name="procedure">
           <Key>
-            <PropertyRef Name="value" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Type="String" Name="value" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="procedure_specialty" Relationship="conciergeModel.procedure_specialty_ibfk_1" FromRole="procedure" ToRole="procedure_specialty" />
+          <NavigationProperty Name="procedure_target" Relationship="conciergeModel.procedure_target_ibfk_1" FromRole="procedure" ToRole="procedure_target" />
+        </EntityType>
+        <EntityType Name="procedure_specialty">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="procedure_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="specialty_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_9" FromRole="procedure_specialty" ToRole="activity" />
+          <NavigationProperty Name="procedure" Relationship="conciergeModel.procedure_specialty_ibfk_1" FromRole="procedure_specialty" ToRole="procedure" />
+          <NavigationProperty Name="specialty" Relationship="conciergeModel.procedure_specialty_ibfk_2" FromRole="procedure_specialty" ToRole="specialty" />
+        </EntityType>
+        <EntityType Name="procedure_target">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="procedure_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="target_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="activity" Relationship="conciergeModel.activity_ibfk_7" FromRole="procedure_target" ToRole="activity" />
+          <NavigationProperty Name="procedure" Relationship="conciergeModel.procedure_target_ibfk_1" FromRole="procedure_target" ToRole="procedure" />
+          <NavigationProperty Name="target" Relationship="conciergeModel.procedure_target_ibfk_2" FromRole="procedure_target" ToRole="target" />
         </EntityType>
         <EntityType Name="release_request">
           <Key>
@@ -637,42 +905,29 @@
           <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.release_request_ibfk_3" FromRole="release_request" ToRole="doctor_patient" />
           <NavigationProperty Name="document" Relationship="conciergeModel.release_request_ibfk_2" FromRole="release_request" ToRole="document" />
         </EntityType>
-        <EntityType Name="release_response">
+        <EntityType Name="search_engine">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="DateTime" Name="received_date" Nullable="false" />
-          <Property Type="DateTime" Name="scanned_date" Nullable="false" />
-          <Property Type="Int32" Name="doctor_patient_id" Nullable="false" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="query_string" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="special_document">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
           <Property Type="Int32" Name="document_id" Nullable="false" />
-          <NavigationProperty Name="doctor_patient" Relationship="conciergeModel.release_response_ibfk_1" FromRole="release_response" ToRole="doctor_patient" />
-          <NavigationProperty Name="document" Relationship="conciergeModel.release_response_ibfk_3" FromRole="release_response" ToRole="document" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="document" Relationship="conciergeModel.special_document_ibfk_1" FromRole="special_document" ToRole="document" />
         </EntityType>
         <EntityType Name="specialty">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
           </Key>
-          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="specialty_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="subspecialty_name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="doctor_specialty" Relationship="conciergeModel.doctor_specialty_ibfk_2" FromRole="specialty" ToRole="doctor_specialty" />
-        </EntityType>
-        <EntityType Name="stamp">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="DateTime" Name="added_date" Nullable="false" />
-          <NavigationProperty Name="patient" Relationship="conciergeModel.patient_ibfk_1" FromRole="stamp" ToRole="patient" />
-        </EntityType>
-        <EntityType Name="stamp_segment">
-          <Key>
-            <PropertyRef Name="position" />
-          </Key>
-          <Property Type="Int32" Name="id" Nullable="false" />
-          <Property Type="Int32" Name="position" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="Binary" Name="data" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="legacy_specialty" Relationship="conciergeModel.legacy_specialty_ibfk_1" FromRole="specialty" ToRole="legacy_specialty" />
+          <NavigationProperty Name="procedure_specialty" Relationship="conciergeModel.procedure_specialty_ibfk_2" FromRole="specialty" ToRole="procedure_specialty" />
         </EntityType>
         <EntityType Name="suffix">
           <Key>
@@ -680,6 +935,37 @@
           </Key>
           <Property Type="String" Name="value" Nullable="false" MaxLength="12" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="target">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Type="String" Name="name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="procedure_target" Relationship="conciergeModel.procedure_target_ibfk_2" FromRole="target" ToRole="procedure_target" />
+        </EntityType>
+        <Association Name="activity_ibfk_10">
+          <End Type="conciergeModel.doctor_specialty" Role="doctor_specialty" Multiplicity="1" />
+          <End Type="conciergeModel.activity" Role="activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor_specialty">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="doctor_specialty_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_11">
+          <End Type="conciergeModel.location" Role="location" Multiplicity="1" />
+          <End Type="conciergeModel.activity" Role="activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="location">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="location_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="activity_ibfk_4">
           <End Type="conciergeModel.document" Role="document" Multiplicity="1" />
           <End Type="conciergeModel.activity" Role="activity" Multiplicity="*" />
@@ -692,6 +978,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="activity_ibfk_7">
+          <End Type="conciergeModel.procedure_target" Role="procedure_target" Multiplicity="1" />
+          <End Type="conciergeModel.activity" Role="activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure_target">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="procedure_target_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_8">
+          <End Type="conciergeModel.doctor_patient" Role="doctor_patient" Multiplicity="1" />
+          <End Type="conciergeModel.activity" Role="activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor_patient">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="doctor_patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activity_ibfk_9">
+          <End Type="conciergeModel.procedure_specialty" Role="procedure_specialty" Multiplicity="1" />
+          <End Type="conciergeModel.activity" Role="activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure_specialty">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="activity">
+              <PropertyRef Name="procedure_specialty_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="detail_item_ibfk_2">
           <End Type="conciergeModel.patient" Role="patient" Multiplicity="1" />
           <End Type="conciergeModel.detail_item" Role="detail_item" Multiplicity="*" />
@@ -700,18 +1022,6 @@
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="detail_item">
-              <PropertyRef Name="patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="directives_ibfk_1">
-          <End Type="conciergeModel.patient" Role="patient" Multiplicity="1" />
-          <End Type="conciergeModel.directives" Role="directives" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="directives">
               <PropertyRef Name="patient_id" />
             </Dependent>
           </ReferentialConstraint>
@@ -764,27 +1074,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="release_response_ibfk_1">
-          <End Type="conciergeModel.doctor_patient" Role="doctor_patient" Multiplicity="1" />
-          <End Type="conciergeModel.release_response" Role="release_response" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="doctor_patient">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="release_response">
-              <PropertyRef Name="doctor_patient_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="doctor_specialty_ibfk_2">
           <End Type="conciergeModel.specialty" Role="specialty" Multiplicity="1" />
           <End Type="conciergeModel.doctor_specialty" Role="doctor_specialty" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="specialty">
-              <PropertyRef Name="id" />
+              <PropertyRef Name="name" />
             </Principal>
             <Dependent Role="doctor_specialty">
-              <PropertyRef Name="specialty_id" />
+              <PropertyRef Name="specialty_name" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -796,6 +1094,18 @@
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="document_segment">
+              <PropertyRef Name="document_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="patient_signature_ibfk_2">
+          <End Type="conciergeModel.document" Role="document" Multiplicity="1" />
+          <End Type="conciergeModel.patient_signature" Role="patient_signature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="document">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="patient_signature">
               <PropertyRef Name="document_id" />
             </Dependent>
           </ReferentialConstraint>
@@ -812,27 +1122,87 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="release_response_ibfk_3">
+        <Association Name="special_document_ibfk_1">
           <End Type="conciergeModel.document" Role="document" Multiplicity="1" />
-          <End Type="conciergeModel.release_response" Role="release_response" Multiplicity="*" />
+          <End Type="conciergeModel.special_document" Role="special_document" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="document">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="release_response">
+            <Dependent Role="special_document">
               <PropertyRef Name="document_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="patient_ibfk_1">
-          <End Type="conciergeModel.stamp" Role="stamp" Multiplicity="0..1" />
-          <End Type="conciergeModel.patient" Role="patient" Multiplicity="*" />
+        <Association Name="legacy_specialty_ibfk_1">
+          <End Type="conciergeModel.specialty" Role="specialty" Multiplicity="1" />
+          <End Type="conciergeModel.legacy_specialty" Role="legacy_specialty" Multiplicity="0..1" />
           <ReferentialConstraint>
-            <Principal Role="stamp">
+            <Principal Role="specialty">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="legacy_specialty">
+              <PropertyRef Name="specialty_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="patient_signature_ibfk_1">
+          <End Type="conciergeModel.patient" Role="patient" Multiplicity="1" />
+          <End Type="conciergeModel.patient_signature" Role="patient_signature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="patient">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="patient">
-              <PropertyRef Name="stamp_id" />
+            <Dependent Role="patient_signature">
+              <PropertyRef Name="patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_specialty_ibfk_1">
+          <End Type="conciergeModel.procedure" Role="procedure" Multiplicity="1" />
+          <End Type="conciergeModel.procedure_specialty" Role="procedure_specialty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_specialty">
+              <PropertyRef Name="procedure_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_target_ibfk_1">
+          <End Type="conciergeModel.procedure" Role="procedure" Multiplicity="1" />
+          <End Type="conciergeModel.procedure_target" Role="procedure_target" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="procedure">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_target">
+              <PropertyRef Name="procedure_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_specialty_ibfk_2">
+          <End Type="conciergeModel.specialty" Role="specialty" Multiplicity="1" />
+          <End Type="conciergeModel.procedure_specialty" Role="procedure_specialty" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="specialty">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_specialty">
+              <PropertyRef Name="specialty_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="procedure_target_ibfk_2">
+          <End Type="conciergeModel.target" Role="target" Multiplicity="1" />
+          <End Type="conciergeModel.procedure_target" Role="procedure_target" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="target">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="procedure_target">
+              <PropertyRef Name="target_name" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -846,9 +1216,10 @@
           <EntitySetMapping Name="activity">
             <EntityTypeMapping TypeName="conciergeModel.activity">
               <MappingFragment StoreEntitySet="activity">
+                <ScalarProperty Name="procedure_specialty_id" ColumnName="procedure_specialty_id" />
+                <ScalarProperty Name="procedure_target_id" ColumnName="procedure_target_id" />
                 <ScalarProperty Name="document_id" ColumnName="document_id" />
-                <ScalarProperty Name="location" ColumnName="location" />
-                <ScalarProperty Name="procedure" ColumnName="procedure" />
+                <ScalarProperty Name="location_name" ColumnName="location_name" />
                 <ScalarProperty Name="doctor_patient_id" ColumnName="doctor_patient_id" />
                 <ScalarProperty Name="date" ColumnName="date" />
                 <ScalarProperty Name="doctor_specialty_id" ColumnName="doctor_specialty_id" />
@@ -868,18 +1239,10 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="directives">
-            <EntityTypeMapping TypeName="conciergeModel.directives">
-              <MappingFragment StoreEntitySet="directives">
-                <ScalarProperty Name="patient_id" ColumnName="patient_id" />
-                <ScalarProperty Name="text" ColumnName="text" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="doctor">
             <EntityTypeMapping TypeName="conciergeModel.doctor">
               <MappingFragment StoreEntitySet="doctor">
+                <ScalarProperty Name="dob" ColumnName="dob" />
                 <ScalarProperty Name="contact_person" ColumnName="contact_person" />
                 <ScalarProperty Name="email" ColumnName="email" />
                 <ScalarProperty Name="fax" ColumnName="fax" />
@@ -892,7 +1255,6 @@
                 <ScalarProperty Name="address3" ColumnName="address3" />
                 <ScalarProperty Name="address2" ColumnName="address2" />
                 <ScalarProperty Name="address1" ColumnName="address1" />
-                <ScalarProperty Name="shortname" ColumnName="shortname" />
                 <ScalarProperty Name="lastname" ColumnName="lastname" />
                 <ScalarProperty Name="firstname" ColumnName="firstname" />
                 <ScalarProperty Name="id" ColumnName="id" />
@@ -913,7 +1275,7 @@
           <EntitySetMapping Name="doctor_specialty">
             <EntityTypeMapping TypeName="conciergeModel.doctor_specialty">
               <MappingFragment StoreEntitySet="doctor_specialty">
-                <ScalarProperty Name="specialty_id" ColumnName="specialty_id" />
+                <ScalarProperty Name="specialty_name" ColumnName="specialty_name" />
                 <ScalarProperty Name="doctor_id" ColumnName="doctor_id" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
@@ -938,10 +1300,31 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="legacy_specialty">
+            <EntityTypeMapping TypeName="conciergeModel.legacy_specialty">
+              <MappingFragment StoreEntitySet="legacy_specialty">
+                <ScalarProperty Name="subfolder" ColumnName="subfolder" />
+                <ScalarProperty Name="folder" ColumnName="folder" />
+                <ScalarProperty Name="specialty_name" ColumnName="specialty_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="location">
             <EntityTypeMapping TypeName="conciergeModel.location">
               <MappingFragment StoreEntitySet="location">
-                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="contact_person" ColumnName="contact_person" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="fax" ColumnName="fax" />
+                <ScalarProperty Name="telephone" ColumnName="telephone" />
+                <ScalarProperty Name="country" ColumnName="country" />
+                <ScalarProperty Name="postal_code" ColumnName="postal_code" />
+                <ScalarProperty Name="locality2" ColumnName="locality2" />
+                <ScalarProperty Name="locality1" ColumnName="locality1" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="address3" ColumnName="address3" />
+                <ScalarProperty Name="address2" ColumnName="address2" />
+                <ScalarProperty Name="address1" ColumnName="address1" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -958,7 +1341,6 @@
           <EntitySetMapping Name="patient">
             <EntityTypeMapping TypeName="conciergeModel.patient">
               <MappingFragment StoreEntitySet="patient">
-                <ScalarProperty Name="stamp_id" ColumnName="stamp_id" />
                 <ScalarProperty Name="emergency_contact" ColumnName="emergency_contact" />
                 <ScalarProperty Name="gender" ColumnName="gender" />
                 <ScalarProperty Name="dob" ColumnName="dob" />
@@ -968,10 +1350,37 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="patient_signature">
+            <EntityTypeMapping TypeName="conciergeModel.patient_signature">
+              <MappingFragment StoreEntitySet="patient_signature">
+                <ScalarProperty Name="document_id" ColumnName="document_id" />
+                <ScalarProperty Name="patient_id" ColumnName="patient_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="procedure">
             <EntityTypeMapping TypeName="conciergeModel.procedure">
               <MappingFragment StoreEntitySet="procedure">
-                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="procedure_specialty">
+            <EntityTypeMapping TypeName="conciergeModel.procedure_specialty">
+              <MappingFragment StoreEntitySet="procedure_specialty">
+                <ScalarProperty Name="specialty_name" ColumnName="specialty_name" />
+                <ScalarProperty Name="procedure_name" ColumnName="procedure_name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="procedure_target">
+            <EntityTypeMapping TypeName="conciergeModel.procedure_target">
+              <MappingFragment StoreEntitySet="procedure_target">
+                <ScalarProperty Name="target_name" ColumnName="target_name" />
+                <ScalarProperty Name="procedure_name" ColumnName="procedure_name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -985,40 +1394,26 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="release_response">
-            <EntityTypeMapping TypeName="conciergeModel.release_response">
-              <MappingFragment StoreEntitySet="release_response">
+          <EntitySetMapping Name="search_engine">
+            <EntityTypeMapping TypeName="conciergeModel.search_engine">
+              <MappingFragment StoreEntitySet="search_engine">
+                <ScalarProperty Name="query_string" ColumnName="query_string" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="special_document">
+            <EntityTypeMapping TypeName="conciergeModel.special_document">
+              <MappingFragment StoreEntitySet="special_document">
+                <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="document_id" ColumnName="document_id" />
-                <ScalarProperty Name="doctor_patient_id" ColumnName="doctor_patient_id" />
-                <ScalarProperty Name="scanned_date" ColumnName="scanned_date" />
-                <ScalarProperty Name="received_date" ColumnName="received_date" />
-                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="specialty">
             <EntityTypeMapping TypeName="conciergeModel.specialty">
               <MappingFragment StoreEntitySet="specialty">
-                <ScalarProperty Name="subspecialty_name" ColumnName="subspecialty_name" />
-                <ScalarProperty Name="specialty_name" ColumnName="specialty_name" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="stamp">
-            <EntityTypeMapping TypeName="conciergeModel.stamp">
-              <MappingFragment StoreEntitySet="stamp">
-                <ScalarProperty Name="added_date" ColumnName="added_date" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="stamp_segment">
-            <EntityTypeMapping TypeName="conciergeModel.stamp_segment">
-              <MappingFragment StoreEntitySet="stamp_segment">
-                <ScalarProperty Name="data" ColumnName="data" />
-                <ScalarProperty Name="position" ColumnName="position" />
-                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1026,6 +1421,13 @@
             <EntityTypeMapping TypeName="conciergeModel.suffix">
               <MappingFragment StoreEntitySet="suffix">
                 <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="target">
+            <EntityTypeMapping TypeName="conciergeModel.target">
+              <MappingFragment StoreEntitySet="target">
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1050,98 +1452,238 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="Model1" ZoomLevel="75">
-        <EntityTypeShape EntityType="conciergeModel.activity" Width="1.5" PointX="10.5" PointY="11.25" Height="2.5571907552083246" />
-        <EntityTypeShape EntityType="conciergeModel.detail_item" Width="1.5" PointX="5.25" PointY="6.5" Height="2.3648893229166674" />
-        <EntityTypeShape EntityType="conciergeModel.directives" Width="1.5" PointX="5.25" PointY="9.625" Height="1.7879850260416674" />
-        <EntityTypeShape EntityType="conciergeModel.doctor" Width="1.5" PointX="6" PointY="0.75" Height="4.480205078124996" />
-        <EntityTypeShape EntityType="conciergeModel.doctor_patient" Width="1.5" PointX="8.25" PointY="7.625" Height="2.749492187499996" />
-        <EntityTypeShape EntityType="conciergeModel.doctor_specialty" Width="1.5" PointX="8.25" PointY="1" Height="1.9802864583333246" />
-        <EntityTypeShape EntityType="conciergeModel.document" Width="1.5" PointX="8.25" PointY="3.75" Height="2.5571907552083246" />
-        <EntityTypeShape EntityType="conciergeModel.document_segment" Width="1.5" PointX="10.5" PointY="14.625" Height="1.7879850260416674" />
-        <EntityTypeShape EntityType="conciergeModel.location" Width="1.5" PointX="0.75" PointY="2.875" Height="1.2110807291666674" />
-        <EntityTypeShape EntityType="conciergeModel.note" Width="1.5" PointX="2.75" PointY="2.875" Height="1.7879850260416674" />
-        <EntityTypeShape EntityType="conciergeModel.patient" Width="1.5" PointX="3" PointY="7.375" Height="3.134095052083353" />
-        <EntityTypeShape EntityType="conciergeModel.procedure" Width="1.5" PointX="0.75" PointY="11.875" Height="1.2110807291666674" />
-        <EntityTypeShape EntityType="conciergeModel.release_request" Width="1.5" PointX="10.5" PointY="7.875" Height="2.1725878906249818" />
-        <EntityTypeShape EntityType="conciergeModel.release_response" Width="1.5" PointX="10.5" PointY="4.75" Height="2.3648893229166674" />
-        <EntityTypeShape EntityType="conciergeModel.specialty" Width="1.5" PointX="6" PointY="13" Height="1.7879850260416674" />
-        <EntityTypeShape EntityType="conciergeModel.stamp" Width="1.5" PointX="0.75" PointY="8.25" Height="1.5956835937499818" />
-        <EntityTypeShape EntityType="conciergeModel.stamp_segment" Width="1.5" PointX="2.75" PointY="12.875" Height="1.5956835937499818" />
-        <EntityTypeShape EntityType="conciergeModel.suffix" Width="1.5" PointX="12.75" PointY="2.875" Height="1.2110807291666674" />
+        <EntityTypeShape EntityType="conciergeModel.activity" Width="1.5" PointX="3" PointY="7.25" Height="3.7109993489583282" />
+        <EntityTypeShape EntityType="conciergeModel.detail_item" Width="1.5" PointX="3.75" PointY="15.75" Height="2.3648893229166674" />
+        <EntityTypeShape EntityType="conciergeModel.doctor" Width="1.5" PointX="1.5" PointY="1.375" Height="4.48020507812501" />
+        <EntityTypeShape EntityType="conciergeModel.doctor_patient" Width="1.5" PointX="3.75" PointY="0.75" Height="2.749492187499996" />
+        <EntityTypeShape EntityType="conciergeModel.doctor_specialty" Width="1.5" PointX="0.75" PointY="12.625" Height="2.1725878906250102" />
+        <EntityTypeShape EntityType="conciergeModel.document" Width="1.5" PointX="0.75" PointY="8.75" Height="2.7494921875000102" />
+        <EntityTypeShape EntityType="conciergeModel.document_segment" Width="1.5" PointX="3" PointY="12.5" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="conciergeModel.legacy_specialty" Width="1.5" PointX="3.75" PointY="23.875" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="conciergeModel.location" Width="1.5" PointX="0.75" PointY="26.5" Height="3.7109993489583246" />
+        <EntityTypeShape EntityType="conciergeModel.note" Width="1.5" PointX="5.75" PointY="2.25" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="conciergeModel.patient" Width="1.5" PointX="1.5" PointY="15.625" Height="2.7494921875000102" />
+        <EntityTypeShape EntityType="conciergeModel.patient_signature" Width="1.5" PointX="6" PointY="9.125" Height="1.9802864583333388" />
+        <EntityTypeShape EntityType="conciergeModel.procedure" Width="1.5" PointX="1.5" PointY="35.875" Height="1.5956835937500102" />
+        <EntityTypeShape EntityType="conciergeModel.procedure_specialty" Width="1.5" PointX="0.75" PointY="20" Height="2.1725878906250102" />
+        <EntityTypeShape EntityType="conciergeModel.procedure_target" Width="1.5" PointX="0.75" PointY="32.75" Height="2.1725878906250102" />
+        <EntityTypeShape EntityType="conciergeModel.release_request" Width="1.5" PointX="6" PointY="6" Height="2.1725878906250102" />
+        <EntityTypeShape EntityType="conciergeModel.search_engine" Width="1.5" PointX="7.75" PointY="2.25" Height="1.4033821614583246" />
+        <EntityTypeShape EntityType="conciergeModel.special_document" Width="1.5" PointX="3" PointY="20.75" Height="1.595683593749996" />
+        <EntityTypeShape EntityType="conciergeModel.specialty" Width="1.5" PointX="1.5" PointY="23.875" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="conciergeModel.suffix" Width="1.5" PointX="8.75" PointY="5.25" Height="1.2110807291666674" />
+        <EntityTypeShape EntityType="conciergeModel.target" Width="1.5" PointX="1.5" PointY="38.25" Height="1.4033821614583246" />
+        <AssociationConnector Association="conciergeModel.activity_ibfk_10" >
+          <ConnectorPoint PointX="2.25" PointY="12.626152846153847" />
+          <ConnectorPoint PointX="2.3160744349011204" PointY="12.560078411252725" />
+          <ConnectorPoint PointX="2.4339255650988791" PointY="12.442227281054969" />
+          <ConnectorPoint PointX="2.4410744349011204" PointY="12.435078411252725" />
+          <ConnectorPoint PointX="2.6214255650988791" PointY="12.254727281054969" />
+          <ConnectorPoint PointX="2.625" PointY="12.251152846153847" />
+          <ConnectorPoint PointX="2.625" PointY="9.1054996744791641" />
+          <ConnectorPoint PointX="3" PointY="9.1054996744791641" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.activity_ibfk_11" >
+          <ConnectorPoint PointX="1.5" PointY="26.5" />
+          <ConnectorPoint PointX="1.5" PointY="25.912985026041667" />
+          <ConnectorPoint PointX="3.25" PointY="25.912985026041667" />
+          <ConnectorPoint PointX="3.25" PointY="22.595683593749996" />
+          <ConnectorPoint PointX="2.75" PointY="22.595683593749996" />
+          <ConnectorPoint PointX="2.75" PointY="18.62449218750001" />
+          <ConnectorPoint PointX="3.25" PointY="18.62449218750001" />
+          <ConnectorPoint PointX="3.25" PointY="14.537985026041667" />
+          <ConnectorPoint PointX="2.9583333333333335" PointY="14.537985026041667" />
+          <ConnectorPoint PointX="2.7916666666666665" PointY="14.537985026041667" />
+          <ConnectorPoint PointX="2.75" PointY="14.537985026041667" />
+          <ConnectorPoint PointX="2.75" PointY="10.06450151171874" />
+          <ConnectorPoint PointX="3" PointY="10.06450151171874" />
+        </AssociationConnector>
         <AssociationConnector Association="conciergeModel.activity_ibfk_4" >
-          <ConnectorPoint PointX="9.75" PointY="6.3060359090544784" />
-          <ConnectorPoint PointX="10.21875" PointY="6.7747859090544784" />
-          <ConnectorPoint PointX="10.21875" PointY="12.528595377604162" />
-          <ConnectorPoint PointX="10.5" PointY="12.528595377604162" />
+          <ConnectorPoint PointX="2.25" PointY="10.575250430338535" />
+          <ConnectorPoint PointX="2.2916666666666665" PointY="10.575250430338535" />
+          <ConnectorPoint PointX="2.4583333333333335" PointY="10.575250430338535" />
+          <ConnectorPoint PointX="2.4791666666666665" PointY="10.575250430338533" />
+          <ConnectorPoint PointX="2.8958333333333335" PointY="10.575250430338535" />
+          <ConnectorPoint PointX="3" PointY="10.575250430338535" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.activity_ibfk_7" >
+          <ConnectorPoint PointX="2.25" PointY="33.836293945312505" />
+          <ConnectorPoint PointX="3.5" PointY="33.836293945312505" />
+          <ConnectorPoint PointX="3.5" PointY="22.845683593749996" />
+          <ConnectorPoint PointX="3.3333333333333335" PointY="22.845683593749996" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="22.845683593749996" />
+          <ConnectorPoint PointX="2.5" PointY="22.845683593749996" />
+          <ConnectorPoint PointX="2.5" PointY="18.87449218750001" />
+          <ConnectorPoint PointX="2.6666666666666665" PointY="18.87449218750001" />
+          <ConnectorPoint PointX="2.8333333333333335" PointY="18.87449218750001" />
+          <ConnectorPoint PointX="3.2916666666666665" PointY="18.87449218750001" />
+          <ConnectorPoint PointX="3.4583333333333335" PointY="18.87449218750001" />
+          <ConnectorPoint PointX="3.5" PointY="18.87449218750001" />
+          <ConnectorPoint PointX="3.5" PointY="14.787985026041667" />
+          <ConnectorPoint PointX="3.3333333333333335" PointY="14.787985026041667" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="14.787985026041667" />
+          <ConnectorPoint PointX="2.875" PointY="14.787985026041667" />
+          <ConnectorPoint PointX="2.875" PointY="11.335999348958328" />
+          <ConnectorPoint PointX="3.2604146666666667" PointY="11.335999348958328" />
+          <ConnectorPoint PointX="3.4270813333333336" PointY="11.335999348958328" />
+          <ConnectorPoint PointX="3.75" PointY="11.335999348958328" />
+          <ConnectorPoint PointX="3.75" PointY="10.960999348958328" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.activity_ibfk_8" >
+          <ConnectorPoint PointX="4.125" PointY="3.499492187499996" />
+          <ConnectorPoint PointX="4.125" PointY="7.25" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.activity_ibfk_9" >
+          <ConnectorPoint PointX="2.25" PointY="21.086293945312505" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="21.086293945312505" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="21.086293945312505" />
+          <ConnectorPoint PointX="2.6666666666666665" PointY="21.086293945312505" />
+          <ConnectorPoint PointX="2.8333333333333335" PointY="21.086293945312505" />
+          <ConnectorPoint PointX="2.875" PointY="21.086293945312505" />
+          <ConnectorPoint PointX="2.875" PointY="20.5" />
+          <ConnectorPoint PointX="3.625" PointY="20.5" />
+          <ConnectorPoint PointX="3.625" PointY="14.662985026041667" />
+          <ConnectorPoint PointX="3.3333333333333335" PointY="14.662985026041667" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="14.662985026041667" />
+          <ConnectorPoint PointX="2.9583333333333335" PointY="14.662985026041667" />
+          <ConnectorPoint PointX="2.7291666666666665" PointY="14.662985026041667" />
+          <ConnectorPoint PointX="2.5" PointY="14.662985026041667" />
+          <ConnectorPoint PointX="2.5" PointY="11.585999348958328" />
+          <ConnectorPoint PointX="2.5416666666666665" PointY="11.585999348958326" />
+          <ConnectorPoint PointX="2.9583333333333335" PointY="11.585999348958328" />
+          <ConnectorPoint PointX="3.343748" PointY="11.585999348958328" />
+          <ConnectorPoint PointX="3.343748" PointY="10.960999348958328" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.detail_item_ibfk_2" >
-          <ConnectorPoint PointX="4.5" PointY="8.1199446614583337" />
-          <ConnectorPoint PointX="5.25" PointY="8.1199446614583337" />
-        </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.directives_ibfk_1" >
-          <ConnectorPoint PointX="4.5" PointY="10.067047526041677" />
-          <ConnectorPoint PointX="5.25" PointY="10.067047526041677" />
+          <ConnectorPoint PointX="3" PointY="16.932444661458334" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="16.93244466145833" />
+          <ConnectorPoint PointX="3.7083333333333335" PointY="16.932444661458334" />
+          <ConnectorPoint PointX="3.75" PointY="16.932444661458334" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.doctor_patient_ibfk_1" >
-          <ConnectorPoint PointX="7.15625" PointY="5.230205078124996" />
-          <ConnectorPoint PointX="7.15625" PointY="9.2449446614583337" />
-          <ConnectorPoint PointX="7.791666666666667" PointY="9.2449446614583337" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="9.2449446614583337" />
-          <ConnectorPoint PointX="8.25" PointY="9.2449446614583337" />
+          <ConnectorPoint PointX="3" PointY="2.437246093749998" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="2.4372460937499976" />
+          <ConnectorPoint PointX="3.3333333333333335" PointY="2.437246093749998" />
+          <ConnectorPoint PointX="3.75" PointY="2.437246093749998" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.doctor_specialty_ibfk_1" >
-          <ConnectorPoint PointX="7.5" PointY="1.9901432291666623" />
-          <ConnectorPoint PointX="8.25" PointY="1.9901432291666623" />
+          <ConnectorPoint PointX="2.5625" PointY="5.85520507812501" />
+          <ConnectorPoint PointX="2.5625" PointY="13.613321436097751" />
+          <ConnectorPoint PointX="2.4583333333333335" PointY="13.613321436097751" />
+          <ConnectorPoint PointX="2.2916666666666665" PointY="13.613321436097751" />
+          <ConnectorPoint PointX="2.25" PointY="13.613321436097751" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.doctor_patient_ibfk_2" >
-          <ConnectorPoint PointX="4.5" PointY="9.0236669921875" />
-          <ConnectorPoint PointX="7.072916666666667" PointY="9.0236669921875" />
-          <ConnectorPoint PointX="7.239583333333333" PointY="9.0236669921875" />
-          <ConnectorPoint PointX="7.791666666666667" PointY="9.0236669921875" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="9.0236669921875" />
-          <ConnectorPoint PointX="8.25" PointY="9.0236669921875" />
+          <ConnectorPoint PointX="2.25" PointY="15.625" />
+          <ConnectorPoint PointX="2.25" PointY="15.04758789062501" />
+          <ConnectorPoint PointX="2.375" PointY="15.04758789062501" />
+          <ConnectorPoint PointX="2.375" PointY="6.10520507812501" />
+          <ConnectorPoint PointX="2.4791666666666665" PointY="6.1052050781250093" />
+          <ConnectorPoint PointX="2.6458333333333335" PointY="6.10520507812501" />
+          <ConnectorPoint PointX="3.25" PointY="6.10520507812501" />
+          <ConnectorPoint PointX="3.25" PointY="1.5623710468750054" />
+          <ConnectorPoint PointX="3.75" PointY="1.5623710468750054" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.release_request_ibfk_3" >
-          <ConnectorPoint PointX="9.75" PointY="8.9612939453124909" />
-          <ConnectorPoint PointX="10.041666666666666" PointY="8.96129394531249" />
-          <ConnectorPoint PointX="10.302083333333334" PointY="8.9612939453124909" />
-          <ConnectorPoint PointX="10.5" PointY="8.9612939453124909" />
-        </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.release_response_ibfk_1" >
-          <ConnectorPoint PointX="9.75" PointY="7.6873066923076925" />
-          <ConnectorPoint PointX="10.06607443490112" PointY="7.37123225740657" />
-          <ConnectorPoint PointX="10.277675565098878" PointY="7.1596311272088125" />
-          <ConnectorPoint PointX="10.3125" PointY="7.1248066923076934" />
-          <ConnectorPoint PointX="10.3125" PointY="7.3023893229166674" />
-          <ConnectorPoint PointX="10.34732443490112" PointY="7.2675648880155457" />
-          <ConnectorPoint PointX="10.465175565098878" PointY="7.1497137578177883" />
-          <ConnectorPoint PointX="10.5" PointY="7.1148893229166674" />
+          <ConnectorPoint PointX="4.90625" PointY="3.499492187499996" />
+          <ConnectorPoint PointX="4.90625" PointY="6.59375" />
+          <ConnectorPoint PointX="6" PointY="6.59375" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.doctor_specialty_ibfk_2" >
-          <ConnectorPoint PointX="7.5" PointY="13.001152846153847" />
-          <ConnectorPoint PointX="7.875" PointY="12.626152846153847" />
-          <ConnectorPoint PointX="7.875" PointY="2.5164668437499871" />
-          <ConnectorPoint PointX="8.25" PointY="2.5164668437499871" />
+          <ConnectorPoint PointX="1.5011528461538464" PointY="23.875" />
+          <ConnectorPoint PointX="1.1261528461538468" PointY="23.5" />
+          <ConnectorPoint PointX="0.58333333333333337" PointY="23.5" />
+          <ConnectorPoint PointX="0.41666666666666669" PointY="23.5" />
+          <ConnectorPoint PointX="0.375" PointY="23.5" />
+          <ConnectorPoint PointX="0.375" PointY="15.173740736778857" />
+          <ConnectorPoint PointX="0.75115284615384637" PointY="14.79758789062501" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.document_segment_ibfk_1" >
-          <ConnectorPoint PointX="9.7130769230769243" PointY="6.3071907552083246" />
-          <ConnectorPoint PointX="10.125" PointY="6.7191138321314" />
-          <ConnectorPoint PointX="10.125" PointY="15.518992513020834" />
-          <ConnectorPoint PointX="10.5" PointY="15.518992513020834" />
+          <ConnectorPoint PointX="2.25" PointY="11.437183495192318" />
+          <ConnectorPoint PointX="2.3160744349011213" PointY="11.503257930093438" />
+          <ConnectorPoint PointX="2.4339255650988791" PointY="11.621109060291197" />
+          <ConnectorPoint PointX="2.4410744349011217" PointY="11.628257930093438" />
+          <ConnectorPoint PointX="2.6839255650988791" PointY="11.871109060291197" />
+          <ConnectorPoint PointX="2.6875" PointY="11.874683495192318" />
+          <ConnectorPoint PointX="2.6875" PointY="13.393992513020834" />
+          <ConnectorPoint PointX="2.7291666666666665" PointY="13.393992513020834" />
+          <ConnectorPoint PointX="2.9583333333333335" PointY="13.393992513020834" />
+          <ConnectorPoint PointX="3" PointY="13.393992513020834" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.patient_signature_ibfk_2" >
+          <ConnectorPoint PointX="2.25" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="2.2916666666666665" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="2.4583333333333335" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="2.4791666666666665" PointY="11.064392903645832" />
+          <ConnectorPoint PointX="2.8958333333333335" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="3.2604146666666667" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="3.4270813333333336" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="11.064392903645834" />
+          <ConnectorPoint PointX="6" PointY="11.064392903645834" />
         </AssociationConnector>
         <AssociationConnector Association="conciergeModel.release_request_ibfk_2" >
-          <ConnectorPoint PointX="9.75" PointY="6.2379589859775555" />
-          <ConnectorPoint PointX="10.40625" PointY="6.8942089859775555" />
-          <ConnectorPoint PointX="10.40625" PointY="8.3868949726562523" />
-          <ConnectorPoint PointX="10.5" PointY="8.3868949726562523" />
+          <ConnectorPoint PointX="1.5" PointY="8.75" />
+          <ConnectorPoint PointX="1.5" PointY="6.9218774999999937" />
+          <ConnectorPoint PointX="2.2916666666666665" PointY="6.9218774999999928" />
+          <ConnectorPoint PointX="2.4583333333333335" PointY="6.9218774999999937" />
+          <ConnectorPoint PointX="2.4791666666666665" PointY="6.9218774999999928" />
+          <ConnectorPoint PointX="2.6458333333333335" PointY="6.9218774999999937" />
+          <ConnectorPoint PointX="4.041666666666667" PointY="6.9218774999999928" />
+          <ConnectorPoint PointX="4.208333333333333" PointY="6.9218774999999937" />
+          <ConnectorPoint PointX="6" PointY="6.9218774999999937" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.release_response_ibfk_3" >
-          <ConnectorPoint PointX="9.75" PointY="5.4627269929887845" />
-          <ConnectorPoint PointX="10.5" PointY="5.4627269929887845" />
+        <AssociationConnector Association="conciergeModel.special_document_ibfk_1" >
+          <ConnectorPoint PointX="2.25" PointY="9.5850005930989521" />
+          <ConnectorPoint PointX="2.2916666666666665" PointY="9.5850005930989521" />
+          <ConnectorPoint PointX="2.4583333333333335" PointY="9.5850005930989521" />
+          <ConnectorPoint PointX="2.4791666666666665" PointY="9.5850005930989521" />
+          <ConnectorPoint PointX="2.7083333333333335" PointY="9.5850005930989521" />
+          <ConnectorPoint PointX="2.8125" PointY="9.5850005930989521" />
+          <ConnectorPoint PointX="2.8125" PointY="15.375" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="15.375" />
+          <ConnectorPoint PointX="3.3333333333333335" PointY="15.375" />
+          <ConnectorPoint PointX="3.375" PointY="15.375" />
+          <ConnectorPoint PointX="3.375" PointY="20.125" />
+          <ConnectorPoint PointX="3.5416666666666665" PointY="20.125" />
+          <ConnectorPoint PointX="3.7083333333333335" PointY="20.125" />
+          <ConnectorPoint PointX="4.0624994999999995" PointY="20.125" />
+          <ConnectorPoint PointX="4.0624994999999995" PointY="20.75" />
         </AssociationConnector>
-        <AssociationConnector Association="conciergeModel.patient_ibfk_1" >
-          <ConnectorPoint PointX="2.25" PointY="9.0478417968749909" />
-          <ConnectorPoint PointX="3" PointY="9.0478417968749909" />
+        <AssociationConnector Association="conciergeModel.legacy_specialty_ibfk_1" >
+          <ConnectorPoint PointX="3" PointY="24.768992513020834" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="24.768992513020834" />
+          <ConnectorPoint PointX="3.3333333333333335" PointY="24.768992513020834" />
+          <ConnectorPoint PointX="3.4166666666666665" PointY="24.768992513020834" />
+          <ConnectorPoint PointX="3.5833333333333335" PointY="24.768992513020834" />
+          <ConnectorPoint PointX="3.75" PointY="24.768992513020834" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.patient_signature_ibfk_1" >
+          <ConnectorPoint PointX="3" PointY="18.275940755208339" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="18.275940755208335" />
+          <ConnectorPoint PointX="3.7083333333333335" PointY="18.275940755208339" />
+          <ConnectorPoint PointX="6.75" PointY="18.275940755208339" />
+          <ConnectorPoint PointX="6.75" PointY="11.105286458333339" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.procedure_specialty_ibfk_1" >
+          <ConnectorPoint PointX="1.5" PointY="35.875" />
+          <ConnectorPoint PointX="1.125" PointY="35.5" />
+          <ConnectorPoint PointX="0.5" PointY="35.5" />
+          <ConnectorPoint PointX="0.5" PointY="22.423740736778857" />
+          <ConnectorPoint PointX="0.75115284615384637" PointY="22.17258789062501" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.procedure_target_ibfk_1" >
+          <ConnectorPoint PointX="1.9062525" PointY="35.875" />
+          <ConnectorPoint PointX="1.9062525" PointY="34.92258789062501" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.procedure_specialty_ibfk_2" >
+          <ConnectorPoint PointX="1.9068289230769233" PointY="23.875" />
+          <ConnectorPoint PointX="1.9068289230769233" PointY="22.17258789062501" />
+        </AssociationConnector>
+        <AssociationConnector Association="conciergeModel.procedure_target_ibfk_2" >
+          <ConnectorPoint PointX="1.5" PointY="38.951691080729162" />
+          <ConnectorPoint PointX="1.0937475" PointY="38.951691080729162" />
+          <ConnectorPoint PointX="1.0937475" PointY="34.92258789062501" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

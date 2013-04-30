@@ -127,9 +127,9 @@ namespace Concierge_Manager
                     i++;
 
                     Db.activity activity = new Db.activity();
-                    activity.location = "";
+                    activity.location_name = "";
                     activity.specialty_id = int.Parse(activityElement.XPathSelectElement("//specialty").Value);
-                    activity.location = activityElement.XPathSelectElement("//location").Value;
+                    activity.location_name = activityElement.XPathSelectElement("//location_name").Value;
                     activity.procedure = activityElement.XPathSelectElement("//procedure").Value;
                     activity.date = DateTime.Parse(activityElement.XPathSelectElement("//date").Value);
                     activity.doctor_id = doctor;
@@ -149,24 +149,6 @@ namespace Concierge_Manager
             }
         }
         */
-        public Hashtable UploadFile(XElement root)
-        {
-            var result = new Hashtable();
-            result["status"] = "ok";
-            try
-            {
-                Db.Db db = Db.Db.Instance();
-                string fullName = root.XPathSelectElement("//fullname").Value;
-                FileInfo fi = new FileInfo(fullName);
-                db.AddFile(fi);
-            }
-            catch (Exception)
-            {
-                result["status"] = "error";
-                result["reason"] = "UploadFile failed";
-            }
-            return result;
-        }
         public Hashtable BrowseDocuments()
         {
             var result = new Hashtable();
@@ -183,6 +165,7 @@ namespace Concierge_Manager
             }
             return result;
         }
+        /*
         public Hashtable GetSpecialties()
         {
             var result = new Hashtable();
@@ -199,6 +182,7 @@ namespace Concierge_Manager
             }
             return result;
         }
+         * */
         public byte[] DownloadFile(int fileId)
         {
             Db.Db db = Db.Db.Instance();
@@ -356,7 +340,7 @@ namespace Concierge_Manager
                         activity["subspecialty"],
                         doctor.lastname,
                         doctor.firstname,
-                        activity["location"],
+                        activity["location_name"],
                         activity["doctorid"],
                         activity["documentid"]));
                 }
@@ -638,6 +622,46 @@ namespace Concierge_Manager
             }
             return result;
         }
+        public Hashtable GetSpecialFile(XElement root)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                Hashtable values = new Hashtable();
+                string name = root.XPathSelectElement("//name").Value;
+                values["name"] = name;
+                Db.Db db = Db.Db.Instance();
+                return db.GetSpecialFile(values);
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = ex.Message;
+            }
+            return result;
+        }
+        public Hashtable AddFile(XElement root)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                Hashtable values = new Hashtable();
+                string path = root.XPathSelectElement("//path").Value;
+                string name = root.XPathSelectElement("//name").Value;
+                values["path"] = path;
+                values["name"] = name;
+                Db.Db db = Db.Db.Instance();
+                return db.AddFile(values);
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = ex.Message;
+            }
+            return result;
+        }
         public Hashtable DeleteDocument(XElement root)
         {
             Hashtable result = new Hashtable();
@@ -655,7 +679,7 @@ namespace Concierge_Manager
             }
             return result;
         }
-
+        /*
         public Hashtable AddSpecialty(XElement root)
         {
             var result = new Hashtable();
@@ -674,6 +698,7 @@ namespace Concierge_Manager
             }
             return result;
         }
+         */
         public Hashtable UpdateDoctor(XElement root)
         {
             var result = new Hashtable();

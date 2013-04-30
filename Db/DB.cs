@@ -25,18 +25,99 @@ namespace Db
             //conciergeEntities_ = new conciergeEntities();
             //conciergeEntities_.Connection.Open();
         }
+        private string BufferToString(byte[] buffer)
+        {
+            string hash = string.Concat((from b in buffer
+                                         select string.Format("{0:X2}",b)).ToArray());
+            return hash;
+        }/*
+        private string Hash(byte[] buffer)
+        {
+            SHA1Managed sha1 = new SHA1Managed();
+            byte[] hashBytes = sha1.ComputeHash(buffer);
+            return BufferToString(hashBytes);
+        }
+        private string Hash(FileStream stream)
+        {
+            SHA1Managed sha1 = new SHA1Managed();
+            byte[] hashBytes = sha1.ComputeHash(stream);
+            return BufferToString(hashBytes);
+        }
         // TODO: refactor, this is a copy/paste from ObjectForScripting
         private string Hash(FileInfo fileInfo)
         {
             SHA1Managed sha1 = new SHA1Managed();
             FileStream inFile = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read);
-            byte[] hashBytes = sha1.ComputeHash(inFile);
-            string hash = string.Concat((from b in hashBytes
-                                         select string.Format("{0:X2}", b)).ToArray());
-            return hash;
+            return Hash(inFile);
+        }*/
+        private string FileHash(byte[] buffer)
+        {
+            MemoryStream ms = new MemoryStream(buffer,false);
+            SHA1Managed sha1 = new SHA1Managed();
+            return string.Concat(from b in sha1.ComputeHash(ms)
+                                 select b.ToString("X2"));
+        }
+        private string FileHash(Stream stream)
+        {
+            SHA1Managed sha1 = new SHA1Managed();
+            return string.Concat(from b in sha1.ComputeHash(stream)
+                                 select b.ToString("X2"));
+        }
+        private string FileHash(FileInfo file)
+        {
+            FileStream stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+            return FileHash(stream);
         }
 
-        // called by AddFiles(FileInfo[] files),AddActivities(activity[] activities, FileInfo[] files)
+        Hashtable RemoveFile_(Hashtable values,conciergeEntities ent)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try 
+	        {
+                int document_id = (int)result["document_id"];
+                var query = from doc in ent.document
+                            where doc.id == document_id
+                            select doc;
+                if(query.Count() < 1)
+                    throw new Exception(string.Format("Trying to remove unknown file id {0}",document_id));
+                var query2 = from ds in ent.document_segment
+                                where ds.document_id == document_id
+                                select ds;
+                foreach(document_segment ds in query2)
+                {
+                    ent.document_segment.DeleteObject(ds);
+                }
+                ent.SaveChanges();
+                ent.document.DeleteObject(query.First());
+                ent.SaveChanges();
+	        }
+	        catch (Exception ex)
+	        {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+	        }
+            return result;
+        }
+        Hashtable GetServerDate(conciergeEntities ent)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try 
+	        {	        
+                System.Data.Objects.ObjectParameter op = new System.Data.Objects.ObjectParameter("CurrentDate",typeof(DateTime));
+                ent.GetServerDate(op);
+                DateTime dt = (DateTime)op.Value;
+                result["date"] = dt;
+	        }
+	        catch (Exception ex)
+	        {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+	        }
+            return result;
+        }
+/*
         private int AddFile_(FileInfo file,conciergeEntities conciergeEntities)
         {
             int id;
@@ -47,7 +128,7 @@ namespace Db
             DateTime dt = (DateTime)op.Value;
             document doc = conciergeEntities.document.CreateObject();
             doc.path = file.FullName;
-            doc.checksum = Hash(file);
+            doc.checksum = FileHash(file);
             doc.added_date = dt;
             conciergeEntities.document.AddObject(doc);
             conciergeEntities.SaveChanges();
@@ -93,7 +174,7 @@ namespace Db
             conciergeEntities.SaveChanges();
 
             return id;
-        }
+        }*/
         public byte[] GetDocumentData(int document_id)
         {
             byte[] result;
@@ -195,6 +276,7 @@ namespace Db
         }
         //        public int AddDoctor(string firstName,string lastName,string shortName,string address1,string address2,string address3,string city,string locality1,string locality2,
 //            string postalCode,string country,string voice,string fax,string email,string contact)
+        /*
         public void UpdateDoctor(string firstName, string lastName, string shortName, string address1, string address2, string address3, string city, string locality1, string locality2,
             string postalCode, string country, string voice, string fax, string email, string contact)
         {
@@ -222,6 +304,8 @@ namespace Db
             }
 
         }
+         */
+        /*
         string[] GetSpecialty(int specialty_id)
         {
             string[] result = new string[2];
@@ -235,7 +319,9 @@ namespace Db
                 result[1] = query.First().subspecialty_name;
             }
             return result;
-        }/*
+        }
+         */
+        /*
         public Hashtable GetActivitiesByDoctor(bool recentOnly, int patient)
         {
             Hashtable result = new Hashtable();
@@ -284,6 +370,50 @@ namespace Db
             else
                 return string.Format(ex.Message + " ::::" + ex.InnerException.Message);
         }
+        public Hashtable UpdateDoctor(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> doctorList = new List<Hashtable>();
+            result["status"] = "ok";
+            try
+            {
+                if(values["id"] == null)
+                    throw new Exception("Missing doctor id");
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    ent.Connection.Open();
+                    int id = (int)values["id"];
+                    var query = from d in ent.doctor
+                                where d.id == id
+                                select d;
+                    if (query.Count() != 1)
+                        throw new Exception("Bad doctor id");
+                    doctor doctor = query.First();
+                    doctor.address1 = values["address1"] as string;
+                    doctor.address2 = values["address2"] as string;
+                    doctor.address3 = values["address3"] as string;
+                    doctor.city = values["city"] as string;
+                    doctor.contact_person = values["contact_person"] as string;
+                    doctor.country = values["country"] as string;
+                    doctor.email = values["email"] as string;
+                    doctor.fax = values["fax"] as string;
+                    doctor.firstname = values["firstname"] as string;
+                    doctor.lastname = values["lastname"] as string;
+                    doctor.locality1 = values["locality1"] as string;
+                    doctor.locality2 = values["locality2"] as string;
+                    doctor.postal_code = values["postal_code"] as string;
+                    doctor.telephone = values["telephone"] as string;
+                    ent.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        /*
         public Hashtable GetDoctors()
         {
             Hashtable result = new Hashtable();
@@ -309,7 +439,7 @@ namespace Db
                         next["lastname"] = d.lastname;
                         next["locality1"] = d.locality1;
                         next["locality2"] = d.locality2;
-                        next["postal_cod"] = d.postal_code;
+                        next["postal_code"] = d.postal_code;
                         next["shortname"] = d.shortname;
                         next["telephone"] = d.telephone;
                         doctorList.Add(next);
@@ -324,6 +454,7 @@ namespace Db
             }
             return result;
         }
+         */
         public Hashtable GetPatients()
         {
             Hashtable result = new Hashtable();
@@ -336,13 +467,12 @@ namespace Db
                     foreach (patient p in (from p in ent.patient select p))
                     {                  
                         Hashtable next = new Hashtable();
-                        next["doc"] = p.dob;
+                        next["dob"] = p.dob;
                         next["emergency_contact"] = p.emergency_contact;
                         next["first"] = p.first;
                         next["gender"] = p.gender;
                         next["id"] = p.id;
                         next["last"] = p.last;
-                        next["stamp_id"] = p.stamp_id;
                         patientList.Add(next);
                     }
                     result["data"] = patientList;
@@ -392,7 +522,7 @@ namespace Db
                     foreach (procedure p in (from p in ent.procedure select p))
                     {
                         Hashtable next = new Hashtable();
-                        next["value"] = p.value;
+                        next["name"] = p.name;
                         procedureList.Add(next);
                     }
                     result["data"] = procedureList;
@@ -405,61 +535,29 @@ namespace Db
             }
             return result;
         }
-        public Hashtable GetPatientSpecialties(int patient_id)
+
+        public Hashtable GetTargets(Hashtable values)
         {
             Hashtable result = new Hashtable();
-            List<Hashtable> specialtyList = new List<Hashtable>();
+            List<Hashtable> targetList = new List<Hashtable>();
+            string procedure_name = (values["procedure_name"] as string).Trim().ToLower();
             result["status"] = "ok";
             try
             {
                 using (conciergeEntities ent = new conciergeEntities())
                 {
-                 /*
-                    var q = from s in ent.specialty
-                            let count = (from p in ent.patient
-                                         join dp in ent.doctor_patient on p.id equals dp.patient_id
-                                         join a in ent.activity on dp.id equals a.doctor_patient_id
-                                         join ds in ent.doctor_specialty on a.doctor_specialty_id equals ds.id
-                                         where (p.id == patient_id && s.id == ds.specialty_id)
-                                         select a).Count()
-                            join ds in ent.doctor_specialty on s.id equals ds.specialty_id
-                            join a in ent.activity on ds.id equals a.doctor_specialty_id
-                            join dp in ent.doctor_patient on a.doctor_patient_id equals dp.id
-                            where 
-                            orderby s.specialty_name, s.subspecialty_name ascending
-                            select new { Specialty = s, Count = count };
-                    foreach (var item in q)
+                    List<Hashtable> items = new List<Hashtable>();
+                    var query = from pt in ent.procedure_target
+                                where pt.procedure_name.Trim().ToLower() == procedure_name
+                                select pt.target_name;
+                    foreach (string target_name in query)
                     {
-                        Hashtable h = new Hashtable();
-                        h["specialty"] = item.Specialty.specialty_name;
-                        h["subspecialty"] = item.Specialty.subspecialty_name;
-                        h["id"] = item.Specialty.id;
-                        h["count"] = item.Count;
-                        specialtyList.Add(h);
+                        Hashtable item = new Hashtable();
+                        item["target_name"] = target_name;
+                        items.Add(item);
                     }
-                  */
-                    ArrayList specialties = new ArrayList();
-                    foreach (specialty s in (from s in ent.specialty select s))
-                    {
-                        specialties.Add(s);
-                    }
-                    foreach(specialty s in specialties)
-                    {
-                        int count = (from p in ent.patient
-                                     join dp in ent.doctor_patient on p.id equals dp.patient_id
-                                     join a in ent.activity on dp.id equals a.doctor_patient_id
-                                     join ds in ent.doctor_specialty on a.doctor_specialty_id equals ds.id
-                                     where (p.id == patient_id && s.id == ds.specialty_id)
-                                     select a).Count();
-                        Hashtable h = new Hashtable();
-                        h["specialty"] = s.specialty_name;
-                        h["subspecialty"] = s.subspecialty_name;
-                        h["id"] = s.id;
-                        h["count"] = count;
-                        specialtyList.Add(h);
-                    }
+                    result["data"] = items;
                 }
-                result["data"] = specialtyList;
             }
             catch (Exception ex)
             {
@@ -468,22 +566,71 @@ namespace Db
             }
             return result;
         }
-        public Hashtable GetSpecialties()
+        
+        public Hashtable GetPatientSpecialties(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            List<Hashtable> specialtyList = new List<Hashtable>();
+            string procedure_name = (values["procedure_name"] as string).Trim().ToLower();
+            int patient_id = (int)values["patient_id"];
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    List<Hashtable> items = new List<Hashtable>();
+                    var query = (from ps in ent.procedure_specialty
+                                 where ps.procedure_name.Trim().ToLower() == procedure_name
+                                 orderby ps.procedure_name
+                                 select ps);
+                    foreach (procedure_specialty ps in query)
+                    {
+                        Hashtable h = new Hashtable();
+                        h["specialty_name"] = ps.specialty_name;
+                        h["procedure_specialty_id"] = ps.id;
+                    }
+                    foreach (Hashtable item in items)
+                    {
+                        string specialty_name = item["specialty_name"] as string;
+                        int procedure_specialty_id = (int)item["procedure_specialty_id"];
+                        int count = (from a in ent.activity
+                                      join dp in ent.doctor_patient on a.doctor_patient_id equals dp.id
+                                      where a.procedure_specialty_id == procedure_specialty_id && dp.patient_id == patient_id
+                                      select a).Count();
+                        item["count"] = count;
+                    }
+                    result["data"] = items;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+         
+        
+        public Hashtable GetSpecialties(Hashtable values)
         {
             Hashtable result = new Hashtable();
             List<Hashtable> specialtyList = new List<Hashtable>();
             result["status"] = "ok";
             try
             {
+                string procedure_name = (values["procedure_name"] as string).Trim().ToLower();
                 using (conciergeEntities ent = new conciergeEntities())
                 {
-                    foreach (specialty sp in (from sp in ent.specialty select sp))
+                    var query = (from ps in ent.procedure_specialty
+                                 where ps.procedure_name.Trim().ToLower() == procedure_name
+                                 orderby ps.specialty_name
+                                 select ps);
+                    foreach(procedure_specialty ps in query)
                     {
-                        Hashtable next = new Hashtable();
-                        next["specialty"] = sp.specialty_name;
-                        next["subspecialty"] = sp.subspecialty_name;
-                        next["id"] = sp.id;
-                        specialtyList.Add(next);
+                        Hashtable item = new Hashtable();
+                        item["specialty_name"] = ps.specialty_name;
+                        item["procedure_specialty_id"] = ps.id;
+                        specialtyList.Add(item);
                     }
                     result["data"] = specialtyList;
                 }
@@ -495,6 +642,7 @@ namespace Db
             }
             return result;
         }
+        
         public Hashtable GetLocations()
         {
             Hashtable result = new Hashtable();
@@ -507,7 +655,19 @@ namespace Db
                     foreach (location l in (from l in ent.location select l))
                     {
                         Hashtable next = new Hashtable();
-                        next["value"] = l.value;
+                        next["name"] = l.name;
+                        next["address1"] = l.address1;
+                        next["address2"] = l.address2;
+                        next["address3"] = l.address3;
+                        next["city"] = l.city;
+                        next["contact_person"] = l.contact_person;
+                        next["country"] = l.country;
+                        next["email"] = l.email;
+                        next["fax"] = l.fax;
+                        next["locality1"] = l.locality1;
+                        next["locality2"] = l.locality2;
+                        next["postal_code"] = l.postal_code;
+                        next["telephone"] = l.telephone;
                         locationList.Add(next);
                     }
                     result["data"] = locationList;
@@ -532,22 +692,20 @@ namespace Db
                     join dp in conciergeEntities.doctor_patient on a.doctor_patient_id equals dp.id
                     join ds in conciergeEntities.doctor_specialty on a.doctor_specialty_id equals ds.id
                     where dp.patient_id == patient && dp.doctor_id == doctor && dp.recent && dp.released
-                    select new { a = a, specialty_id = ds.specialty_id };
+                    select a;
                 var query2 =
                     from a in conciergeEntities.activity
                     join dp in conciergeEntities.doctor_patient on a.doctor_patient_id equals dp.id
                     join ds in conciergeEntities.doctor_specialty on a.doctor_specialty_id equals ds.id
                     where dp.patient_id == patient && dp.doctor_id == doctor && dp.released
-                    select new { a = a, specialty_id = ds.specialty_id };
+                    select a;
                 foreach (var r in recent ? query1 : query2)
                 {
                     Hashtable current = new Hashtable();
-                    current["procedure"] = r.a.procedure;
-                    current["specialtyid"] = r.specialty_id;
-                    current["documentid"] = r.a.document_id;
-                    current["location"] = r.a.location;
-                    current["date"] = r.a.date.ToShortDateString();
-                    current["binarydate"] = r.a.date;
+                    current["documentid"] = r.document_id;
+                    current["location_name"] = r.location;
+                    current["date"] = r.date.ToShortDateString();
+                    current["binarydate"] = r.date;
                     acts.Add(current);
                 }
                 result["items"] = acts;
@@ -556,9 +714,11 @@ namespace Db
             foreach (Hashtable act in acts)
             {
                 act["document"] = GetDocumentData((int)(act["documentid"]));
+                /*
                 string[] sp = GetSpecialty((int)(act["specialtyid"]));
                 act["specialty"] = sp[0];
                 act["subspecialty"] = sp[1];
+                 */
             }
             return result;
         }
@@ -573,22 +733,19 @@ namespace Db
                               join dp in conciergeEntities.doctor_patient on a.doctor_patient_id equals dp.id
                               join ds in conciergeEntities.doctor_specialty on a.doctor_specialty_id equals ds.id
                               where dp.patient_id == patient && dp.released && dp.recent
-                              select new { a = a, ds = ds };
+                              select a;
                 var query02 = from a in conciergeEntities.activity
                               join dp in conciergeEntities.doctor_patient on a.doctor_patient_id equals dp.id
                               join ds in conciergeEntities.doctor_specialty on a.doctor_specialty_id equals ds.id
                               where dp.patient_id == patient && dp.released && dp.released
-                              select new { a = a, ds = ds };
+                              select a;
                 foreach (var r in recent ? query01 : query02)
                 {
                     Hashtable current = new Hashtable();
-                    current["procedure"] = r.a.procedure;
-                    current["specialtyid"] = r.ds.specialty_id;
-                    current["doctorid"] = r.ds.doctor_id;
-                    current["documentid"] = r.a.document_id;
-                    current["location"] = r.a.location;
-                    current["date"] = r.a.date.ToShortDateString();
-                    current["binarydate"] = r.a.date;
+                    current["documentid"] = r.document_id;
+                    current["location_name"] = r.location;
+                    current["date"] = r.date.ToShortDateString();
+                    current["binarydate"] = r.date;
                     acts.Add(current);
                 }
                 result["items"] = acts;
@@ -598,9 +755,11 @@ namespace Db
             {
                 act["document"] = GetDocumentData((int)(act["documentid"]));
                 act["doctor"] = GetDoctor((int)(act["doctorid"]));
+                /*
                 string[] sp = GetSpecialty((int)(act["specialtyid"]));
                 act["specialty"] = sp[0];
                 act["subspecialty"] = sp[1];
+                 */
             }
             return result;
         }
@@ -627,11 +786,9 @@ namespace Db
                 foreach (var r in query)
                 {
                     Hashtable current = new Hashtable();
-                    current["procedure"] = r.a.procedure;
-                    current["specialtyid"] = r.ds.specialty_id;
                     current["doctorid"] = r.ds.doctor_id;
                     current["documentid"] = r.a.document_id;
-                    current["location"] = r.a.location;
+                    current["location_name"] = r.a.location;
                     current["date"] = r.a.date.ToShortDateString();
                     acts.Add(current);
                     i++;
@@ -643,9 +800,11 @@ namespace Db
             {
                 act["document"] = GetDocumentData((int)(act["documentid"]));
                 act["doctor"] = GetDoctor((int)(act["doctorid"]));
+                /*
                 string[] sp = GetSpecialty((int)(act["specialtyid"]));
                 act["specialty"] = sp[0];
                 act["subspecialty"] = sp[1];
+                 */
             }
             return result;
         }
@@ -668,7 +827,7 @@ namespace Db
                 result = ms.ToArray();
             }
             return result;
-        }
+        }/*
         public Hashtable[] Doctors()
         {
             conciergeEntities conciergeEntities;
@@ -703,6 +862,7 @@ namespace Db
                 return result;
             }
         }
+          */
         public Hashtable[] BrowseDocuments()
         {
             conciergeEntities conciergeEntities;
@@ -713,15 +873,11 @@ namespace Db
                           join acti in conciergeEntities.activity on docu.id equals acti.document_id
                           join dr_spe in conciergeEntities.doctor_specialty on acti.doctor_specialty_id equals dr_spe.id
                           join doct in conciergeEntities.doctor on dr_spe.doctor_id equals doct.id
-                          join spec in conciergeEntities.specialty on dr_spe.specialty_id equals spec.id
                           join dr_pat in conciergeEntities.doctor_patient on acti.doctor_patient_id equals dr_pat.id
                           join pati in conciergeEntities.patient on dr_pat.patient_id equals pati.id
                           select new
                           {
-                              Specialty = spec.specialty_name,
-                              Subspecialty = spec.subspecialty_name,
-                              Doctor = doct.shortname,
-                              Procedure = acti.procedure,
+                              Doctor = doct.shortname
                               Location = acti.location,
                               Patient = pati.first + " " + pati.last,
                               Checksum = docu.checksum,
@@ -742,7 +898,7 @@ namespace Db
                         Subspecialty = spec.subspecialty_name,
                         Doctor = doct.shortname,
                         Procedure = acti.procedure,
-                        Location = acti.location,
+                        Location = acti.location_name,
                         Patient = pait.first + " " + pait.last,
                         Checksum = docu.checksum,
                         Path = docu.path,
@@ -753,10 +909,7 @@ namespace Db
                 foreach (var item in query)
                 {
                     result[i] = new Hashtable();
-                    result[i]["Specialty"] = item.Specialty;
-                    result[i]["Subspecialty"] = item.Subspecialty;
                     result[i]["Doctor"] = item.Doctor;
-                    result[i]["Procedure"] = item.Procedure;
                     result[i]["Location"] = item.Location;
                     result[i]["Patient"] = item.Patient;
                     result[i]["Checksum"] = item.Checksum;
@@ -767,6 +920,8 @@ namespace Db
                 return result;
             }
         }
+
+        /*
         public Hashtable[] Specialties()
         {
             conciergeEntities conciergeEntities;
@@ -787,6 +942,8 @@ namespace Db
                 return result;
             }
         }
+         */
+
         public Hashtable GetPatient(int id)
         {
             Hashtable result = new Hashtable();
@@ -808,6 +965,7 @@ namespace Db
                     data["first"] = p.first;
                     data["gender"] = p.gender;
                     data["last"] = p.last;
+                    //data["signature_document_id"] = p.signature_document_id;
                 }
             }
             catch (Exception ex)
@@ -839,32 +997,6 @@ namespace Db
                 conciergeEntities.SaveChanges();
                 return result;
             }
-        }
-        // called by AddFile(FileInfo file)
-        private int AddFiles(FileInfo[] files)
-        {
-            conciergeEntities conciergeEntities;
-            using (conciergeEntities = new conciergeEntities())
-            {
-                conciergeEntities.Connection.Open();
-                using (DbTransaction transaction = conciergeEntities.Connection.BeginTransaction())
-                {
-                    foreach (FileInfo file in files)
-                    {
-                        int result = AddFile_(file,conciergeEntities);
-                    }
-                    transaction.Commit();
-                }
-                return 0;
-            }
-        }
-        // called by AddFile_
-        private string FileHash(FileInfo file)
-        {
-            FileStream stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
-            SHA1Managed sha1 = new SHA1Managed();
-            return string.Concat(from b in sha1.ComputeHash(stream)
-                                 select b.ToString("X2"));
         }
         #endregion 
         public Hashtable AddPatient(Hashtable values)
@@ -910,6 +1042,136 @@ namespace Db
                 conciergeEntities.SaveChanges();
             }
         }
+        public Hashtable GetSpecialFile(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string name = ((values["name"] as string) ?? "").Trim();
+                if(name == "")
+                    throw new Exception("Special file name unspecified");
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    ent.Connection.Open();
+                    var query1 = from sd in ent.special_document
+                                 where sd.name == name
+                                 select sd;
+                    if (query1.Count() < 1)
+                    {
+                        throw new Exception("document not found");
+                    }
+                    int document_id = query1.First().document_id;
+                    var query2 = from ds in ent.document_segment
+                                 where ds.document_id == document_id
+                                 orderby ds.position ascending
+                                 select ds;
+                    int length = 0;
+                    foreach (document_segment ds in query2)
+                        length += ds.data.Length;
+                    byte[] buffer = new byte[length];
+                    MemoryStream ms = new MemoryStream(buffer);
+                    foreach (document_segment ds in query2)
+                    {
+                        ms.Write(ds.data, 0, ds.data.Length);
+                    }
+                    result["data"] = buffer;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable GetSpecialF_ile(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string name = (values["name"] as string).Trim().ToLower();
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    var query = from sd in ent.special_document
+                                where sd.name.Trim().ToLower() == name
+                                select sd;
+                    if (query.Count() == 0)
+                    {
+                        throw new Exception("unknown special file");
+                    }
+                    int document_id = query.First().document_id;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable GetFile(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string path = values["path"] as string ?? string.Empty;
+                string name = values["name"] as string ?? string.Empty;
+                if(values["document_id"] != null && name != string.Empty)
+                    throw new Exception("Cannot specify both document_id and name in GetFile");
+                if(values["document_id"] == null && name == string.Empty)
+                    throw new Exception("Must specify either document_id or name in GetFile");
+                int document_id = (int)values["document_id"];
+                Stream s;
+                MemoryStream ms = null;
+                FileStream fs = null;
+                if (path != string.Empty)
+                {
+                    fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
+                    s = fs;
+                }
+                else
+                {
+                    ms = new MemoryStream();
+                    s = ms;
+                }
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    if(name != "")
+                    {
+                        name = name.Trim().ToLower();
+                        var q2 = from sd in ent.special_document
+                            where sd.name.Trim().ToLower() == name
+                            select sd;
+                        if(q2.Count() == 0)
+                            throw new Exception(string.Format("Could not find file named '{0}' in GetFile",name));
+                        document_id = q2.First().document_id;
+                    }
+                    var query = from ds in ent.document_segment
+                                where ds.document_id == document_id
+                                orderby ds.position
+                                select ds;
+                    foreach (document_segment ds in query)
+                    {
+                        s.Write(ds.data, 0, ds.data.Length);
+                    }
+                }
+                if(ms != null)
+                {
+                    result["data"] = ms.GetBuffer();
+                }
+                s.Close();
+                s.Dispose();
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
         public void DeleteDocument(int id)
         {
             conciergeEntities conciergeEntities;
@@ -950,6 +1212,7 @@ namespace Db
                 }
             }
         }
+        /*
         public int AddSpecialty(string specialty, string subspecialty)
         {
             conciergeEntities conciergeEntities;
@@ -964,6 +1227,8 @@ namespace Db
                 return 0;
             }
         }
+         */
+        /*
         public Hashtable AddDoctor(Hashtable values)
         {
             Hashtable result = new Hashtable();
@@ -994,7 +1259,9 @@ namespace Db
             }
             return result;
         }
+         */
         // called by AddDoctor(XElement)
+        /*
         public int AddDoctor(string firstName,string lastName,string shortName,string address1,string address2,string address3,string city,string locality1,string locality2,
             string postalCode,string country,string voice,string fax,string email,string contact)
         {
@@ -1046,11 +1313,13 @@ namespace Db
                 return 0;
             }
         }
+        */
         public Hashtable GetStamp(Hashtable values)
         {
             Hashtable result = new Hashtable();
             result["status"] = "ok";
             conciergeEntities conciergeEntities;
+            int document_id;
             try
             {
                 if (values["patient_id"] == null)
@@ -1064,32 +1333,77 @@ namespace Db
                                         select pa);
                     if (patientQuery.Count() < 1)
                         throw new Exception("Invalid patient_id when calling GetStamp");
-                    patient p = patientQuery.First();
-                    if (p.stamp_id != null)
+                    var signatureQuery = (from ps in conciergeEntities.patient_signature
+                                          where ps.patient_id == patient_id
+                                          select ps);
+                    if(signatureQuery.Count() < 1)
+                        throw new Exception("Patient has no signature");
+                    document_id = signatureQuery.First().document_id;
+                    conciergeEntities.Connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+                return result;
+            }
+            values["path"] = "";
+            values["document_id"] = document_id;
+            Hashtable result2 = GetFile(values);
+            if (result2["status"] as string != "ok")
+                return result2;
+            byte[] buffer = result2["data"] as byte[];
+            Image image = Image.FromStream(new MemoryStream(buffer));
+            try
+            {
+                result["image"] = image;
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+         
+        
+        public Hashtable AddStamp(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                if (values["image"] == null)
+                    throw new Exception("image not specified when calling AddStamp");
+                Image image = values["image"] as Image;
+                if (values["patient_id"] == null)
+                    throw new Exception("patient_id not specified when calling AddStamp");
+                int patient_id = (int)values["patient_id"];
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    ent.Connection.Open();
+                    using (DbTransaction txn = ent.Connection.BeginTransaction())
                     {
-                        int stamp_id = p.stamp_id ?? -1;
-                        var stampQuery = (from st in conciergeEntities.stamp
-                                          where st.id == stamp_id
-                                          select st);
-                        if (stampQuery.Count() < 1)
-                            throw new Exception("The patient has an invalid stamp_id");
-                        stamp stamp = stampQuery.First();
-                        var stampSegmentQuery = (from ss in conciergeEntities.stamp_segment
-                                                 where ss.id == stamp_id
-                                                 orderby ss.position
-                                                 select ss.data);
-                        if (stampSegmentQuery.Count() < 1)
-                            throw new Exception("The patient has an empty stamp");
+                        //Hashtable values = new Hashtable();
                         MemoryStream ms = new MemoryStream();
-                        foreach (byte[] data in stampSegmentQuery)
-                            ms.Write(data, 0, data.Length);
+                        image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
                         ms.Position = 0;
-                        Image image = Image.FromStream(ms, false, true);
-                        ms.Dispose();
-                        if (image == null)
-                            throw new Exception("The patient has a corrupted stamp");
-                        result["image"] = image;
-                    }
+                        result = AddFile(ms, ent, "SIGNATURE");
+                        if (result["status"] as string != "ok")
+                        {
+                            txn.Rollback();
+                            return result;
+                        }
+                        ent.SaveChanges();
+                        int file_id = (int)result["file_id"];
+                        patient_signature ps = ent.patient_signature.CreateObject();
+                        ps.document_id = file_id;
+                        ps.patient_id = patient_id;
+                        ent.patient_signature.AddObject(ps);
+                        ent.SaveChanges();
+                        txn.Commit();
+                    }           
                 }
             }
             catch (Exception ex)
@@ -1099,7 +1413,9 @@ namespace Db
             }
             return result;
         }
-        public Hashtable AddStamp(Hashtable values)
+         
+        /*
+        public Hashtable _AddStamp(Hashtable values)
         {
             Hashtable result = new Hashtable();
             result["status"] = "ok";
@@ -1127,10 +1443,10 @@ namespace Db
                             throw new Exception("Invalid patient_id when calling AddStamp");
                         patient pat = query.First();
                         int stamp_id;
-                        if (pat.stamp_id != null)
+                        if (pat.signature_document_id != null)
                         {
-                            stamp_id = (int)pat.stamp_id;
-                            pat.stamp_id = null;
+                            stamp_id = (int)pat.signature_document_id;
+                            pat.signature_document_id = null;
                             conciergeEntities.SaveChanges();
                             var querySegments = (from ss in conciergeEntities.stamp_segment
                                                  where ss.id == stamp_id
@@ -1181,11 +1497,73 @@ namespace Db
                             conciergeEntities.stamp_segment.AddObject(stamp_segment);
                         }
                         conciergeEntities.SaveChanges();
-                        pat.stamp_id = stamp_id;
+                        pat.signature_document_id = stamp_id;
                         conciergeEntities.SaveChanges();
                         transaction.Commit();
                         conciergeEntities.SaveChanges();
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        */
+        public Hashtable GetSearchEngines()
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            List<Hashtable> dataResults = new List<Hashtable>();
+            result["data"] = dataResults;
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    var query = from se in ent.search_engine
+                                select se;
+                    foreach (search_engine se in query)
+                    {
+                        Hashtable entry = new Hashtable();
+                        entry["name"] = se.name;
+                        entry["query_string"] = se.query_string;
+                        dataResults.Add(entry);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        public Hashtable AddLocation(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    location location = ent.location.CreateObject();
+                    location.name = values["name"] as string;
+                    location.address1 = values["address1"] as string;
+                    location.address2 = values["address2"] as string;
+                    location.address3 = values["address3"] as string;
+                    location.city = values["city"] as string;
+                    location.contact_person = values["contact_person"] as string;
+                    location.country = values["country"] as string;
+                    location.email = values["email"] as string;
+                    location.fax = values["fax"] as string;
+                    location.locality1 = values["locality1"] as string;
+                    location.locality2 = values["locality2"] as string;
+                    location.postal_code = values["postal_code"] as string;
+                    location.telephone = values["telephone"] as string;
+                    ent.location.AddObject(location);
+                    ent.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -1210,135 +1588,43 @@ namespace Db
                 {
                     foreach (var item in items)
                     {
-                        string specialty = item["specialty"] as string;
-                        string subspecialty = item["subspecialty"] as string;
-                        var specialtyQuery = (from s in conciergeEntities.specialty
-                                              where s.specialty_name == specialty && s.subspecialty_name == subspecialty
-                                              select s.id);
-                        if (specialtyQuery.Count() != 1)
-                        {
-                            result["status"] = "error";
-                            result["reason"] = "Unknown specialty/subspecialty combination";
-                            //                        transaction.Rollback();
-                            transaction.Rollback();
-                            return result;
-                        }
-                        int specialty_id = (from s in conciergeEntities.specialty
-                                            where s.specialty_name == specialty && s.subspecialty_name == subspecialty
-                                            select s.id).First();
-                        string firstName = item["firstName"] as string;
-                        string lastName = item["lastName"] as string;
-                        var patientQuery = (from s in conciergeEntities.patient
-                                            where s.first == firstName && s.last == lastName
-                                            select s.id);
-                        if (patientQuery.Count() != 1)
-                        {
-                            result["status"] = "error";
-                            result["reason"] = "Unknown patient";
-                            transaction.Rollback();
-                            return result;
-                        }
-                        int patient_id = patientQuery.First();
+                        string specialty = (item["specialty"] as string).Trim().ToLower();
+                        string target_name = (item["target_name"] as string).Trim().ToLower();
+                        int patient_id = (int)item["patient_id"];
                         string fullFileName = item["path"] as string;
                         FileInfo fileInfo = new FileInfo(fullFileName);
                         fileName = fileInfo.Name;
-                        //  (fileInfo.Name
-                        string doctorName;
-                        Match m;
-                        if (item["doctorName"] == null)
-                        {
-                            m = Regex.Match(fileName, @"^.*\-\-DOCTOR\-\-(?<name>[^\-]*)\-\-.*$");
-                            doctorName = m.Groups["name"].Value;
-                        }
-                        else
-                            doctorName = item["doctorName"] as string;
-                        var doctorQuery = (from s in conciergeEntities.doctor
-                                           where s.shortname == doctorName
-                                           select s.id);
-                        if (doctorQuery.Count() != 1)
-                        {
-                            result["status"] = "error";
-                            result["reason"] = "Unknown doctor";
-                            transaction.Rollback();
-                            return result;
-                        }
-                        int doctor_id = doctorQuery.First();
+                        int doctor_id = (int)item["doctor_id"];
                         DateTime dt;
-                        if (item["procedureDate"] == null)
+                        Match m;
+                        dt = (DateTime)item["procedureDate"];
+                        string procedure_name = item["procedure_name"] as string;
+                        string location_name = item["location_name"] as string; ;
+                        var dpQuery0 = from dp in conciergeEntities.doctor_patient
+                                      where dp.patient_id == patient_id && dp.doctor_id == doctor_id
+                                      select dp;
+                        doctor_patient doctor_patient;
+                        if (dpQuery0.Count() == 0)
                         {
-                            m = Regex.Match(fileName, @"^(?<month>\d{2})(?<day>\d{2})(?<year>\d{4}).*$");
-                            dt = new DateTime(int.Parse(m.Groups["year"].Value), int.Parse(m.Groups["month"].Value), int.Parse(m.Groups["day"].Value));
-                        }
-                        else
-                            dt = (DateTime)item["procedureDate"];
-                        string procedureName;
-                        if (item["procedureName"] == null)
-                        {
-                            m = Regex.Match(fileName, @"^.*\-\-PROCEDURE\-\-(?<name>[^\-]*)\-\-.*$");
-                            procedureName = m.Groups["name"].Value;
-                        }
-                        else
-                            procedureName = item["procedureName"] as string;
-                        var procedureNameQuery = (from pn in conciergeEntities.procedure
-                                                  where pn.value == procedureName
-                                                  select pn);
-                        if (procedureNameQuery.Count() == 0)
-                        {
-                            procedure p = conciergeEntities.procedure.CreateObject();
-                            p.value = procedureName;
-                            conciergeEntities.procedure.AddObject(p);
+                            doctor_patient = conciergeEntities.doctor_patient.CreateObject();
+                            doctor_patient.doctor_id = doctor_id;
+                            doctor_patient.patient_id = patient_id;
+                            conciergeEntities.doctor_patient.AddObject(doctor_patient);
                             conciergeEntities.SaveChanges();
                         }
-                        string location;
-                        if (item["location"] == null)
-                        {
-                            m = Regex.Match(fileName, @"^.*\-\-LOCATION\-\-(?<name>[^\-]*)\-\-.*$");
-                            location = m.Groups["name"].Value;
-                        }
-                        else
-                            location = item["location"] as string;
-                        var locationNameQuery = (from ln in conciergeEntities.location
-                                                 where ln.value == location
-                                                 select ln);
-                        if (locationNameQuery.Count() == 0)
-                        {
-                            location l = conciergeEntities.location.CreateObject();
-                            l.value = location;
-                            conciergeEntities.location.AddObject(l);
-                            conciergeEntities.SaveChanges();
-                        }
-                        int file_id = AddFile_(fileInfo, conciergeEntities);
+                        doctor_patient = dpQuery0.First();
+                        int doctor_patient_id = doctor_patient.id;
+
+                        //int file_id = AddFile_(fileInfo, conciergeEntities);
+                        Hashtable r = AddFile(fileInfo, conciergeEntities);
+                        int file_id = (int)r["file_id"];
                         conciergeEntities.SaveChanges();
 
                         var dpQuery = from dp in conciergeEntities.doctor_patient
                                       where dp.doctor_id == doctor_id && dp.patient_id == patient_id
                                       select dp;
-                        doctor_patient dr_pat;
-                        switch (dpQuery.Count())
-                        {
-                            case 0:
-                                {
-                                    dr_pat = conciergeEntities.CreateObject<doctor_patient>();
-                                    dr_pat.patient_id = patient_id;
-                                    dr_pat.recent = true; // TODO: do we want to make this a choice, or just default like this
-                                    dr_pat.doctor_id = doctor_id;
-                                    dr_pat.released = false;
-                                    conciergeEntities.doctor_patient.AddObject(dr_pat);
-                                    conciergeEntities.SaveChanges();
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    dr_pat = dpQuery.First();
-                                    break;
-                                }
-                            default:
-                                {
-                                    throw new Exception("More than one doctor patient relationship exists in the database");
-                                }
-                        }
                         var dsQuery = from ds in conciergeEntities.doctor_specialty
-                                      where ds.doctor_id == doctor_id && ds.specialty_id == specialty_id
+                                      where ds.doctor_id == doctor_id && ds.specialty_name.Trim().ToLower() == specialty
                                       select ds;
                         doctor_specialty dr_spe;
                         switch (dsQuery.Count())
@@ -1346,7 +1632,7 @@ namespace Db
                             case 0:
                                 {
                                     dr_spe = conciergeEntities.CreateObject<doctor_specialty>();
-                                    dr_spe.specialty_id = specialty_id;
+                                    dr_spe.specialty_name = specialty;
                                     dr_spe.doctor_id = doctor_id;
                                     conciergeEntities.doctor_specialty.AddObject(dr_spe);
                                     conciergeEntities.SaveChanges();
@@ -1362,14 +1648,20 @@ namespace Db
                                     throw new Exception("More than one doctor specialty relationship exists in the database");
                                 }
                         }
+                        int procedure_target_id;
+                        var ptQuery = from pt in conciergeEntities.procedure_target
+                                      where pt.procedure_name.Trim().ToLower() == procedure_name && pt.target_name.Trim().ToLower() == target_name
+                                      select pt;
+                        procedure_target_id = ptQuery.First().id;
                         activity activity2 = conciergeEntities.activity.CreateObject();
+                        activity2.procedure_specialty_id = (int)item["procedure_specialty_id"];
+                        activity2.procedure_target_id = procedure_target_id;
                         activity2.doctor_specialty_id = dr_spe.id;
                         activity2.date = dt;
-                        activity2.doctor_patient_id = dr_pat.id;
-                        activity2.procedure = procedureName;
-                        activity2.location = location;
+                        activity2.doctor_patient_id = doctor_patient_id;
+                        activity2.location_name = location_name;
                         activity2.document_id = file_id;
-                        //activity activity2 = activity.Createactivity(specialty_id,doctor_id,dt,patient_id,procedureName,location,file_id);
+                        //activity activity2 = activity.Createactivity(specialty_id,doctor_id,dt,patient_id,procedure_name,location_name,file_id);
                         var foo = (from d in conciergeEntities.doctor
                                    where d.id == doctor_id
                                    select d).First();
@@ -1447,7 +1739,7 @@ namespace Db
                             activity.date = activities[i].date;
                             activity.doctor_id = activities[i].doctor_id;
                             activity.document_id = fileId;
-                            activity.location = activities[i].location;
+                            activity.location_name = activities[i].location_name;
                             activity.patient_id = activities[i].patient_id;
                             activity.procedure = activities[i].procedure;
                             activity.specialty_id = activities[i].specialty_id;
@@ -1476,13 +1768,6 @@ namespace Db
             return result;
         }
          * */
-        // called by UploadFile(XElement root)
-        public int AddFile(FileInfo file)
-        {
-            FileInfo[] files = new FileInfo[1];
-            files[0] = file;
-            return AddFiles(files);
-        }
         static public Db Instance()
         {
             if (db == null)
@@ -1490,6 +1775,281 @@ namespace Db
                 db = new Db();
             }
             return db;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private Hashtable AddFile(Hashtable values, conciergeEntities ent)
+        {
+            Hashtable result = new Hashtable();
+            Hashtable result2;
+            result["status"] = "ok";
+            try
+            {
+                string data = values["data"] as string ?? "";
+                string path = values["path"] as string ?? "";
+                
+                if (data == "" && path == "")
+                    throw new Exception("data and path missing in AddFile");
+                if (data != "" && path != "")
+                    throw new Exception("data and path both specified in AddFile");
+                result2 = GetServerDate(ent);
+                if (result2["status"] as string != "ok")
+                    return result2;
+                DateTime dt = (DateTime)result2["date"];
+                if (values["path"] != null)
+                {
+                    FileStream fs = new FileStream(values["path"] as string, FileMode.Open, FileAccess.Read);
+                    return AddFile(fs, ent, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
+        }
+        // called by AddActivities only
+        private Hashtable AddFile(FileInfo file, conciergeEntities ent)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                FileStream fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+                return AddFile(fs, ent, file.FullName);
+            }
+            catch (Exception ex)
+            {
+                result["reason"] = Explain(ex);
+                result["status"] = "error";
+            }
+            return result;
+        }
+        // No, these paramters are not redundant.  The s
+        private Hashtable AddFile(Stream stream, conciergeEntities ent, string source)
+        {
+            Hashtable result = new Hashtable();
+            Hashtable result2;
+            result["status"] = "ok";
+
+            try
+            {
+                string hash = FileHash(stream);
+                result2 = GetServerDate(ent);
+                if (result2["status"] as string != "ok")
+                    return result2;
+                document doc = ent.document.CreateObject();
+                doc.path = source;
+                doc.checksum = FileHash(stream);
+                result2 = GetServerDate(ent);
+                if (result2["status"] as string != "ok")
+                    return result2;
+                DateTime dt = (DateTime)result2["date"];
+                doc.added_date = dt;
+                ent.document.AddObject(doc);
+                ent.SaveChanges();
+                int id = (from d in ent.document
+                          select d.id).Max();
+                result["file_id"] = id;
+                doc = (from d in ent.document
+                       where d.id == id
+                       select d).First();
+
+                stream.Position = 0;
+                int fullSegments = (int)(stream.Length / MaxDocumentSegmentSize);
+                int leftOver = (int)(stream.Length % MaxDocumentSegmentSize);
+                for (int iSegment = 0; iSegment < fullSegments; iSegment++)
+                {
+                    byte[] buffer = new byte[MaxDocumentSegmentSize];
+                    int position = iSegment * MaxDocumentSegmentSize;
+                    stream.Read(buffer, 0, MaxDocumentSegmentSize);
+                    document_segment segment = ent.document_segment.CreateObject();
+                    segment.document_id = id;
+                    segment.data = buffer;
+                    segment.position = iSegment;
+                    ent.document_segment.AddObject(segment);
+                }
+                ent.SaveChanges();
+                if (leftOver > 0)
+                {
+                    byte[] buffer = new byte[leftOver];
+                    int position = (int)(stream.Length - leftOver);
+                    stream.Read(buffer, 0, leftOver);
+                    document_segment segment = ent.document_segment.CreateObject();
+                    segment.document_id = id;
+                    segment.data = buffer;
+                    segment.position = fullSegments;
+                    ent.document_segment.AddObject(segment);
+                }
+                ent.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                result["reason"] = Explain(ex);
+                result["status"] = "error";
+            }
+            return result;
+        }
+
+        public Hashtable AddFile(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try 
+	        {	        
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    ent.Connection.Open();
+                    using (DbTransaction txn = ent.Connection.BeginTransaction())
+                    {   /*
+                        if (values["name"] as string != "" && values["patient_id"] == null)
+                        {
+                            throw new Exception("name but not patient specified when adding file");
+                        }
+                        if (values["name"] as string == "" && values["patient_id"] != null)
+                        {
+                            throw new Exception("patient but not name specified when adding file");
+                        }*/
+                        result = AddFile(values, ent);
+                        ent.SaveChanges();
+                        if (result["status"] as string != "ok")
+                        {
+                            txn.Rollback();
+                            return result;
+                        }
+                        int document_id = (int)result["file_id"];
+                        /*
+                        if (values["patient_id"] != null)
+                        {
+                            int patient_id = (int)values["patient_id"];
+                            var query = from p in ent.patient
+                                        where p.id == patient_id
+                                        select p;
+                            if (query.Count() == 0)
+                                throw new Exception("patient not found while adding file");
+                            patient p2 = query.First();
+                            if (p2.signature_document_id != null)
+                                throw new Exception("patient already has a signature");
+                            p2.signature_document_id = (int)result["document_id"];
+                            ent.SaveChanges();
+                        }
+                         * */
+                        string name = values["name"] as string ;
+                        if (name != "")
+                        {
+                            var query = from sd in ent.special_document
+                                        where sd.name.Trim().ToLower() == name.Trim().ToLower()
+                                        select sd;
+                            if (query.Count() > 0)
+                                throw new Exception("Special file already exists");
+                            special_document sd2 = ent.special_document.CreateObject();
+                            sd2.name = name;
+                            sd2.document_id = document_id;
+                            ent.special_document.AddObject(sd2);
+                            ent.SaveChanges();
+                        }
+                        ent.SaveChanges();
+                        txn.Commit();
+                    }
+                }
+	        }
+	        catch (Exception ex)
+	        {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+	        }
+            return result;
+            /*
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                string name = ((values["name"] as string) ?? "").Trim();
+                string path = ((values["path"] as string) ?? "").Trim();
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    ent.Connection.Open();
+                    using (DbTransaction txn = ent.Connection.BeginTransaction())
+                    {
+                        FileInfo fi = new FileInfo(path);
+                        if (fi == null)
+                            throw new Exception("Bad path");
+                        int i = AddFile_(fi, ent);
+                        ent.SaveChanges();
+                        if (name != string.Empty)
+                        {
+                            special_document sd = ent.special_document.CreateObject();
+                            sd.document_id = i;
+                            sd.name = name;
+                            ent.special_document.AddObject(sd);
+                        }
+                        ent.SaveChanges();
+                        txn.Commit();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;*/
+        }
+        public Hashtable GetDoctorsForPatient(Hashtable values)
+        {
+            Hashtable result = new Hashtable();
+            result["status"] = "ok";
+            try
+            {
+                int patient_id = (int)values["patient_id"];
+                using (conciergeEntities ent = new conciergeEntities())
+                {
+                    ent.Connection.Open();
+                    var query1 = (from dp in ent.doctor_patient
+                                  where dp.patient_id == patient_id
+                                  select dp);
+                    List<Hashtable> items = new List<Hashtable>();
+                    foreach (doctor_patient dp in query1)
+                    {
+                        Hashtable item = new Hashtable();
+                        item["doctor_patient_id"] = dp.id;
+                        item["doctor_id"] = dp.doctor_id;
+                    }
+                    result["data"] = items;
+                }
+            }
+            catch (Exception ex)
+            {
+                result["status"] = "error";
+                result["reason"] = Explain(ex);
+            }
+            return result;
         }
     }
 }

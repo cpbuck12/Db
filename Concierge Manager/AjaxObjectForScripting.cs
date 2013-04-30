@@ -48,7 +48,7 @@ namespace Concierge_Manager
             response.Status = HttpStatusCode.OK;
             response.ContentType = "applixation/text";
         }
-        public bool PdfReply(byte[] payload, IHttpResponse response)
+        public bool DownloadFileReply(byte[] payload, string fileExtension,IHttpResponse response)
         {
             if (payload == null || payload.Length <= 0)
             {
@@ -57,7 +57,20 @@ namespace Concierge_Manager
             }
             response.Body.Write(payload, 0, payload.Length);
             response.Status = HttpStatusCode.OK;
-            response.ContentType = "application/pdf";
+            fileExtension = fileExtension.Trim().ToLower();
+            switch (fileExtension)
+            {
+                case "pdf":
+                    response.ContentType = "application/pdf";
+                    break;
+                case "bmp":
+                    response.ContentType = "image/bmp";
+                    break;
+                case "docx":
+//                    response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                    response.ContentType = "application/msword";
+                    break;
+            }
             return true;
         }
         public bool GetFile(string[] parts, IHttpResponse response)
@@ -127,8 +140,19 @@ namespace Concierge_Manager
             }
             else if (request.UriParts[0].ToLower() == "downloadfile")
             {
-                int fileId = int.Parse(request.UriParts[1].Split(new char[] { '.' })[0]);
-                return PdfReply(objectForScripting.DownloadFile(fileId),response);
+                string[] fileParts = request.UriParts[1].Split(new char[] { '.' });
+                int fileId = int.Parse(fileParts[0]);
+                string fileExtension = fileParts[1];
+                try
+                {
+
+                }
+                catch (Exception ex)
+                {
+                    ex = null;
+                }
+                byte[] buffer = objectForScripting.DownloadFile(fileId);
+                return DownloadFileReply(buffer,fileExtension,response);
             }
             else if (request.UriParts[0].ToLower() == "ajax")
             {
@@ -138,6 +162,12 @@ namespace Concierge_Manager
 
                     switch (request.UriParts[1])
                     {
+                        case "GetSpecialFile":
+                            AjaxReply(objectForScripting.GetSpecialFile(xmlRequest), response);
+                            return true;
+                        case "AddFile":
+                            AjaxReply(objectForScripting.AddFile(xmlRequest), response);
+                            return true;
                         case "DeleteDocument":
                             AjaxReply(objectForScripting.DeleteDocument(xmlRequest), response);
                             return true;
@@ -147,9 +177,11 @@ namespace Concierge_Manager
                         case "SetCurrentDirectory":
                             AjaxReply(objectForScripting.SetCurrentDirectory(xmlRequest), response);
                             return true;
+                            /*
                         case "AddSpecialty":
                             AjaxReply(objectForScripting.AddSpecialty(xmlRequest), response);
                             return true;
+                             */
                         case "AddPatient":
                             AjaxReply(objectForScripting.AddPatient(xmlRequest), response);
                             return true;
@@ -165,9 +197,11 @@ namespace Concierge_Manager
                         case "AddActivities":
                             AjaxReply(objectForScripting.AddActivities(xmlRequest), response);
                             return true;
+                            /*
                         case "UploadFile":
                             AjaxReply(objectForScripting.UploadFile(xmlRequest), response);
                             return true;
+                             */
                         case "GetPeopleOnDisk":
                             AjaxReply(objectForScripting.GetPeopleOnDisk(), response);
                             return true;
@@ -177,9 +211,11 @@ namespace Concierge_Manager
                         case "GetPeopleInDb":
                             AjaxReply(objectForScripting.GetPatients(), response);
                             return true;
+                            /*
                         case "GetSpecialties":
                             AjaxReply(objectForScripting.GetSpecialties(), response);
                             return true;
+                             */
                         case "BrowseDocuments":
                             AjaxReply(objectForScripting.BrowseDocuments(), response);
                             return true;
